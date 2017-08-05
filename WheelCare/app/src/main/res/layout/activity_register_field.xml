@@ -1,0 +1,204 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerVertical="true"
+    tools:context="com.example.lenovo.wheelcare.RegisterationActicvity">
+
+    <LinearLayout
+        android:id="@+id/email_login_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/text_header_fullname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:gravity="left"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="3dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="Username*"/>
+
+        <EditText
+            android:id="@+id/et_fullname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:hint="@string/full_name"
+            android:paddingLeft="5dp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:background="@color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:inputType="textPersonName"
+            android:maxLength="35"
+            android:maxLines="1"/>
+
+        <TextView
+            android:id="@+id/text_header_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:gravity="left"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="35dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="Username*"/>
+
+        <EditText
+            android:id="@+id/et_uname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:hint="@string/user_name"
+            android:paddingLeft="5dp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:background="@color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:inputType="textPersonName"
+            android:maxLength="35"
+            android:maxLines="1"/>
+        <TextView
+            android:id="@+id/text_username_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/auto_fill"
+            android:maxLines="1"
+
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="50dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="username should be atleast 8 characters long"/>
+
+        <TextView
+            android:id="@+id/txt_password_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="35dp"
+            android:gravity="left"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="Password*"
+            android:layout_marginBottom="3dp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:id="@+id/et_pass"
+            android:hint="@string/password"
+            android:paddingLeft="5dp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:background="@color/white"
+            android:inputType="textPassword"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:maxLines="1"
+            android:maxLength="16"/>
+        <TextView
+            android:id="@+id/text_password_error"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/auto_fill"
+            android:maxLines="1"
+            android:layout_marginLeft="50dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="password should be atleast 6 characters long"/>
+
+        <TextView
+            android:id="@+id/txt_re_enterpass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:gravity="left"
+            android:layout_marginLeft="35dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="Re-Enter Password*"
+            android:layout_marginBottom="3dp"/>
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:id="@+id/et_repass"
+            android:hint="Re-enter Password"
+            android:paddingLeft="5dp"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:background="@color/white"
+            android:inputType="textPassword"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:maxLines="1"
+            android:maxLength="16"/>
+        <TextView
+            android:id="@+id/text_renter_password_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/auto_fill"
+            android:maxLines="1"
+            android:gravity="left"
+            android:layout_marginLeft="50dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Passwords Do Not Match"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkBox_showpassword"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:textColor="@color/white"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_gravity="left"
+            android:checked="false"
+            android:text="Show Password"
+            android:buttonTint="@color/colorAccent"/>
+
+        <TextView
+            android:id="@+id/reqd_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="*Required Information"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="50dp"
+
+            />
+
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/round_edge"
+            android:textSize="@dimen/_18sdp"
+            android:text="Submit"/>
+
+
+
+    </LinearLayout>
+
+</ScrollView>
