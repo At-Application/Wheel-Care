@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_plane_otp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/text_auto_detect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#00C2F3"
+            android:gravity="left"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="35dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="Waiting to automatically detect SMS sent to"/>
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:indeterminate="true"
+            android:layout_marginTop="20dp"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="#d3d3d3"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
+       </LinearLayout>
+    <TextView
+        android:id="@+id/or_border"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:layout_marginLeft="55dp"
+        android:layout_marginRight="50dp"
+        android:textColor="#000"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:text="OR"
+
+        android:layout_marginBottom="5dp"
+        />
+    <TextView
+        android:id="@+id/text_manual_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="5dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:text="Enter your code Manually"/>
+    <EditText
+        android:id="@+id/et_otp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="#ffffff"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="8dp"
+        android:hint="Enter Your OTP"
+        android:paddingLeft="5dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_gravity="bottom"
+        android:maxLength="4"
+        android:maxLines="1"
+        />
+    <TextView
+        android:id="@+id/text_otp_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/auto_fill"
+        android:maxLines="1"
+        android:layout_marginTop="25dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="50dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Invalid OTP"/>
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/round_edge"
+        android:textSize="@dimen/_18sdp"
+        android:textColor="@color/setup_btn_color"
+        android:text="Submit"/>
+
+    <TextView
+        android:id="@+id/text_resend_sms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:layout_marginRight="35dp"
+        android:layout_marginTop="10dp"
+        android:gravity="right"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:text="Resend SMS"/>
+
+</LinearLayout>

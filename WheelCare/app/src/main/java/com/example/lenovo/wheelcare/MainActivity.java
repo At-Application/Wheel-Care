@@ -29,54 +29,51 @@ import android.widget.Toast;
 
 public class MainActivity extends RootActivity implements View.OnClickListener {
 
-    private EditText edit_username;
+    private EditText edit_mobile;
     private EditText edit_userpass;
-    private Button btn_login;
-    private CheckBox chech_box;
-    private TextView forgot_password;
-    private TextView create_account;
-    private TextView text_header_username;
-    private TextView txt_password_header;
-    private Typeface custom_font_bold,custom_font_light;
+    private Typeface custom_font_light;
     private TextView text_invalid_password;
-    private boolean isConnected;
+    private boolean isValid;
+    private TextView text_mobile_error;
+    private TextView text_password_error;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       // Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-       // setSupportActionBar(toolbar);
-        edit_username =(EditText)findViewById(R.id.edit_username);
+        edit_mobile =(EditText)findViewById(R.id.edit_mobile);
         edit_userpass =(EditText)findViewById(R.id.edit_userpass);
 
         custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
-        custom_font_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-bold.ttf");
 
-        btn_login = (Button)findViewById(R.id.btn_login);
-        chech_box = (CheckBox) findViewById(R.id.chech_box);
-        forgot_password = (TextView)findViewById(R.id.text_forgot_password);
-        create_account = (TextView)findViewById(R.id.text_create_account);
-        text_header_username = (TextView)findViewById(R.id.text_header_username);
-        txt_password_header = (TextView)findViewById(R.id.txt_password_header);
+        Button btn_submit = (Button) findViewById(R.id.btn_submit);
+        CheckBox chech_box = (CheckBox) findViewById(R.id.chech_box);
+        TextView forgot_password = (TextView) findViewById(R.id.text_forgot_password);
+        TextView text_header_mobile = (TextView) findViewById(R.id.text_header_mobile);
+        TextView txt_password_header = (TextView) findViewById(R.id.txt_password_header);
+        text_mobile_error= (TextView)findViewById(R.id.text_mobile_error);
         text_invalid_password = (TextView)findViewById(R.id.text_invalid_password);
+        text_password_error= (TextView)findViewById(R.id.text_password_error);
         forgot_password.setPaintFlags(forgot_password.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        create_account.setPaintFlags(create_account.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        //forgot_password.setOnClickListener(this);
-        create_account.setOnClickListener(this);
-        btn_login.setOnClickListener(this);
+        text_password_error.setPaintFlags(text_password_error.getPaintFlags()|Paint.UNDERLINE_TEXT_FLAG);
+
+        text_mobile_error.setVisibility(View.INVISIBLE);
+        text_password_error.setVisibility(View.INVISIBLE);
+        btn_submit.setOnClickListener(this);
         text_invalid_password.setVisibility(View.INVISIBLE);
 
-        edit_username.setTypeface(custom_font_light);
+        edit_mobile.setTypeface(custom_font_light);
+        text_password_error.setTypeface(custom_font_light);
+        text_mobile_error.setTypeface(custom_font_light);
         edit_userpass.setTypeface(custom_font_light);
         chech_box.setTypeface(custom_font_light);
-        btn_login.setTypeface(custom_font_light);
+        btn_submit.setTypeface(custom_font_light);
         text_invalid_password.setTypeface(custom_font_light);
-        text_header_username.setTypeface(custom_font_light);
+        text_header_mobile.setTypeface(custom_font_light);
         txt_password_header.setTypeface(custom_font_light);
         text_invalid_password.setTypeface(custom_font_light);
         forgot_password.setTypeface(custom_font_light);
-        create_account.setTypeface(custom_font_light);
+        //create_account.setTypeface(custom_font_light);
 
 
         /**************************** Password Show  ****************************/
@@ -94,15 +91,28 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
             }
         });
         /*******************************************************************************/
-       /* edit_username.addTextChangedListener(new TextWatcher(){
+        edit_mobile.addTextChangedListener(new TextWatcher(){
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                edit_username.setBackgroundColor(Color.parseColor("#ffffff"));
-                text_invalid_password.setVisibility(View.INVISIBLE);
-                if (edit_username.getText().toString().matches("^ ") )
-                    edit_username.setText("");
+
+                if (edit_mobile.getText().toString().matches("^ ") ){
+                    Log.d("match", "onTextChanged: ");
+                    text_mobile_error.setVisibility(View.VISIBLE);
+                    isValid= false;
+                }else if(edit_mobile.getText().toString().length()==10){
+                    text_mobile_error.setVisibility(View.INVISIBLE);
+                    isValid= true;
+                }else{
+                    isValid=false;
+                }
+                    //edit_username.setText("");
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){
+                Log.d("match", "beforeTextChanged: ");
+                edit_mobile.setBackgroundColor(Color.parseColor("#ffffff"));
+                text_invalid_password.setVisibility(View.INVISIBLE);
+                text_mobile_error.setVisibility(View.VISIBLE);
+            }
             @Override
             public void afterTextChanged(Editable arg0) {
 
@@ -114,51 +124,34 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
             {
                 //Log.d("Text changed to:", (String) s);
                 Log.d("MSG","text changed");
-                edit_username.setBackgroundColor(Color.parseColor("#ffffff"));
-                if (edit_userpass.getText().toString().matches("^[A-Za-z.\\s_-]+$") ){
+                edit_userpass.setBackgroundColor(Color.parseColor("#ffffff"));
+                if((edit_userpass.getText().toString().matches("^[A-Za-z0-9][A-Za-z0-9@#%&*]*$"))&&(edit_userpass.getText().toString().length()>8)){
+
                     text_invalid_password.setVisibility(View.INVISIBLE);
-                }else{
-                    edit_userpass.setText("");
+                    text_password_error.setVisibility(View.INVISIBLE);
+                    isValid= true;
+                }else if(edit_userpass.getText().toString().matches("^ ")){
+                    text_password_error.setText("should be atleast 8 characters long");
+                    text_password_error.setVisibility(View.VISIBLE);
+                    isValid= false;
+               } else{
+                    text_password_error.setText("should Contain atleast one Capital alphabet,one Number and one Special Character");
+                    //text_invalid_password.setText("Should contain atleast one alphabet,Number and special characters");
                     text_invalid_password.setVisibility(View.VISIBLE);
-                }
+                    text_password_error.setVisibility(View.VISIBLE);
+                    isValid=false;
+               }
 
 
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){
+                edit_mobile.setBackgroundColor(Color.parseColor("#ffffff"));
+            }
             @Override
             public void afterTextChanged(Editable arg0) {
 
             }
-        });*/
-
-        /*edit_username.setFilters(new InputFilter[] {
-                new InputFilter() {
-                    public CharSequence filter(CharSequence src, int start,
-                                               int end, Spanned dst, int dstart, int dend) {
-                        if(src.equals("")){ // for backspace
-                            return src;
-                        }
-                        if(src.toString().matches("[\\x00-\\x7F]+")){
-                            return src;
-                        }
-                        return "";
-                    }
-                }
         });
-        edit_userpass.setFilters(new InputFilter[] {
-                new InputFilter() {
-                    public CharSequence filter(CharSequence src, int start,
-                                               int end, Spanned dst, int dstart, int dend) {
-                        if(src.equals("")){ // for backspace
-                            return src;
-                        }
-                        if(src.toString().matches("[\\x00-\\x7F]+")){
-                            return src;
-                        }
-                        return "";
-                    }
-                }
-        });*/
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -171,25 +164,15 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
     }
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-
-            case R.id.btn_login :
-               if(edit_username.getText().toString().matches("^ @$")){
-                   text_invalid_password.setVisibility(View.VISIBLE);
-               }
-
-                //startActivity(intent);
-                break;
-
-            /*case R.id.text_forgot_password :
-                break;*/
-            case R.id.text_create_account :
-                startActivity(new Intent(getApplicationContext(),RegisterationActicvity.class));
-                break;
-
-
+        if (isValid) {
+             startActivity(new Intent(getApplicationContext(),OtpActivity.class));
+        }else{
+              text_invalid_password.setVisibility(View.VISIBLE);
         }
+
     }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
