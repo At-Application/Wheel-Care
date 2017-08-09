@@ -24,6 +24,8 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
     private ImageView image_user;
     private ImageView image_service;
     private Typeface custom_font_light;
+    private TextView option;
+    private TextView or_border;
 
     @Override
     protected void onPostResume() {
@@ -60,10 +62,14 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
         welcome_text= (TextView)findViewById(R.id.welcome_text);
         et_user= (EditText)findViewById(R.id.et_user);
         et_service= (EditText)findViewById(R.id.et_service);
+        option= (TextView) findViewById(R.id.option);
+        or_border= (TextView)findViewById(R.id.or_border);
 
         custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
 
         welcome_text.setTypeface(custom_font_light);
+        or_border.setTypeface(custom_font_light);
+        option.setTypeface(custom_font_light);
         et_user.setTypeface(custom_font_light);
         et_service.setTypeface(custom_font_light);
 

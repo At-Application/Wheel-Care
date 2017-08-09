@@ -33,7 +33,8 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
     private EditText edit_userpass;
     private Typeface custom_font_light;
     private TextView text_invalid_password;
-    private boolean isValid;
+    private boolean  isValidMobile;
+    private boolean isValidPassword;
     private TextView text_mobile_error;
     private TextView text_password_error;
 
@@ -98,12 +99,12 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
                 if (edit_mobile.getText().toString().matches("^ ") ){
                     Log.d("match", "onTextChanged: ");
                     text_mobile_error.setVisibility(View.VISIBLE);
-                    isValid= false;
+                    isValidMobile= false;
                 }else if(edit_mobile.getText().toString().length()==10){
                     text_mobile_error.setVisibility(View.INVISIBLE);
-                    isValid= true;
+                    isValidMobile= true;
                 }else{
-                    isValid=false;
+                    isValidMobile=false;
                 }
                     //edit_username.setText("");
             }
@@ -112,6 +113,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
                 edit_mobile.setBackgroundColor(Color.parseColor("#ffffff"));
                 text_invalid_password.setVisibility(View.INVISIBLE);
                 text_mobile_error.setVisibility(View.VISIBLE);
+                isValidMobile= false;
             }
             @Override
             public void afterTextChanged(Editable arg0) {
@@ -129,17 +131,17 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
 
                     text_invalid_password.setVisibility(View.INVISIBLE);
                     text_password_error.setVisibility(View.INVISIBLE);
-                    isValid= true;
+                    isValidPassword= true;
                 }else if(edit_userpass.getText().toString().matches("^ ")){
                     text_password_error.setText("should be atleast 8 characters long");
                     text_password_error.setVisibility(View.VISIBLE);
-                    isValid= false;
+                    isValidPassword= false;
                } else{
                     text_password_error.setText("should Contain atleast one Capital alphabet,one Number and one Special Character");
                     //text_invalid_password.setText("Should contain atleast one alphabet,Number and special characters");
                     text_invalid_password.setVisibility(View.VISIBLE);
                     text_password_error.setVisibility(View.VISIBLE);
-                    isValid=false;
+                    isValidPassword=false;
                }
 
 
@@ -164,7 +166,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
     }
     @Override
     public void onClick(View v) {
-        if (isValid) {
+        if ((isValidPassword)&&(isValidMobile)) {
              startActivity(new Intent(getApplicationContext(),OtpActivity.class));
         }else{
               text_invalid_password.setVisibility(View.VISIBLE);
