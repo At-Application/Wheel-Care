@@ -11,16 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_gravity="center"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="50dp"
         android:layout_marginRight="50dp">
-
-
 
         <TextView
             android:id="@+id/text_header_mobile"
             android:layout_width="match_parent"
             android:text="Enter your Mobile Number"
+            android:textSize="40dp"
             android:layout_height="wrap_content"
             android:textColor="@color/btn_click"
             android:gravity="left"
@@ -34,6 +33,7 @@
             android:layout_height="wrap_content"
             android:hint="Mobile Number"
             android:paddingLeft="5dp"
+            android:textSize="40dp"
             android:paddingTop="@dimen/_8sdp"
             android:paddingBottom="@dimen/_8sdp"
             android:layout_marginTop="10dp"
@@ -49,6 +49,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
             android:maxLines="1"
+            android:textSize="25dp"
             android:layout_marginTop="8dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Mobile Number should be eaxctly 10 characters long"/>
@@ -58,12 +59,13 @@
             android:id="@+id/txt_password_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="40dp"
             android:textColor="@color/btn_click"
             android:gravity="left"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
             android:text="Enter your Password"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="45dp"
             android:layout_marginBottom="@dimen/_5sdp"/>
 
         <EditText
@@ -71,6 +73,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/edit_userpass"
             android:hint="@string/password"
+            android:textSize="40dp"
             android:paddingLeft="5dp"
             android:paddingTop="10dp"
             android:paddingBottom="@dimen/_8sdp"
@@ -84,6 +87,7 @@
             android:id="@+id/text_password_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="25dp"
             android:textColor="@color/auto_fill"
             android:maxLines="3"
             android:layout_marginTop="8dp"
@@ -95,21 +99,25 @@
             android:id="@+id/chech_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:textColor="@color/btn_color"
+            android:layout_marginTop="40dp"
+            android:textSize="30dp"
+            android:layout_marginRight="15dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/btn_click"
             android:checked="false"
             android:text="Show Password"
-            android:buttonTint="@color/colorAccent"
+            android:buttonTint="@color/btn_color"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
             android:id="@+id/btn_submit"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_width="600dp"
+            android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="18dp"
             android:background="@drawable/round_edge"
-            android:textSize="@dimen/_18sdp"
+            android:textSize="40dp"
             android:textColor="@color/setup_btn_color"
             android:text="SUBMIT"/>
 
@@ -118,11 +126,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
+            android:textSize="25dp"
             android:gravity="center_horizontal"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
             android:text="Invalid Mobile number or Password"
-            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="@dimen/_5sdp"/>
 
         <TextView
@@ -130,7 +139,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/btn_click"
-            android:gravity="right"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:textSize="40dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
             android:text="@string/forgot_password"

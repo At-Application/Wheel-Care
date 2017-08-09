@@ -6,7 +6,7 @@
     <color name="auto_fill">#FF8E88</color>
     <color name="colorAccent">#FF4081</color>
     <color name="setup_btn_color">#595959</color>
-    <color name="btn_click">#003d4d</color>
+    <color name="btn_click">#000000</color>
     <color name="btn_color">#00C2F3</color>
     <color name="black">#000</color>
 </resources>

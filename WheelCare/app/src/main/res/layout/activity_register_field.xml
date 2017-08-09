@@ -10,6 +10,7 @@
         android:id="@+id/email_login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:orientation="vertical">
         <TextView
             android:id="@+id/text_header_fullname"
@@ -18,7 +19,6 @@
             android:textColor="@color/btn_click"
             android:gravity="left"
             android:layout_marginLeft="35dp"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="3dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/btn_click"
             android:gravity="left"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="3dp"
             android:layout_marginLeft="35dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/btn_click"
             android:gravity="left"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="3dp"
             android:layout_marginLeft="35dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -130,7 +130,6 @@
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
             android:maxLines="1"
-
             android:layout_marginTop="2dp"
             android:layout_marginLeft="50dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -140,13 +139,12 @@
             android:id="@+id/reqd_field"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="*Required Information"
             android:layout_marginTop="20dp"
-            android:layout_marginLeft="50dp"
-
             />
 
         <Button

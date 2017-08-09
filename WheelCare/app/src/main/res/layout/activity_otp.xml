@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_plane_otp">
+    <include layout="@layout/custom_action_bar"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -21,21 +22,21 @@
         <ProgressBar
             android:id="@+id/progressBar1"
             style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:indeterminate="true"
             android:layout_marginTop="20dp"
             android:indeterminateTintMode="src_atop"
             android:indeterminateTint="#d3d3d3"
             android:layout_gravity="center"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerHorizontal="true" />
-       </LinearLayout>
+    </LinearLayout>
     <TextView
         android:id="@+id/or_border"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="55dp"
-        android:layout_marginLeft="55dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="50dp"
         android:textColor="#000"
         android:gravity="center"
@@ -62,9 +63,9 @@
         android:layout_height="wrap_content"
         android:textColor="@color/auto_fill"
         android:maxLines="1"
+        android:layout_gravity="center"
         android:layout_marginTop="25dp"
         android:textStyle="bold"
-        android:layout_marginLeft="50dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Invalid OTP"/>
     <EditText
@@ -103,9 +104,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/btn_click"
-        android:layout_marginRight="35dp"
         android:layout_marginTop="10dp"
-        android:gravity="right"
+        android:gravity="center"
         android:textStyle="bold"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_gravity="center_horizontal|center_vertical"

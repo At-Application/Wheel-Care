@@ -41,6 +41,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateUnchanged" />
+        <activity
+            android:name="com.example.lenovo.wheelcare.CarRegistration"
+            android:configChanges="orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged" />
     </application>
 
 </manifest>
