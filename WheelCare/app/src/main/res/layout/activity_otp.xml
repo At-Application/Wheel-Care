@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_plane_otp">
+    android:background="@drawable/bg_plane">
     <include layout="@layout/custom_action_bar"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,10 +13,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#00C2F3"
-            android:gravity="left"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="35dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
             android:text="Waiting to automatically detect SMS sent to"/>
         <ProgressBar
@@ -24,7 +23,6 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="match_parent"
             android:indeterminate="true"
-            android:layout_marginTop="20dp"
             android:indeterminateTintMode="src_atop"
             android:indeterminateTint="#d3d3d3"
             android:layout_gravity="center"
@@ -50,11 +48,10 @@
         android:id="@+id/text_manual_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/btn_click"
+        android:textColor="@color/btn_color"
         android:gravity="center"
         android:layout_marginTop="15dp"
-        android:layout_marginLeft="5dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_gravity="center_horizontal|center_vertical"
         android:text="Enter your code Manually"/>
     <TextView
@@ -65,14 +62,13 @@
         android:maxLines="1"
         android:layout_gravity="center"
         android:layout_marginTop="25dp"
-        android:textStyle="bold"
-        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Invalid OTP"/>
     <EditText
         android:id="@+id/et_otp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusable="true"
+        android:inputType="number|numberDecimal"
         android:focusableInTouchMode="true"
         android:background="#ffffff"
         android:layout_marginLeft="50dp"
@@ -106,7 +102,7 @@
         android:textColor="@color/btn_click"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:textStyle="bold"
+        android:textStyle="italic"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_gravity="center_horizontal|center_vertical"
         android:text="Resend SMS"/>

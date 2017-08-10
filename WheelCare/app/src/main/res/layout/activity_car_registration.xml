@@ -5,19 +5,23 @@
     android:background="@drawable/bg_plane">
     <include layout="@layout/custom_action_bar"/>
      <ImageView
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:src="@drawable/renaultkwid"
-         android:layout_marginLeft="25dp"
+         android:layout_width="200dp"
+         android:layout_height="200dp"
+         android:src="@drawable/marutibrezza"
+         android:layout_gravity="center"
          android:layout_marginTop="20dp"
          />
     <Spinner
         android:id="@+id/brand_spinner"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="50dp"
+        android:background="@color/white"
+
+        />
     <Spinner
         android:id="@+id/model_spinner"
         android:layout_width="fill_parent"
         android:layout_marginTop="15dp"
-        android:layout_height="wrap_content" />
+        android:background="@color/white"
+        android:layout_height="50dp" />
 </LinearLayout>

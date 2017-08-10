@@ -27,6 +27,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 public class MainActivity extends RootActivity implements View.OnClickListener {
 
     private EditText edit_mobile;
@@ -37,6 +39,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
     private boolean isValidPassword;
     private TextView text_mobile_error;
     private TextView text_password_error;
+    private TextView txt_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
 
         custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
 
+        txt_title=(TextView)findViewById(R.id.txt_title);
         Button btn_submit = (Button) findViewById(R.id.btn_submit);
         CheckBox chech_box = (CheckBox) findViewById(R.id.chech_box);
         TextView forgot_password = (TextView) findViewById(R.id.text_forgot_password);
@@ -63,6 +67,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
         btn_submit.setOnClickListener(this);
         text_invalid_password.setVisibility(View.INVISIBLE);
 
+        txt_title.setTypeface(custom_font_light);
         edit_mobile.setTypeface(custom_font_light);
         text_password_error.setTypeface(custom_font_light);
         text_mobile_error.setTypeface(custom_font_light);
@@ -137,7 +142,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
                     text_password_error.setVisibility(View.VISIBLE);
                     isValidPassword= false;
                } else{
-                    text_password_error.setText("should Contain atleast one Capital alphabet,one Number and one Special Character");
                     //text_invalid_password.setText("Should contain atleast one alphabet,Number and special characters");
                     text_invalid_password.setVisibility(View.VISIBLE);
                     text_password_error.setVisibility(View.VISIBLE);
@@ -155,14 +159,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
     }
     @Override
     public void onClick(View v) {

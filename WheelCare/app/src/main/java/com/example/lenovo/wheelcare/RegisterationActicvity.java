@@ -1,6 +1,7 @@
 package com.example.lenovo.wheelcare;
 
 
+import android.content.Intent;
 import android.content.pm.ProviderInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -23,10 +24,13 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
     private EditText et_user;
     private EditText et_referral;
     private TextView text_email_error;
-    private boolean isValid = false;
+    private boolean isValidFullName = false;
+    private boolean isValidEmail = false;
    // private EditText et_fullname;
     private TextView text_fullname_error;
     private EditText et_fullname;
+    private TextView txt_title;
+    private boolean isValidRefferral = false;
 
 
     @Override
@@ -34,6 +38,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
+        txt_title = (TextView)findViewById(R.id.txt_title);
         et_user = (EditText) findViewById(R.id.et_email);
         et_referral = (EditText) findViewById(R.id.et_referal);
         et_fullname= (EditText)findViewById(R.id.et_fullname);
@@ -46,7 +51,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
 
         TextView text_header_email = (TextView) findViewById(R.id.text_header_email);
         TextView text_header_referral = (TextView)findViewById(R.id.text_header_referral);
-        TextView text_header_fullName = (TextView) findViewById(R.id.text_header_fullname);
+        final TextView text_header_fullName = (TextView) findViewById(R.id.text_header_fullname);
 
         //final TextView et_fullName = (TextView) findViewById(R.id.et_fullname);
         TextView reqdField = (TextView) findViewById(R.id.reqd_field);
@@ -57,6 +62,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
         Typeface custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
 
 
+        txt_title.setTypeface(custom_font_light);
         et_user.setTypeface(custom_font_light);
         text_header_referral.setTypeface(custom_font_light);
         text_referal_error.setTypeface(custom_font_light);
@@ -77,16 +83,18 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 et_fullname.setBackgroundColor(Color.parseColor("#ffffff"));
-                isValid= false;
+                isValidFullName= false;
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                text_header_fullName.setVisibility(View.INVISIBLE);
                 if(et_fullname.getText().toString().matches("^ ")){
                     text_fullname_error.setVisibility(View.VISIBLE);
-                    isValid = false;
+                    isValidFullName = false;
                 }else{
-                    isValid= true;
+                    isValidFullName= true;
+                    text_header_fullName.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -104,14 +112,14 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
                     Log.d("Match","invalid");
                     // et_user.setText("");
                     text_email_error.setVisibility(View.VISIBLE);
-                    isValid= false;
+                    isValidEmail= false;
                 }else if(et_user.getText().toString().matches("^[a-zA-Z0-9._-]+@[a-z]+.[a-z]+$")){
 
                     text_email_error.setVisibility(View.INVISIBLE);
-                    isValid = true;
+                    isValidEmail = true;
                 }else {
                     text_email_error.setVisibility(View.VISIBLE);
-                    isValid= false;
+                    isValidEmail = false;
                 }
 
             }
@@ -135,12 +143,12 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
                     Log.d("Match","invalid");
                     // et_user.setText("");
                     //text_password_error.setVisibility(View.VISIBLE);
-                    isValid= false;
+                    isValidRefferral = false;
                 }else if(et_referral.getText().toString().length()<8){
                     //text_password_error.setVisibility(View.VISIBLE);
-                    isValid = false;
+                    isValidRefferral = false;
                 }else{
-                    isValid = true;
+                    isValidRefferral = true;
                 }
             }
 
@@ -156,12 +164,13 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        Bundle bundle= new Bundle();
+       // Bundle bundle= new Bundle();
        if (et_fullname.getText().toString().length()==0){
            text_fullname_error.setVisibility(View.VISIBLE);
-           isValid = false;
+           isValidFullName = false;
        }
-        if (isValid){
+        if ((isValidFullName)&&(isValidEmail)){
+            startActivity(new Intent(getApplicationContext(),CarRegistration.class));
             //bundle.putString("Mobile",et_user.getText().toString());
            //startActivity(new Intent(getApplicationContext(),OtpActivity.class).putExtras(bundle));
         }

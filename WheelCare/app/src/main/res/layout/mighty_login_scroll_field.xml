@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:layout_centerVertical="true"
     tools:context="com.example.lenovo.wheelcare.MainActivity">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -48,10 +47,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
-            android:maxLines="1"
+            android:maxLines="2"
             android:layout_marginTop="8dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Mobile Number should be eaxctly 10 characters long"/>
+            android:text="Mobile Number should be eaxctly 10 characters"/>
 
 
         <TextView
@@ -78,14 +77,14 @@
             android:inputType="textPassword"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
-            android:maxLines="1"
+            android:maxLines="10"
             android:maxLength="35"/>
         <TextView
             android:id="@+id/text_password_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
-            android:maxLines="3"
+            android:maxLines="10"
             android:layout_marginTop="8dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Should be atleast 8 characters long"
@@ -120,7 +119,6 @@
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
             android:gravity="center_horizontal"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
             android:text="Invalid Mobile number or Password"
             android:layout_marginTop="@dimen/_5sdp"
