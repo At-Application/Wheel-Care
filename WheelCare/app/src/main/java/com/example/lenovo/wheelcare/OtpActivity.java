@@ -1,10 +1,15 @@
 package com.example.lenovo.wheelcare;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.telephony.SmsMessage;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,13 +19,24 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+
 import org.w3c.dom.Text;
 
 /**
  * Created by Lenovo on 8/6/2017.
  */
 
-public class OtpActivity extends RootActivity implements View.OnClickListener {
+public class OtpActivity extends RootActivity implements View.OnClickListener, OTPRequestListener, OTPVerificationListener {
+    private static final String TAG = OtpActivity.class.getSimpleName();
+
+    private BroadcastReceiver mReceiver;
+
+    private OTPManager otpManager = new OTPManager();
+
+    private static final String otpRequestURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/loginOTP";
+    private static final String otpVerifyURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/loginOTPValidate";
+
     private Typeface custom_font_light;
     private TextView text_auto_detect;
     private ProgressBar progressBar1;
@@ -38,6 +54,12 @@ public class OtpActivity extends RootActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp);
+
+        otpManager.setOTPRequestURL(otpRequestURL);
+        otpManager.setOTPVerifyURL(otpVerifyURL);
+
+        otpManager.requestOTP(this.getApplicationContext(), this);
+
         txt_title= (TextView)findViewById(R.id.txt_title);
         text_auto_detect= (TextView)findViewById(R.id.text_auto_detect);
         progressBar1= (ProgressBar)findViewById(R.id.progressBar1);
@@ -92,15 +114,98 @@ public class OtpActivity extends RootActivity implements View.OnClickListener {
 
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                Log.d(TAG, "onReceive");
+                // Retrieves a map of extended data from the intent.
+                final Bundle bundle = intent.getExtras();
+
+                try {
+
+                    if (bundle != null) {
+
+                        final Object[] pdusObj = (Object[]) bundle.get("pdus");
+
+                        if(pdusObj != null) {
+                            for (int i = 0; i < pdusObj.length; i++) {
+
+                                SmsMessage currentMessage;
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    String format = bundle.getString("format");
+                                    currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i], format);
+                                } else {
+                                    currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
+                                }
+
+                                Log.d(TAG, currentMessage.getDisplayOriginatingAddress());
+
+                                String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+
+                                String senderNum = phoneNumber;
+                                String message = currentMessage.getDisplayMessageBody().split(":")[1];
+
+                                message = message.substring(0, message.length() - 1);
+                                Log.i("SmsReceiver", "senderNum: " + senderNum + "; message: " + message);
+
+                                Intent myIntent = new Intent("otp");
+                                myIntent.putExtra("message", message);
+                                // Show Alert
+
+                            } // end for loop
+                        }
+                    } // bundle is null
+
+
+                } catch (Exception e) {
+                    Log.e("SmsReceiver", "Exception smsReceiver" +e);
+                }
+            }
+        };
+
+        this.registerReceiver(mReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(mReceiver);
     }
 
     @Override
     public void onClick(View view) {
         if (isValid){
-            startActivity(new Intent(getApplicationContext(),RegisterationActicvity.class));
+            otpManager.verifyOTP(this.getApplicationContext(), this, et_otp.getText().toString());
         }
-
     }
 
+    @Override
+    public void OTPRequestSuccessful() {
+        // Nothing to be done
+    }
+
+    @Override
+    public void OTPRequestFailed(VolleyError error) {
+        Log.e(TAG, error.toString());
+    }
+
+    @Override
+    public void OTPVerificationSuccessful() {
+        startActivity(new Intent(getApplicationContext(),RegisterationActicvity.class));
+    }
+
+    @Override
+    public void OTPVerificationFailed(VolleyError error) {
+        Log.e(TAG, error.toString());
+    }
 }

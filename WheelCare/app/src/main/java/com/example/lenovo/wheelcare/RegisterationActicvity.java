@@ -13,14 +13,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 /**
  * Created by Lenovo on 8/5/2017.
  */
 
-public class RegisterationActicvity extends RootActivity implements View.OnClickListener {
+public class RegisterationActicvity extends RootActivity implements View.OnClickListener, RegistrationListener {
+
+    private static final String TAG = RegisterationActicvity.class.getSimpleName();
+
+    public static final String registrationURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/doRegistration";
+
     private EditText et_user;
     private EditText et_referral;
     private TextView text_email_error;
@@ -32,11 +42,12 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
     private TextView txt_title;
     private boolean isValidRefferral = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+
+        setupRegistrationURL();
 
         txt_title = (TextView)findViewById(R.id.txt_title);
         et_user = (EditText) findViewById(R.id.et_email);
@@ -144,7 +155,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
                     // et_user.setText("");
                     //text_password_error.setVisibility(View.VISIBLE);
                     isValidRefferral = false;
-                }else if(et_referral.getText().toString().length()<8){
+                } else if(et_referral.getText().toString().length() < 8){
                     //text_password_error.setVisibility(View.VISIBLE);
                     isValidRefferral = false;
                 }else{
@@ -157,9 +168,6 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
 
             }
         });
-
-
-
     }
 
     @Override
@@ -170,9 +178,53 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
            isValidFullName = false;
        }
         if ((isValidFullName)&&(isValidEmail)){
-            startActivity(new Intent(getApplicationContext(),CarRegistration.class));
+            register();
             //bundle.putString("Mobile",et_user.getText().toString());
            //startActivity(new Intent(getApplicationContext(),OtpActivity.class).putExtras(bundle));
         }
+    }
+
+    public void register() {
+        JSONObject object = createRegisterJSONObject();
+        if(object != null) {
+            AuthenticationManager.getInstance().register(this.getApplicationContext(), this, object);
+        } else {
+            Log.e(TAG, "Failed to create JSON object");
+        }
+    }
+
+    public JSONObject createRegisterJSONObject() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("userId", AuthenticationManager.getInstance().getUserID());
+            object.put("username", et_fullname.getText().toString());
+            object.put("emailId", et_user.getText().toString());
+            if(et_referral.getText() != null) {
+                object.put("referralCode", et_referral.getText().toString());
+            } else {
+                object.put("referralCode", "");
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return object;
+    }
+
+    void setupRegistrationURL() {
+        AuthenticationManager.getInstance().setRegisterURL(registrationURL);
+    }
+
+    @Override
+    public void registrationSuccessful() {
+        Log.i(TAG, "Registration Successful");
+        Toast.makeText(this.getApplicationContext(), "Registration Successful", Toast.LENGTH_LONG).show();
+        //startActivity(new Intent(getApplicationContext(),CarRegistration.class));
+    }
+
+    @Override
+    public void registrationFailed(VolleyError error) {
+        Log.e(TAG, error.toString());
     }
 }
