@@ -27,9 +27,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
-public class MainActivity extends RootActivity implements View.OnClickListener {
+import java.util.Objects;
+
+public class MainActivity extends RootActivity implements View.OnClickListener, LoginListener {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+
+    private String userType = "usr";
 
     private EditText edit_mobile;
     private EditText edit_userpass;
@@ -41,10 +51,21 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
     private TextView text_password_error;
     private TextView txt_title;
 
+    public static final String loginURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/mobileLoginAuth";
+    public static final String renewURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/getRefreshToken";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Bundle extra = getIntent().getExtras();
+        if(extra != null) {
+            userType = extra.getString("user_type");
+        }
+
+        setupAuthentication();
+
         edit_mobile =(EditText)findViewById(R.id.edit_mobile);
         edit_userpass =(EditText)findViewById(R.id.edit_userpass);
 
@@ -83,6 +104,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
 
 
         /**************************** Password Show  ****************************/
+
         chech_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -96,7 +118,9 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
                 }
             }
         });
+
         /*******************************************************************************/
+
         edit_mobile.addTextChangedListener(new TextWatcher(){
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
@@ -127,6 +151,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
         });
 
         edit_userpass.addTextChangedListener(new TextWatcher(){
+
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
                 //Log.d("Text changed to:", (String) s);
@@ -147,36 +172,17 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
                     text_password_error.setVisibility(View.VISIBLE);
                     isValidPassword=false;
                }
-
-
             }
+
             public void beforeTextChanged(CharSequence s, int start, int count, int after){
                 edit_mobile.setBackgroundColor(Color.parseColor("#ffffff"));
             }
+
             @Override
             public void afterTextChanged(Editable arg0) {
 
             }
         });
-
-
-    }
-    @Override
-    public void onClick(View v) {
-        if ((isValidPassword)&&(isValidMobile)) {
-             startActivity(new Intent(getApplicationContext(),OtpActivity.class));
-        }else{
-              text_invalid_password.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
     @Override
@@ -194,5 +200,69 @@ public class MainActivity extends RootActivity implements View.OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
+    // MARK: Login Related Functions
+
+    @Override
+    public void onClick(View v) {
+        if ((isValidPassword)&&(isValidMobile)) {
+            login();
+        }else{
+              text_invalid_password.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setupAuthentication() {
+        AuthenticationManager.getInstance().setAuthenticationType(AuthenticationType.OAUTH);
+        AuthenticationManager.getInstance().setLoginURL(loginURL);
+        AuthenticationManager.getInstance().setRenewURL(renewURL);
+    }
+
+    public void login() {
+        JSONObject object = createJSONObject();
+        if(object != null) {
+            AuthenticationManager.getInstance().login(this.getApplicationContext(), this, object);
+        } else {
+            Log.e(TAG, "Failed to create JSON object");
+        }
+    }
+
+    public JSONObject createJSONObject() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("usertype", userType);
+            object.put("mobilenumber", edit_mobile.getText().toString());
+            object.put("password", edit_userpass.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return object;
+    }
+
+    @Override
+    public void loginSuccess(JSONObject response) {
+        try {
+            if (Objects.equals((String) response.get("statusDesc"), "account already exist")) {
+                Toast.makeText(getApplicationContext(), "User already registered", Toast.LENGTH_LONG).show();
+            } else {
+                Log.i(TAG, "Login Successful");
+                startActivity(new Intent(getApplicationContext(), OtpActivity.class));
+            }
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void loginFailed(VolleyError error) {
+        Log.e(TAG, error.toString());
+    }
 }
