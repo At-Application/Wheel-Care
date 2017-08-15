@@ -220,7 +220,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
     public void registrationSuccessful() {
         Log.i(TAG, "Registration Successful");
         Toast.makeText(this.getApplicationContext(), "Registration Successful", Toast.LENGTH_LONG).show();
-        //startActivity(new Intent(getApplicationContext(),CarRegistration.class));
+        startActivity(new Intent(getApplicationContext(),CarRegistration.class));
     }
 
     @Override

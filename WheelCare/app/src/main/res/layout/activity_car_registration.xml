@@ -4,24 +4,51 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_plane">
     <include layout="@layout/custom_action_bar"/>
-     <ImageView
-         android:layout_width="200dp"
-         android:layout_height="200dp"
-         android:src="@drawable/marutibrezza"
-         android:layout_gravity="center"
-         android:layout_marginTop="20dp"
-         />
-    <Spinner
-        android:id="@+id/brand_spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:background="@color/white"
-
+    <ImageView
+        android:id="@+id/carImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         />
-    <Spinner
-        android:id="@+id/model_spinner"
-        android:layout_width="fill_parent"
-        android:layout_marginTop="15dp"
-        android:background="@color/white"
-        android:layout_height="50dp" />
+    <FrameLayout
+        android:id="@+id/carBrand"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+        <Spinner
+            android:id="@+id/brand_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/spinner_border"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:spinnerMode="dropdown"
+            />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/dropdown"
+            />
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/carModel"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+        <Spinner
+            android:id="@+id/model_spinner"
+            android:layout_width="fill_parent"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/spinner_border"
+            android:backgroundTintMode="src_atop"
+            android:layout_height="50dp" />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/dropdown"
+            />
+    </FrameLayout>
 </LinearLayout>
