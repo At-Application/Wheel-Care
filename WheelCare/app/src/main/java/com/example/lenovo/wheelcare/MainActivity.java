@@ -140,7 +140,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
             public void beforeTextChanged(CharSequence s, int start, int count, int after){
                 Log.d("match", "beforeTextChanged: ");
                 edit_mobile.setBackgroundColor(Color.parseColor("#ffffff"));
-                text_invalid_password.setVisibility(View.INVISIBLE);
                 text_mobile_error.setVisibility(View.VISIBLE);
                 isValidMobile= false;
             }
@@ -158,8 +157,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
                 Log.d("MSG","text changed");
                 edit_userpass.setBackgroundColor(Color.parseColor("#ffffff"));
                 if((edit_userpass.getText().toString().matches("^[A-Za-z0-9][A-Za-z0-9@#%&*]*$"))&&(edit_userpass.getText().toString().length()>8)){
-
-                    text_invalid_password.setVisibility(View.INVISIBLE);
                     text_password_error.setVisibility(View.INVISIBLE);
                     isValidPassword= true;
                 }else if(edit_userpass.getText().toString().matches("^ ")){
@@ -168,7 +165,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
                     isValidPassword= false;
                } else{
                     //text_invalid_password.setText("Should contain atleast one alphabet,Number and special characters");
-                    text_invalid_password.setVisibility(View.VISIBLE);
                     text_password_error.setVisibility(View.VISIBLE);
                     isValidPassword=false;
                }

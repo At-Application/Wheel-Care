@@ -6,14 +6,15 @@
     <include layout="@layout/custom_action_bar"/>
     <ImageView
         android:id="@+id/carImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="300dp"
+        android:layout_height="120dp"
+        android:src="@drawable/temp_logo"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
         />
     <FrameLayout
         android:id="@+id/carBrand"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
+        android:layout_gravity="center"
         android:layout_height="100dp">
         <Spinner
             android:id="@+id/brand_spinner"
@@ -34,7 +35,8 @@
     </FrameLayout>
     <FrameLayout
         android:id="@+id/carModel"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
+        android:layout_gravity="center"
         android:layout_height="80dp">
         <Spinner
             android:id="@+id/model_spinner"
@@ -51,4 +53,39 @@
             android:src="@drawable/dropdown"
             />
     </FrameLayout>
+    <TextView
+        android:id="@+id/text_header_mobile"
+        android:layout_width="match_parent"
+        android:text="Registration Number"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/btn_click"
+        android:gravity="left"
+        android:layout_marginLeft="45dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+    <EditText
+        android:id="@+id/et_carRegno"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="Example KA09HD9392"
+        android:layout_gravity="center"
+        />
+    <TextView
+        android:id="@+id/text_invalid_regno"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/auto_fill"
+        android:gravity="center_horizontal"
+        android:text="This Field Cannot Be Left Empty!"/>
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/round_edge"
+        android:textSize="@dimen/_18sdp"
+        android:textColor="@color/setup_btn_color"
+        android:text="SUBMIT"/>
 </LinearLayout>

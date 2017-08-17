@@ -4,12 +4,16 @@ import android.database.DataSetObserver;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -29,8 +33,24 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
     private final String [] model_items = new String[2];
     private ImageView carImage;
     private TextView txt_title;
+    private TextView text_invalid_regno;
+    private EditText et_carRegno;
+    private boolean isValidCarNumber= false;
+    private Button submit_btn;
 
-   // private String[] car_models= new String[5];
+    @Override
+    public void onClick(View view) {
+        super.onClick(view);
+        if (isValidCarNumber){
+            //startActivity()
+            Toast.makeText(getApplicationContext(),"Valid Car number",Toast.LENGTH_LONG).show();
+        }else if(et_carRegno.getText().toString().length()==0){
+            text_invalid_regno.setText("This field cannot be Empty!");
+            text_invalid_regno.setVisibility(View.VISIBLE);
+        }
+    }
+
+    // private String[] car_models= new String[5];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,21 +58,49 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         txt_title= (TextView)findViewById(R.id.txt_title);
         brand_spinner = (Spinner) findViewById(R.id.brand_spinner);
         model_spinner= (Spinner)findViewById(R.id.model_spinner);
+        text_invalid_regno= (TextView)findViewById(R.id.text_invalid_regno);
        // spinner_text= (TextView)findViewById(R.id.spinner_text);
         carImage = (ImageView)findViewById(R.id.carImage);
+        et_carRegno= (EditText)findViewById(R.id.et_carRegno);
+        submit_btn= (Button)findViewById(R.id.btn_submit);
         custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
+
+        submit_btn.setOnClickListener(this);
 
         txt_title.setText("Wheelcare Car Registration");
         txt_title.setTypeface(custom_font_light);
-// Create an ArrayAdapter using the string array and a default spinner layout
 
-        /*adapter=ArrayAdapter.createFromResource(this,
-                    R.array.car_brand_array, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
-// Apply the adapter to the spinner
+        text_invalid_regno.setVisibility(View.GONE);
+
         changeTypeFaceSpinner1();
-        //changeTypeFaceSpinner2();
+
+        et_carRegno.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (et_carRegno.getText().toString().matches("^ ")) {
+                                                       // Log.d("match", "onTextChanged: ");
+                    text_invalid_regno.setText("Should contain exactly 4 Characters");
+                    text_invalid_regno.setVisibility(View.VISIBLE);
+                    isValidCarNumber = false;
+                } else if (et_carRegno.getText().toString().length() == 4) {
+                    text_invalid_regno.setVisibility(View.INVISIBLE);
+                    isValidCarNumber = true;
+                } else {
+                    isValidCarNumber = false;
+                }
+                                                   //edit_username.setText("");
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         brand_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
@@ -73,7 +121,7 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
     public void changeTypeFaceSpinner2(){
 
 
-        carImage.setVisibility(View.GONE);
+        carImage.setImageResource(R.drawable.temp_logo);
         model_items[0]="Select Models";
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.spinner_text, model_items) {
