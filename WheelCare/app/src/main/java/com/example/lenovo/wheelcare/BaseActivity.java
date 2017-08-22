@@ -41,7 +41,7 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
         switch (view.getId()){
             case R.id.et_user:
                 et_user.setBackgroundColor(Color.parseColor("#8B008B"));
-                Intent i = new Intent(getApplicationContext(),CarRegistration.class);
+                Intent i = new Intent(getApplicationContext(),RegisterationActicvity.class);
                 i.putExtra("user_type", "usr");
                 startActivity(i);
                 break;

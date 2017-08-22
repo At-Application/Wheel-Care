@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_gravity="center"
+    android:gravity="center"
     android:layout_height="match_parent">
-    <include layout="@layout/custom_action_bar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="50dp"
         android:orientation="vertical">
 
         <TextView
@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_marginTop="20dp"
+            android:textSize="15dp"
             android:gravity="center"
             android:text="Waiting to automatically detect SMS sent to"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -83,8 +84,8 @@
         android:focusableInTouchMode="true"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
+        android:textColorHint="@color/black"
         android:gravity="center_horizontal"
-        android:layout_marginTop="25dp"
         android:background="@drawable/custom_edit_box"
         android:hint="CODE"
         android:paddingLeft="5dp"
@@ -101,8 +102,9 @@
         android:layout_width="250dp"
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_marginTop="35dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginTop="40dp"
+        android:textSize="20dp"
         android:background="@drawable/round_edge"
         android:textColor="@color/white"
         android:text="Submit"/>
@@ -113,6 +115,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/btn_color"
         android:layout_marginTop="40dp"
+        android:textSize="15dp"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_gravity="center_horizontal|center_vertical"

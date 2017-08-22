@@ -66,7 +66,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
         Typeface custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
 
 
-        txt_title.setTypeface(custom_font_light);
+        //txt_title.setTypeface(custom_font_light);
         et_user.setTypeface(custom_font_light);
         text_referal_error.setTypeface(custom_font_light);
         text_fullname_error.setTypeface(custom_font_light);

@@ -52,6 +52,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     private TextView text_password_error;
     private TextView txt_title;
     boolean is_hidden = true;
+    private TextView header;
 
     public static final String loginURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/mobileLoginAuth";
     public static final String renewURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/getRefreshToken";
@@ -71,8 +72,9 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         edit_mobile =(EditText)findViewById(R.id.edit_mobile);
         edit_userpass =(EditText)findViewById(R.id.edit_userpass);
 
-        custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
+        custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
 
+        header= (TextView)findViewById(R.id.header) ;
         txt_title=(TextView)findViewById(R.id.txt_title);
         Button btn_submit = (Button) findViewById(R.id.btn_submit);
         ImageView chech_box = (ImageView) findViewById(R.id.chech_box);
@@ -88,7 +90,8 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         btn_submit.setOnClickListener(this);
         text_invalid_password.setVisibility(View.INVISIBLE);
 
-        txt_title.setTypeface(custom_font_light);
+        header.setTypeface(custom_font_light);
+        //txt_title.setTypeface(custom_font_light);
         edit_mobile.setTypeface(custom_font_light);
         text_password_error.setTypeface(custom_font_light);
         text_mobile_error.setTypeface(custom_font_light);

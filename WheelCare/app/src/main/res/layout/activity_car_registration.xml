@@ -4,18 +4,17 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     >
-    <include layout="@layout/custom_action_bar"/>
     <ImageView
         android:id="@+id/carImage"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_height="120dp"
         android:layout_gravity="center"
         />
     <FrameLayout
         android:id="@+id/carBrand"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_gravity="center"
-        android:layout_height="70dp">
+        android:layout_height="80dp">
         <Spinner
             android:id="@+id/brand_spinner"
             android:layout_width="fill_parent"
@@ -27,7 +26,7 @@
             />
         <ImageView
             android:layout_width="20dp"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:layout_gravity="right"
             android:layout_marginRight="10dp"
             android:src="@drawable/dropdown"
@@ -36,7 +35,7 @@
 
     <FrameLayout
         android:id="@+id/carModel"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_gravity="center"
         android:layout_height="80dp">
         <Spinner
@@ -56,9 +55,9 @@
     </FrameLayout>
     <FrameLayout
         android:id="@+id/carType"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_gravity="center"
-        android:layout_height="70dp">
+        android:layout_height="80dp">
         <Spinner
             android:id="@+id/type_spinner"
             android:layout_width="fill_parent"
@@ -79,8 +78,10 @@
 
     <EditText
         android:id="@+id/et_carRegno"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
+        android:layout_width="350dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="5dp"
+        android:textSize="20dp"
         android:imeOptions="actionSend|flagNoEnterAction"
         android:hint="Registration Number(KA09HD9392)"
         android:maxLines="4"
@@ -94,15 +95,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/auto_fill"
+        android:textSize="15dp"
         android:gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="This Field Cannot Be Left Empty!"/>
     <Button
         android:id="@+id/btn_submit"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="45dp"
         android:background="@drawable/round_edge"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/white"

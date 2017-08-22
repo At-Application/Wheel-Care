@@ -74,7 +74,7 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
         custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
 
         text_otp_error.setVisibility(View.INVISIBLE);
-        txt_title.setTypeface(custom_font_light);
+//        txt_title.setTypeface(custom_font_light);
         text_auto_detect.setTypeface(custom_font_light);
         or_border.setTypeface(custom_font_light);
         //text_manual_code.setTypeface(custom_font_light);
