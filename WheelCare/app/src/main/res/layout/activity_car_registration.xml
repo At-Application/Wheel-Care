@@ -2,25 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_plane">
+    android:fitsSystemWindows="true"
+    >
     <include layout="@layout/custom_action_bar"/>
     <ImageView
         android:id="@+id/carImage"
         android:layout_width="300dp"
         android:layout_height="120dp"
-        android:src="@drawable/temp_logo"
         android:layout_gravity="center"
         />
     <FrameLayout
         android:id="@+id/carBrand"
         android:layout_width="300dp"
         android:layout_gravity="center"
-        android:layout_height="100dp">
+        android:layout_height="70dp">
         <Spinner
             android:id="@+id/brand_spinner"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
-            android:background="@drawable/spinner_border"
+            android:background="@drawable/custom_edit_box"
             android:gravity="center"
             android:layout_gravity="center"
             android:spinnerMode="dropdown"
@@ -33,6 +33,7 @@
             android:src="@drawable/dropdown"
             />
     </FrameLayout>
+
     <FrameLayout
         android:id="@+id/carModel"
         android:layout_width="300dp"
@@ -42,7 +43,7 @@
             android:id="@+id/model_spinner"
             android:layout_width="fill_parent"
             android:layout_marginTop="15dp"
-            android:background="@drawable/spinner_border"
+            android:background="@drawable/custom_edit_box"
             android:backgroundTintMode="src_atop"
             android:layout_height="50dp" />
         <ImageView
@@ -53,22 +54,39 @@
             android:src="@drawable/dropdown"
             />
     </FrameLayout>
-    <TextView
-        android:id="@+id/text_header_mobile"
-        android:layout_width="match_parent"
-        android:text="Registration Number"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:textColor="@color/btn_click"
-        android:gravity="left"
-        android:layout_marginLeft="45dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        />
+    <FrameLayout
+        android:id="@+id/carType"
+        android:layout_width="300dp"
+        android:layout_gravity="center"
+        android:layout_height="70dp">
+        <Spinner
+            android:id="@+id/type_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/custom_edit_box"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:spinnerMode="dropdown"
+            />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/dropdown"
+            />
+    </FrameLayout>
+
     <EditText
         android:id="@+id/et_carRegno"
         android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:hint="Example KA09HD9392"
+        android:layout_height="50dp"
+        android:imeOptions="actionSend|flagNoEnterAction"
+        android:hint="Registration Number(KA09HD9392)"
+        android:maxLines="4"
+        android:inputType="textShortMessage|textCapSentences|textMultiLine"
+        android:maxLength="2000"
+        android:background="@drawable/custom_edit_box"
         android:layout_gravity="center"
         />
     <TextView
@@ -77,6 +95,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/auto_fill"
         android:gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="This Field Cannot Be Left Empty!"/>
     <Button
         android:id="@+id/btn_submit"
@@ -85,7 +104,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="35dp"
         android:background="@drawable/round_edge"
-        android:textSize="@dimen/_18sdp"
-        android:textColor="@color/setup_btn_color"
-        android:text="SUBMIT"/>
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/white"
+        android:text="ADD CAR"/>
 </LinearLayout>

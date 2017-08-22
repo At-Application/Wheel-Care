@@ -4,113 +4,113 @@
     android:id="@+id/login_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_centerVertical="true"
     tools:context="com.example.lenovo.wheelcare.MainActivity">
+
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="265dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp">
-
-
-
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginTop="20dp">
         <TextView
-            android:id="@+id/text_header_mobile"
             android:layout_width="match_parent"
-            android:text="Enter your Mobile Number"
-            android:layout_height="wrap_content"
-            android:textColor="@color/btn_click"
+            android:layout_height="match_parent"
+            android:textColor="@color/btn_color"
             android:gravity="left"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            />
+            android:layout_gravity="left"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Enter your mobile number to get started!"/>
 
-        <EditText
-            android:id="@+id/edit_mobile"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Mobile Number"
-            android:paddingLeft="5dp"
-            android:paddingTop="@dimen/_8sdp"
-            android:paddingBottom="@dimen/_8sdp"
-            android:layout_marginTop="10dp"
-            android:background="@color/white"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:inputType="number|numberDecimal"
-            android:maxLength="35"
-            android:maxLines="1"/>
+            android:layout_height="43dp"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="40dp"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/btn_click"
+                android:gravity="left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="+91-"/>
+            <EditText
+                android:id="@+id/edit_mobile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="4dp"
+                android:background="@drawable/custom_edit_box"
+                android:hint="10 digit mobile number"
+                android:layout_marginLeft="3dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:inputType="number|numberDecimal"
+                android:maxLength="35"
+                android:maxLines="1"/>
+        </LinearLayout>
         <TextView
             android:id="@+id/text_mobile_error"
-            android:layout_width="match_parent"
+            android:layout_width="225dp"
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
+            android:visibility="gone"
             android:maxLines="2"
+            android:layout_gravity="right"
             android:layout_marginTop="8dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Mobile Number should be eaxctly 10 characters"/>
-
-
-        <TextView
-            android:id="@+id/txt_password_header"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/btn_click"
-            android:gravity="left"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:text="Enter your Password"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="@dimen/_5sdp"/>
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            >
+            <EditText
+                android:id="@+id/edit_userpass"
+                android:layout_width="225dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/custom_edit_box"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:maxLength="35"
+                android:maxLines="1"
+                android:paddingBottom="8dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            <ImageView
+                android:id="@+id/chech_box"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="right|bottom"
+                android:paddingBottom="5dp"
+                android:src="@drawable/password_show"
+                />
+        </FrameLayout>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_userpass"
-            android:hint="@string/password"
-            android:paddingLeft="5dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="@dimen/_8sdp"
-            android:background="@color/white"
-            android:inputType="textPassword"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:maxLines="10"
-            android:maxLength="35"/>
         <TextView
             android:id="@+id/text_password_error"
-            android:layout_width="match_parent"
+            android:layout_width="225dp"
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
+            android:layout_gravity="right"
+            android:visibility="gone"
             android:maxLines="10"
             android:layout_marginTop="8dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Should be atleast 8 characters long"
             />
 
-        <CheckBox
-            android:id="@+id/chech_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_gravity="center"
-            android:textColor="@color/btn_click"
-            android:checked="false"
-            android:text="Show Password"
-            android:buttonTint="@color/btn_color"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
             android:id="@+id/btn_submit"
-            android:layout_width="match_parent"
+            android:layout_width="265dp"
             android:layout_height="40dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="18dp"
+            android:layout_gravity="right"
+            android:layout_marginTop="40dp"
             android:background="@drawable/round_edge"
-            android:textSize="@dimen/_18sdp"
-            android:textColor="@color/setup_btn_color"
+            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="SUBMIT"/>
 
         <TextView
@@ -118,9 +118,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
+            android:visibility="gone"
             android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal|center_vertical"
             android:text="Invalid Mobile number or Password"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginBottom="@dimen/_5sdp"/>
 
@@ -128,10 +130,11 @@
             android:id="@+id/text_forgot_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/btn_click"
+            android:textColor="@color/btn_color"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="70dp"
             android:text="@string/forgot_password"
             android:padding="10dp"
             />

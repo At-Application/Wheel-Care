@@ -59,14 +59,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
         text_email_error = (TextView) findViewById(R.id.text_email_error);
         text_fullname_error= (TextView)findViewById(R.id.text_fullname_error);
 
-
-        TextView text_header_email = (TextView) findViewById(R.id.text_header_email);
-        TextView text_header_referral = (TextView)findViewById(R.id.text_header_referral);
-        final TextView text_header_fullName = (TextView) findViewById(R.id.text_header_fullname);
-
-        //final TextView et_fullName = (TextView) findViewById(R.id.et_fullname);
-        TextView reqdField = (TextView) findViewById(R.id.reqd_field);
-        TextView text_referal_error = (TextView) findViewById(R.id.text_referal_error);
+        final TextView text_referal_error = (TextView) findViewById(R.id.text_referal_error);
 
         text_referal_error.setVisibility(View.INVISIBLE);
 
@@ -75,16 +68,12 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
 
         txt_title.setTypeface(custom_font_light);
         et_user.setTypeface(custom_font_light);
-        text_header_referral.setTypeface(custom_font_light);
         text_referal_error.setTypeface(custom_font_light);
         text_fullname_error.setTypeface(custom_font_light);
         et_fullname.setTypeface(custom_font_light);
         et_referral.setTypeface(custom_font_light);
         btn_submit.setTypeface(custom_font_light);
-        text_header_email.setTypeface(custom_font_light);
         text_email_error.setTypeface(custom_font_light);
-        text_header_fullName.setTypeface(custom_font_light);
-        reqdField.setTypeface(custom_font_light);
         text_email_error.setVisibility(View.INVISIBLE);
         text_fullname_error.setVisibility(View.INVISIBLE);
         btn_submit.setOnClickListener(this);
@@ -93,19 +82,17 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
         et_fullname.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                et_fullname.setBackgroundColor(Color.parseColor("#ffffff"));
                 isValidFullName= false;
+                text_fullname_error.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                text_header_fullName.setVisibility(View.INVISIBLE);
                 if(et_fullname.getText().toString().matches("^ ")){
                     text_fullname_error.setVisibility(View.VISIBLE);
                     isValidFullName = false;
                 }else{
                     isValidFullName= true;
-                    text_header_fullName.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -118,9 +105,9 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
                 text_email_error.setVisibility(View.INVISIBLE);
-                et_user.setBackgroundColor(Color.parseColor("#ffffff"));
                 if (et_user.getText().toString().matches("^ ") ){
                     Log.d("Match","invalid");
+                    text_email_error.setText("This field cannot be left empty");
                     // et_user.setText("");
                     text_email_error.setVisibility(View.VISIBLE);
                     isValidEmail= false;
@@ -134,7 +121,12 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
                 }
 
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){
+
+                text_email_error.setVisibility(View.INVISIBLE);
+                text_email_error.setText("Invalid Email ID");
+
+            }
             @Override
             public void afterTextChanged(Editable arg0) {
 
@@ -143,20 +135,16 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
         et_referral.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                //text_password_error.setVisibility(View.INVISIBLE);
-                et_referral.setBackgroundColor(Color.parseColor("#ffffff"));
-
+                text_referal_error.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (et_referral.getText().toString().matches("^ ") ){
                     Log.d("Match","invalid");
-                    // et_user.setText("");
-                    //text_password_error.setVisibility(View.VISIBLE);
                     isValidRefferral = false;
                 } else if(et_referral.getText().toString().length() < 8){
-                    //text_password_error.setVisibility(View.VISIBLE);
+
                     isValidRefferral = false;
                 }else{
                     isValidRefferral = true;
@@ -176,6 +164,9 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
        if (et_fullname.getText().toString().length()==0){
            text_fullname_error.setVisibility(View.VISIBLE);
            isValidFullName = false;
+       }else if(et_user.getText().toString().length()==0){
+           text_email_error.setVisibility(View.VISIBLE);
+            isValidEmail = false;
        }
         if ((isValidFullName)&&(isValidEmail)){
             register();

@@ -64,7 +64,6 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
         text_auto_detect= (TextView)findViewById(R.id.text_auto_detect);
         progressBar1= (ProgressBar)findViewById(R.id.progressBar1);
         or_border=(TextView)findViewById(R.id.or_border);
-        text_manual_code=(TextView)findViewById(R.id.text_manual_code);
         et_otp= (EditText)findViewById(R.id.et_otp);
         btn_submit= (Button)findViewById(R.id.btn_submit);
         text_resend_sms= (TextView)findViewById(R.id.text_resend_sms);
@@ -78,7 +77,7 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
         txt_title.setTypeface(custom_font_light);
         text_auto_detect.setTypeface(custom_font_light);
         or_border.setTypeface(custom_font_light);
-        text_manual_code.setTypeface(custom_font_light);
+        //text_manual_code.setTypeface(custom_font_light);
         et_otp.setTypeface(custom_font_light);
         btn_submit.setTypeface(custom_font_light);
         text_resend_sms.setTypeface(custom_font_light);
@@ -90,7 +89,6 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                et_otp.setBackgroundColor(Color.parseColor("#ffffff"));
             }
 
             @Override

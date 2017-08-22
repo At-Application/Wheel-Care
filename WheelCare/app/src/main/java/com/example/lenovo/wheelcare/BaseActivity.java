@@ -40,13 +40,13 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
         Bundle bundle= new Bundle();
         switch (view.getId()){
             case R.id.et_user:
-                et_user.setBackgroundColor(Color.parseColor("#00C2F3"));
-                Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                et_user.setBackgroundColor(Color.parseColor("#8B008B"));
+                Intent i = new Intent(getApplicationContext(),CarRegistration.class);
                 i.putExtra("user_type", "usr");
                 startActivity(i);
                 break;
             case R.id.et_service:
-                et_service.setBackgroundColor(Color.parseColor("#00C2F3"));
+                et_service.setBackgroundColor(Color.parseColor("#8B008B"));
                 Intent j = new Intent(getApplicationContext(),MainActivity.class);
                 j.putExtra("user_type", "sp");
                 startActivity(j);

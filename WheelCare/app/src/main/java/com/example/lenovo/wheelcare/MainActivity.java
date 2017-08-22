@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     private TextView text_mobile_error;
     private TextView text_password_error;
     private TextView txt_title;
+    boolean is_hidden = true;
 
     public static final String loginURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/mobileLoginAuth";
     public static final String renewURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/getRefreshToken";
@@ -73,10 +75,8 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
 
         txt_title=(TextView)findViewById(R.id.txt_title);
         Button btn_submit = (Button) findViewById(R.id.btn_submit);
-        CheckBox chech_box = (CheckBox) findViewById(R.id.chech_box);
+        ImageView chech_box = (ImageView) findViewById(R.id.chech_box);
         TextView forgot_password = (TextView) findViewById(R.id.text_forgot_password);
-        TextView text_header_mobile = (TextView) findViewById(R.id.text_header_mobile);
-        TextView txt_password_header = (TextView) findViewById(R.id.txt_password_header);
         text_mobile_error= (TextView)findViewById(R.id.text_mobile_error);
         text_invalid_password = (TextView)findViewById(R.id.text_invalid_password);
         text_password_error= (TextView)findViewById(R.id.text_password_error);
@@ -93,28 +93,29 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         text_password_error.setTypeface(custom_font_light);
         text_mobile_error.setTypeface(custom_font_light);
         edit_userpass.setTypeface(custom_font_light);
-        chech_box.setTypeface(custom_font_light);
         btn_submit.setTypeface(custom_font_light);
         text_invalid_password.setTypeface(custom_font_light);
-        text_header_mobile.setTypeface(custom_font_light);
-        txt_password_header.setTypeface(custom_font_light);
-        text_invalid_password.setTypeface(custom_font_light);
         forgot_password.setTypeface(custom_font_light);
+
         //create_account.setTypeface(custom_font_light);
 
 
         /**************************** Password Show  ****************************/
 
-        chech_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        chech_box.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked) {
+            public void onClick(View view) {
+
+                if (is_hidden) {
                     edit_userpass.setInputType(129);
                     edit_userpass.setTypeface(custom_font_light);
-
+                    is_hidden = false;
                 } else {
                     edit_userpass.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     edit_userpass.setTypeface(custom_font_light);
+                    is_hidden= true;
                 }
             }
         });
@@ -139,7 +140,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){
                 Log.d("match", "beforeTextChanged: ");
-                edit_mobile.setBackgroundColor(Color.parseColor("#ffffff"));
                 text_mobile_error.setVisibility(View.VISIBLE);
                 isValidMobile= false;
             }
@@ -155,8 +155,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
             {
                 //Log.d("Text changed to:", (String) s);
                 Log.d("MSG","text changed");
-                edit_userpass.setBackgroundColor(Color.parseColor("#ffffff"));
-                if((edit_userpass.getText().toString().matches("^[A-Za-z0-9][A-Za-z0-9@#%&*]*$"))&&(edit_userpass.getText().toString().length()>8)){
+                if((edit_userpass.getText().toString().matches("^[A-Za-z0-9][A-Za-z0-9@#%&*]*$"))&&(edit_userpass.getText().toString().length()>=8)){
                     text_password_error.setVisibility(View.INVISIBLE);
                     isValidPassword= true;
                 }else if(edit_userpass.getText().toString().matches("^ ")){
@@ -171,7 +170,8 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after){
-                edit_mobile.setBackgroundColor(Color.parseColor("#ffffff"));
+                //edit_mobile.setBackgroundColor(Color.parseColor("#ffffff"));
+               // edit_userpass.setBackgroundResource(R.drawable.custom_edit_box);
             }
 
             @Override
@@ -209,8 +209,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     public void onClick(View v) {
         if ((isValidPassword)&&(isValidMobile)) {
             login();
-        }else{
-              text_invalid_password.setVisibility(View.VISIBLE);
         }
     }
 

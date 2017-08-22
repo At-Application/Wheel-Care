@@ -9,32 +9,30 @@
     <LinearLayout
         android:id="@+id/email_login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/text_header_fullname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/btn_click"
-            android:gravity="left"
-            android:layout_marginLeft="35dp"
-            android:layout_marginBottom="3dp"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/btn_color"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:text="Enter your Full Name*"/>
-
+            android:text="Register with Wheel Care"/>
         <EditText
             android:id="@+id/et_fullname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
+            android:layout_marginTop="40dp"
             android:hint="Full Name"
             android:paddingLeft="5dp"
+            android:background="@drawable/custom_edit_box"
             android:paddingTop="@dimen/_8sdp"
             android:paddingBottom="@dimen/_8sdp"
-            android:background="@color/white"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
             android:inputType="textPersonName"
@@ -45,6 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
+            android:visibility="invisible"
             android:maxLines="1"
             android:layout_marginTop="2dp"
             android:layout_marginLeft="50dp"
@@ -52,18 +51,6 @@
             android:text="This field cannot be left empty!"/>
 
 
-        <TextView
-            android:id="@+id/text_header_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/btn_click"
-            android:gravity="left"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="3dp"
-            android:layout_marginLeft="35dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:text="Enter your Email-Address*"/>
 
         <EditText
             android:id="@+id/et_email"
@@ -71,11 +58,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
-            android:hint="Email Address"
+            android:background="@drawable/custom_edit_box"
+            android:hint="Email ID"
             android:paddingLeft="5dp"
             android:paddingTop="@dimen/_8sdp"
             android:paddingBottom="@dimen/_8sdp"
-            android:background="@color/white"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
             android:inputType="textEmailAddress"
@@ -87,26 +74,11 @@
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
             android:maxLines="1"
-
+            android:visibility="invisible"
             android:layout_marginTop="2dp"
             android:layout_marginLeft="50dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Invalid Email address!"/>
-
-
-
-        <TextView
-            android:id="@+id/text_header_referral"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/btn_click"
-            android:gravity="left"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="3dp"
-            android:layout_marginLeft="35dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:text="Enter your Referral Code(optional)"/>
+            android:text="This field cannot be left empty!"/>
 
         <EditText
             android:id="@+id/et_referal"
@@ -114,47 +86,36 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
-            android:hint="Referral Code"
+            android:background="@drawable/custom_edit_box"
+            android:hint="Referral Code(Optional)"
             android:paddingLeft="5dp"
             android:paddingTop="@dimen/_8sdp"
             android:paddingBottom="@dimen/_8sdp"
-            android:background="@color/white"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_horizontal|center_vertical"
             android:inputType="textPersonName"
-            android:maxLength="35"
-            android:maxLines="1"/>
+            android:maxLength="2005"
+            android:maxLines="4"/>
         <TextView
             android:id="@+id/text_referal_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/auto_fill"
             android:maxLines="1"
+            android:visibility="gone"
             android:layout_marginTop="2dp"
             android:layout_marginLeft="50dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Inavlide Referral code!"/>
-
-        <TextView
-            android:id="@+id/reqd_field"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="*Required Information"
-            android:layout_marginTop="20dp"
-            />
-
         <Button
             android:id="@+id/btn_submit"
             android:layout_width="250dp"
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="45dp"
             android:background="@drawable/round_edge"
-            android:textSize="@dimen/_18sdp"
+            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Submit"/>
 
 

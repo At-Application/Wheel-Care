@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,7 +30,7 @@ import java.security.PrivateKey;
 public class CarRegistration extends BaseActivity implements View.OnClickListener{
     private Typeface custom_font_light;
     private ArrayAdapter<CharSequence> adapter;
-    private Spinner brand_spinner,model_spinner;
+    private Spinner brand_spinner,model_spinner,type_spinner;
     private final String [] model_items = new String[2];
     private ImageView carImage;
     private TextView txt_title;
@@ -55,9 +56,13 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_registration);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         txt_title= (TextView)findViewById(R.id.txt_title);
         brand_spinner = (Spinner) findViewById(R.id.brand_spinner);
         model_spinner= (Spinner)findViewById(R.id.model_spinner);
+        type_spinner = (Spinner)findViewById(R.id.type_spinner);
         text_invalid_regno= (TextView)findViewById(R.id.text_invalid_regno);
        // spinner_text= (TextView)findViewById(R.id.spinner_text);
         carImage = (ImageView)findViewById(R.id.carImage);
@@ -73,20 +78,19 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         text_invalid_regno.setVisibility(View.GONE);
 
         changeTypeFaceSpinner1();
+        changeTypeFaceSpinner3();
 
         et_carRegno.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                text_invalid_regno.setText("Invalid Registration number");
             }
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 if (et_carRegno.getText().toString().matches("^ ")) {
-                                                       // Log.d("match", "onTextChanged: ");
-                    text_invalid_regno.setText("Should contain exactly 4 Characters");
                     text_invalid_regno.setVisibility(View.VISIBLE);
                     isValidCarNumber = false;
-                } else if (et_carRegno.getText().toString().length() == 4) {
+                } else if (et_carRegno.getText().toString().length() == 10) {
                     text_invalid_regno.setVisibility(View.INVISIBLE);
                     isValidCarNumber = true;
                 } else {
@@ -104,9 +108,9 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         brand_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                Toast.makeText(adapterView.getContext(),
+               /* Toast.makeText(adapterView.getContext(),
                         "OnItemSelectedListener : " + adapterView.getItemAtPosition(pos).toString(),
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_LONG).show();*/
                         changeTypeFaceSpinner2();
             }
 
@@ -121,8 +125,8 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
     public void changeTypeFaceSpinner2(){
 
 
-        carImage.setImageResource(R.drawable.temp_logo);
-        model_items[0]="Select Models";
+        //carImage.setImageResource(R.drawable.temp_logo);
+        model_items[0]="Vehicle";
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.spinner_text, model_items) {
 
@@ -152,9 +156,32 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         model_spinner.setAdapter(adapter);
     }
 
+    public void changeTypeFaceSpinner3(){
+        final String [] items = new String[4];
+        items[0]="Vehicle Type";
+        items[1]="Diesel";
+        items[2]="Petrol";
+        items[3]="CNG";
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.spinner_text, items) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                ((TextView) v).setTypeface(custom_font_light);
+                return v;
+            }
+
+            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
+                View v =super.getDropDownView(position, convertView, parent);
+                ((TextView) v).setTypeface(custom_font_light);
+                return v;
+            }
+        };
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        type_spinner.setAdapter(adapter);
+    }
     public void changeTypeFaceSpinner1(){
         final String [] items = new String[4];
-        items[0]="Select Brand";
+        items[0]="Manufacturer";
         items[1]="Maruti";
         items[2]="Mahindra";
         items[3]="Renault";
