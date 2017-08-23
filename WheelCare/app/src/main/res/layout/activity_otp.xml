@@ -84,7 +84,6 @@
         android:focusableInTouchMode="true"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:textColorHint="@color/black"
         android:gravity="center_horizontal"
         android:background="@drawable/custom_edit_box"
         android:hint="CODE"

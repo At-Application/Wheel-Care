@@ -44,7 +44,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="7dp"
-                android:textColorHint="@color/black"
                 android:textSize="20dp"
                 android:background="@drawable/custom_edit_box"
                 android:hint="10 digit mobile number"
@@ -80,7 +79,6 @@
                 android:layout_marginTop="15dp"
                 android:textSize="20dp"
                 android:maxLength="35"
-                android:textColorHint="@color/black"
                 android:maxLines="1"
                 android:paddingBottom="8dp"
                 android:textAppearance="?android:attr/textAppearanceMedium" />

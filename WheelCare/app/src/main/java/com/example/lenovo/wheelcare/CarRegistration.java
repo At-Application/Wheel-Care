@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.security.PrivateKey;
+import java.util.Objects;
 
 /**
  * Created by Lenovo on 8/9/2017.
@@ -36,6 +37,7 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
     private TextView txt_title;
     private TextView text_invalid_regno;
     private EditText et_carRegno;
+    private TextView text_register_number;
     private boolean isValidCarNumber= false;
     private Button submit_btn;
 
@@ -57,27 +59,30 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_registration);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        txt_title= (TextView)findViewById(R.id.txt_title);
+        //txt_title= (TextView)findViewById(R.id.txt_title);
         brand_spinner = (Spinner) findViewById(R.id.brand_spinner);
         model_spinner= (Spinner)findViewById(R.id.model_spinner);
         type_spinner = (Spinner)findViewById(R.id.type_spinner);
+        text_register_number = (TextView)findViewById(R.id.text_Register_number);
         text_invalid_regno= (TextView)findViewById(R.id.text_invalid_regno);
        // spinner_text= (TextView)findViewById(R.id.spinner_text);
         carImage = (ImageView)findViewById(R.id.carImage);
         et_carRegno= (EditText)findViewById(R.id.et_carRegno);
         submit_btn= (Button)findViewById(R.id.btn_submit);
-        custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
+        custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
+
+        text_register_number.setTypeface(custom_font_light);
 
         submit_btn.setOnClickListener(this);
 
-        txt_title.setText("Wheelcare Car Registration");
+        /*txt_title.setText("Wheelcare Car Registration");
         txt_title.setTypeface(custom_font_light);
-
+        */
         text_invalid_regno.setVisibility(View.GONE);
 
         changeTypeFaceSpinner1();
+        changeTypeFaceSpinner2();
         changeTypeFaceSpinner3();
 
         et_carRegno.addTextChangedListener(new TextWatcher() {
@@ -132,15 +137,17 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
 
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
-                if (model_items[position]== "Brezza"){
+                if (Objects.equals(model_items[position], "Brezza")){
                     carImage.setVisibility(View.VISIBLE);
                     carImage.setImageResource(R.drawable.marutibrezza);
-                }else if (model_items[position]== "Bolero"){
+                }else if (Objects.equals(model_items[position], "Bolero")){
                     carImage.setVisibility(View.VISIBLE);
                     carImage.setImageResource(R.drawable.mahindrabolero);
-                }else if(model_items[position]=="KWID"){
+                }else if(Objects.equals(model_items[position], "KWID")){
                     carImage.setVisibility(View.VISIBLE);
                     carImage.setImageResource(R.drawable.renaultkwid);
+                }else{
+                    carImage.setVisibility(View.INVISIBLE);
                 }
                 ((TextView) v).setTypeface(custom_font_light);
                 return v;

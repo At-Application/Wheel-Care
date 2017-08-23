@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_marginLeft="30dp"
+    android:layout_marginRight="30dp"
     android:fitsSystemWindows="true"
     >
     <ImageView
@@ -12,9 +15,10 @@
         />
     <FrameLayout
         android:id="@+id/carBrand"
-        android:layout_width="350dp"
+        android:layout_width="310dp"
+        android:layout_marginTop="10dp"
         android:layout_gravity="center"
-        android:layout_height="80dp">
+        android:layout_height="70dp">
         <Spinner
             android:id="@+id/brand_spinner"
             android:layout_width="fill_parent"
@@ -35,16 +39,16 @@
 
     <FrameLayout
         android:id="@+id/carModel"
-        android:layout_width="350dp"
+        android:layout_width="310dp"
         android:layout_gravity="center"
-        android:layout_height="80dp">
+        android:layout_height="70dp">
         <Spinner
             android:id="@+id/model_spinner"
             android:layout_width="fill_parent"
             android:layout_marginTop="15dp"
             android:background="@drawable/custom_edit_box"
             android:backgroundTintMode="src_atop"
-            android:layout_height="50dp" />
+            android:layout_height="40dp" />
         <ImageView
             android:layout_width="20dp"
             android:layout_height="wrap_content"
@@ -55,9 +59,9 @@
     </FrameLayout>
     <FrameLayout
         android:id="@+id/carType"
-        android:layout_width="350dp"
+        android:layout_width="310dp"
         android:layout_gravity="center"
-        android:layout_height="80dp">
+        android:layout_height="70dp">
         <Spinner
             android:id="@+id/type_spinner"
             android:layout_width="fill_parent"
@@ -75,20 +79,29 @@
             android:src="@drawable/dropdown"
             />
     </FrameLayout>
+   <TextView
+        android:id="@+id/text_Register_number"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="bottom"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/btn_color"
+        android:textSize="22dp"
+        android:text="Registration Number"/>
 
     <EditText
         android:id="@+id/et_carRegno"
-        android:layout_width="350dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="5dp"
+        android:layout_width="310dp"
+        android:layout_height="50dp"
         android:textSize="20dp"
-        android:imeOptions="actionSend|flagNoEnterAction"
-        android:hint="Registration Number(KA09HD9392)"
+        android:hint=" E.g KA09HD9392"
+        android:paddingBottom="10dp"
         android:maxLines="4"
         android:inputType="textShortMessage|textCapSentences|textMultiLine"
         android:maxLength="2000"
         android:background="@drawable/custom_edit_box"
         android:layout_gravity="center"
+        android:gravity="bottom"
         />
     <TextView
         android:id="@+id/text_invalid_regno"
@@ -103,8 +116,9 @@
         android:id="@+id/btn_submit"
         android:layout_width="250dp"
         android:layout_height="40dp"
+        android:textSize="20dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/round_edge"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/white"

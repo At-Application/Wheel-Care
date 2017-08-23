@@ -31,6 +31,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
 
     public static final String registrationURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/doRegistration";
 
+    private TextView welcome_text;
     private EditText et_user;
     private EditText et_referral;
     private TextView text_email_error;
@@ -49,6 +50,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
 
         setupRegistrationURL();
 
+        welcome_text= (TextView)findViewById(R.id.welcome_text);
         txt_title = (TextView)findViewById(R.id.txt_title);
         et_user = (EditText) findViewById(R.id.et_email);
         et_referral = (EditText) findViewById(R.id.et_referal);
@@ -63,10 +65,11 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
 
         text_referal_error.setVisibility(View.INVISIBLE);
 
-        Typeface custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
+        Typeface custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
 
 
         //txt_title.setTypeface(custom_font_light);
+        welcome_text.setTypeface(custom_font_light);
         et_user.setTypeface(custom_font_light);
         text_referal_error.setTypeface(custom_font_light);
         text_fullname_error.setTypeface(custom_font_light);
