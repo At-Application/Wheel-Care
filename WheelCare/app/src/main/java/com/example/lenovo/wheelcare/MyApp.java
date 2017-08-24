@@ -1,6 +1,7 @@
 package com.example.lenovo.wheelcare;
 
 import android.app.Application;
+import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 
 /**
@@ -8,6 +9,7 @@ import android.os.SystemClock;
  */
 
 public class MyApp extends Application {
+    private Drawable spalsh_background;
     @Override
     public void onCreate() {
         super.onCreate();

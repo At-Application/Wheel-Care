@@ -33,7 +33,7 @@
             android:layout_height="70dp"
             android:layout_gravity="right"
             android:layout_marginRight="10dp"
-            android:src="@drawable/dropdown"
+            android:src="@drawable/arrow"
             />
     </FrameLayout>
 
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginRight="10dp"
-            android:src="@drawable/dropdown"
+            android:src="@drawable/arrow"
             />
     </FrameLayout>
     <FrameLayout
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginRight="10dp"
-            android:src="@drawable/dropdown"
+            android:src="@drawable/arrow"
             />
     </FrameLayout>
    <TextView
