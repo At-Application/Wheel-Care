@@ -64,6 +64,11 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
         text_auto_detect= (TextView)findViewById(R.id.text_auto_detect);
         progressBar1= (ProgressBar)findViewById(R.id.progressBar1);
         or_border=(TextView)findViewById(R.id.or_border);
+        Bundle recieve_number = getIntent().getExtras();
+
+        String mobile_number = recieve_number.getString("mobile_number");
+
+        or_border.setText(mobile_number);
         et_otp= (EditText)findViewById(R.id.et_otp);
         btn_submit= (Button)findViewById(R.id.btn_submit);
         text_resend_sms= (TextView)findViewById(R.id.text_resend_sms);

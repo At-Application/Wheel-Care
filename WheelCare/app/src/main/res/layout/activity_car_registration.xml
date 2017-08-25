@@ -3,8 +3,7 @@
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:layout_marginLeft="30dp"
-    android:layout_marginRight="30dp"
+    android:layout_gravity="center"
     android:fitsSystemWindows="true"
     >
     <ImageView
@@ -16,7 +15,6 @@
     <FrameLayout
         android:id="@+id/carBrand"
         android:layout_width="310dp"
-        android:layout_marginTop="10dp"
         android:layout_gravity="center"
         android:layout_height="70dp">
         <Spinner
@@ -26,13 +24,11 @@
             android:background="@drawable/custom_edit_box"
             android:gravity="center"
             android:layout_gravity="center"
-            android:spinnerMode="dropdown"
             />
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="70dp"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:layout_marginRight="10dp"
             android:src="@drawable/arrow"
             />
     </FrameLayout>
@@ -45,15 +41,15 @@
         <Spinner
             android:id="@+id/model_spinner"
             android:layout_width="fill_parent"
-            android:layout_marginTop="15dp"
             android:background="@drawable/custom_edit_box"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:backgroundTintMode="src_atop"
             android:layout_height="40dp" />
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:layout_marginRight="10dp"
             android:src="@drawable/arrow"
             />
     </FrameLayout>
@@ -65,58 +61,63 @@
         <Spinner
             android:id="@+id/type_spinner"
             android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/custom_edit_box"
+            android:layout_height="40dp"
             android:gravity="center"
             android:layout_gravity="center"
-            android:spinnerMode="dropdown"
+            android:backgroundTintMode="src_atop"
+            android:background="@drawable/custom_edit_box"
             />
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:layout_marginRight="10dp"
             android:src="@drawable/arrow"
             />
     </FrameLayout>
-   <TextView
-        android:id="@+id/text_Register_number"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="bottom"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/btn_color"
-        android:textSize="22dp"
-        android:text="Registration Number"/>
-
-    <EditText
-        android:id="@+id/et_carRegno"
+    <LinearLayout
         android:layout_width="310dp"
-        android:layout_height="50dp"
-        android:textSize="20dp"
-        android:hint=" E.g KA09HD9392"
-        android:paddingBottom="10dp"
-        android:maxLines="4"
-        android:inputType="textShortMessage|textCapSentences|textMultiLine"
-        android:maxLength="2000"
-        android:background="@drawable/custom_edit_box"
-        android:layout_gravity="center"
-        android:gravity="bottom"
-        />
+        android:layout_height="70dp"
+        android:orientation="vertical"
+        >
+        <!--<TextView-->
+            <!--android:id="@+id/text_Register_number"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:textColor="@color/btn_color"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:textSize="@dimen/_18sdp"-->
+            <!--android:text="Registration Number"/>-->
+        <EditText
+            android:id="@+id/et_carRegno"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textCursorDrawable="@null"
+            android:textSize="18dp"
+            android:hint="Registration Number E.g KA09HD9392"
+            android:maxLines="1"
+            android:inputType="textShortMessage|textCapSentences|textMultiLine"
+            android:maxLength="20"
+            android:background="@drawable/custom_edit_box"
+            />
+    </LinearLayout>
+
+
+
     <TextView
         android:id="@+id/text_invalid_regno"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/auto_fill"
-        android:textSize="15dp"
+        android:textSize="@dimen/_15sdp"
         android:gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="This Field Cannot Be Left Empty!"/>
     <Button
         android:id="@+id/btn_submit"
         android:layout_width="250dp"
-        android:layout_height="40dp"
-        android:textSize="20dp"
+        android:layout_height="50dp"
+        android:textSize="@dimen/_18sdp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:background="@drawable/round_edge"

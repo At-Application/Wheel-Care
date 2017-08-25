@@ -84,6 +84,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         text_password_error= (TextView)findViewById(R.id.text_password_error);
         forgot_password.setPaintFlags(forgot_password.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         text_password_error.setPaintFlags(text_password_error.getPaintFlags()|Paint.UNDERLINE_TEXT_FLAG);
+        text_mobile_error.setPaintFlags(text_mobile_error.getPaintFlags()|Paint.UNDERLINE_TEXT_FLAG);
 
         text_mobile_error.setVisibility(View.INVISIBLE);
         text_password_error.setVisibility(View.INVISIBLE);
@@ -211,6 +212,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         if ((isValidPassword)&&(isValidMobile)) {
+
             login();
         }
     }
@@ -250,7 +252,10 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
                 Toast.makeText(getApplicationContext(), "User already registered", Toast.LENGTH_LONG).show();
             } else {
                 Log.i(TAG, "Login Successful");
-                startActivity(new Intent(getApplicationContext(), OtpActivity.class));
+                Bundle send_number = new Bundle();
+                send_number.putString("mobile_number",edit_mobile.getText().toString());
+
+                startActivity(new Intent(getApplicationContext(), OtpActivity.class).putExtras(send_number));
             }
         } catch (JSONException e) {
             Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();

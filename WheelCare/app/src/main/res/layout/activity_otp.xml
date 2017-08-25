@@ -43,7 +43,7 @@
             android:layout_gravity="center"
             android:background="@drawable/indicator"
             android:indeterminate="true"
-            android:indeterminateTint="#000"
+            android:indeterminateTint="#ffffff"
             android:indeterminateTintMode="src_atop" />
     </LinearLayout>
 
@@ -106,7 +106,7 @@
         android:textSize="20dp"
         android:background="@drawable/round_edge"
         android:textColor="@color/white"
-        android:text="Submit"/>
+        android:text="SUBMIT"/>
 
     <TextView
         android:id="@+id/text_resend_sms"

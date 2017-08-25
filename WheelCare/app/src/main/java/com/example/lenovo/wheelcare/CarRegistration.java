@@ -1,9 +1,11 @@
 package com.example.lenovo.wheelcare;
 
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,13 +33,13 @@ import java.util.Objects;
 public class CarRegistration extends BaseActivity implements View.OnClickListener{
     private Typeface custom_font_light;
     private ArrayAdapter<CharSequence> adapter;
-    private Spinner brand_spinner,model_spinner,type_spinner;
+    public Spinner brand_spinner,model_spinner,type_spinner;
     private final String [] model_items = new String[2];
     private ImageView carImage;
     private TextView txt_title;
     private TextView text_invalid_regno;
     private EditText et_carRegno;
-    private TextView text_register_number;
+   // private TextView text_register_number;
     private boolean isValidCarNumber= false;
     private Button submit_btn;
 
@@ -63,8 +65,11 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         //txt_title= (TextView)findViewById(R.id.txt_title);
         brand_spinner = (Spinner) findViewById(R.id.brand_spinner);
         model_spinner= (Spinner)findViewById(R.id.model_spinner);
+        //model_spinner.setClickable(false);
+
         type_spinner = (Spinner)findViewById(R.id.type_spinner);
-        text_register_number = (TextView)findViewById(R.id.text_Register_number);
+        //type_spinner.setClickable(false);
+        //text_register_number = (TextView)findViewById(R.id.text_Register_number);
         text_invalid_regno= (TextView)findViewById(R.id.text_invalid_regno);
        // spinner_text= (TextView)findViewById(R.id.spinner_text);
         carImage = (ImageView)findViewById(R.id.carImage);
@@ -72,7 +77,7 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         submit_btn= (Button)findViewById(R.id.btn_submit);
         custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
 
-        text_register_number.setTypeface(custom_font_light);
+        //text_register_number.setTypeface(custom_font_light);
 
         submit_btn.setOnClickListener(this);
 
@@ -152,13 +157,37 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
                 ((TextView) v).setTypeface(custom_font_light);
                 return v;
             }
+            @Override
+            public boolean isEnabled(int position) {
+                if(position == 0)
+                {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
 
             public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
                 View v =super.getDropDownView(position, convertView, parent);
                 ((TextView) v).setTypeface(custom_font_light);
+                if(position == 0){
+                    // Set the hint text color gray
+                    ((TextView)v).setTextColor(Color.GRAY);
+                }
+                else {
+
+                    ((TextView)v).setTextColor(Color.BLACK);
+                }
+
                 return v;
             }
         };
+        model_spinner.setEnabled(true);
+        model_spinner.setClickable(true);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         model_spinner.setAdapter(adapter);
     }
@@ -174,12 +203,38 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
                 ((TextView) v).setTypeface(custom_font_light);
+
+                if(position == 0){
+
+                }
                 return v;
+            }
+            @Override
+            public boolean isEnabled(int position) {
+                if(position == 0)
+                {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
 
             public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
                 View v =super.getDropDownView(position, convertView, parent);
                 ((TextView) v).setTypeface(custom_font_light);
+
+                if(position == 0){
+                    // Set the hint text color gray
+                    ((TextView)v).setTextColor(Color.GRAY);
+                }
+                else {
+
+                    ((TextView)v).setTextColor(Color.BLACK);
+                }
                 return v;
             }
         };
@@ -194,27 +249,60 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         items[3]="Renault";
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.spinner_text, items) {
 
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
-                if (position==1){
-                    Log.d("position :", String.valueOf(position));
+
+                if (position==0){
+                    //Log.d("position :", String.valueOf(position));
                     //car_models[1]="Brezza";
+                    model_items[1]="";
+                }else if (position == 1){
                     model_items[1]="Brezza";
                 }else if (position == 2){
                     model_items[1]="Bolero";
-                }else if (position == 3){
-                    model_items[1]="KWID";
+                }else if(position == 3){
+                    model_items[1]= "KWID";
                 }
+                model_spinner.setEnabled(false);
+                //type_spinner.setEnabled(false);
                 ((TextView) v).setTypeface(custom_font_light);
+
                 return v;
             }
 
-            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
+            @Override
+            public boolean isEnabled(int position) {
+                if(position == 0)
+                {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                }
+                else
+                {
+
+                    return true;
+                }
+            }
+
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 View v =super.getDropDownView(position, convertView, parent);
+                Log.d("positon", String.valueOf(position));
                 ((TextView) v).setTypeface(custom_font_light);
+                if(position == 0){
+                    // Set the hint text color gray
+                    ((TextView)v).setTextColor(Color.GRAY);
+                }
+                else {
+                    Log.d("position_select", String.valueOf(position));
+                    ((TextView)v).setTextColor(Color.BLACK);
+                }
+
                 return v;
             }
         };
+
+        //type_spinner.setClickable(false);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         brand_spinner.setAdapter(adapter);
     }
