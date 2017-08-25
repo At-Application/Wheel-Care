@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_layout"
+    android:layout_width="match_parent"
+    android:layout_gravity="center"
+    android:layout_height="match_parent"
+    tools:context="com.example.lenovo.wheelcare.MainActivity">
+    <LinearLayout
+        android:layout_width="265dp"
+        android:layout_height="265dp"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:layout_marginTop="40dp"
+        >
+        <TextView
+            android:id="@+id/header"
+            android:layout_width="346dp"
+            android:layout_marginTop="20dp"
+            android:layout_height="80dp"
+            android:textColor="@color/btn_color"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textSize="15dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Enter your mobile number to get started!"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/btn_click"
+                android:textSize="20dp"
+                android:gravity="left"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="+91"/>
+            <EditText
+                android:id="@+id/edit_mobile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="7dp"
+                android:textSize="20dp"
+                android:background="@drawable/custom_edit_box"
+                android:hint="10 digit mobile number"
+                android:layout_marginLeft="5dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:inputType="number|numberDecimal"
+                android:maxLength="35"
+                android:maxLines="1"/>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/text_mobile_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/auto_fill"
+            android:maxLines="2"
+            android:layout_marginLeft="25dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Mobile Number should be eaxctly 10 characters"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <EditText
+                android:id="@+id/edit_userpass"
+                android:layout_width="223dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/custom_edit_box"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:textSize="20dp"
+                android:maxLength="35"
+                android:maxLines="1"
+                android:paddingBottom="8dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            <ImageView
+                android:id="@+id/chech_box"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="right|bottom"
+                android:paddingBottom="8dp"
+                android:src="@drawable/password_show"
+                />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/text_password_error"
+            android:layout_width="225dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/auto_fill"
+            android:layout_gravity="right"
+            android:maxLines="10"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Should be atleast 8 characters long"
+            />
+
+
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textSize="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/round_edge"
+            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="SUBMIT"/>
+
+        <TextView
+            android:id="@+id/text_invalid_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/auto_fill"
+            android:visibility="gone"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="Invalid Mobile number or Password"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"/>
+
+        <TextView
+            android:id="@+id/text_forgot_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/btn_color"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_gravity="bottom"
+            android:textSize="15dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginBottom="50dp"
+            android:text="@string/forgot_password"
+            android:padding="10dp"
+            />
+
+
+
+
+    </LinearLayout>
+
+</ScrollView>

@@ -60,7 +60,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.wheelcare_login_field);
 
         Bundle extra = getIntent().getExtras();
         if(extra != null) {
