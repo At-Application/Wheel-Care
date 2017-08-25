@@ -76,9 +76,9 @@
     </FrameLayout>
     <LinearLayout
         android:layout_width="310dp"
-        android:layout_height="70dp"
+        android:layout_height="59dp"
         android:orientation="vertical"
-        >
+        android:weightSum="1">
         <!--<TextView-->
             <!--android:id="@+id/text_Register_number"-->
             <!--android:layout_width="fill_parent"-->
@@ -91,18 +91,19 @@
         <EditText
             android:id="@+id/et_carRegno"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textCursorDrawable="@null"
-            android:textSize="18dp"
-            android:hint="Registration Number E.g KA09HD9392"
-            android:maxLines="1"
-            android:inputType="textShortMessage|textCapSentences|textMultiLine"
-            android:maxLength="20"
+            android:layout_height="55dp"
+            android:layout_weight="0.13"
             android:background="@drawable/custom_edit_box"
-            />
+            android:gravity="bottom"
+            android:hint="Registration Number (KA01JD1234)"
+            android:inputType="textShortMessage|textCapSentences"
+            android:maxLength="10"
+            android:maxLines="1"
+            android:paddingBottom="8dp"
+            android:paddingLeft="7dp"
+            android:textCursorDrawable="@null"
+            android:textSize="18dp" />
     </LinearLayout>
-
-
 
     <TextView
         android:id="@+id/text_invalid_regno"

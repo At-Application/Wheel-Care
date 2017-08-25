@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
         Bundle bundle= new Bundle();
         switch (view.getId()){
             case R.id.text_user:
-                Intent i = new Intent(getApplicationContext(),OtpActivity.class);
+                Intent i = new Intent(getApplicationContext(),MainActivity.class);
                 i.putExtra("user_type", "usr");
                 startActivity(i);
                 break;

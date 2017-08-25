@@ -121,7 +121,11 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
                /* Toast.makeText(adapterView.getContext(),
                         "OnItemSelectedListener : " + adapterView.getItemAtPosition(pos).toString(),
                         Toast.LENGTH_LONG).show();*/
-                        changeTypeFaceSpinner2();
+                changeTypeFaceSpinner2();
+                TextView selectedText = (TextView) adapterView.getChildAt(0);
+                if (selectedText != null && selectedText.getText() != "Manufacturer") {
+                    selectedText.setTextColor(Color.BLACK);
+                }
             }
 
             @Override
@@ -129,7 +133,43 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
 
             }
         });
-        model_spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
+
+        model_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+               /* Toast.makeText(adapterView.getContext(),
+                        "OnItemSelectedListener : " + adapterView.getItemAtPosition(pos).toString(),
+                        Toast.LENGTH_LONG).show();*/
+                changeTypeFaceSpinner3();
+                TextView selectedText = (TextView) adapterView.getChildAt(0);
+                if (selectedText != null && selectedText.getText() != "Vehicle") {
+                    selectedText.setTextColor(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        type_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+               /* Toast.makeText(adapterView.getContext(),
+                        "OnItemSelectedListener : " + adapterView.getItemAtPosition(pos).toString(),
+                        Toast.LENGTH_LONG).show();*/
+                TextView selectedText = (TextView) adapterView.getChildAt(0);
+                if (selectedText != null && selectedText.getText() != "Vehicle Type") {
+                    selectedText.setTextColor(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     public void changeTypeFaceSpinner2(){
@@ -142,6 +182,7 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
 
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
+                type_spinner.setEnabled(true);
                 if (Objects.equals(model_items[position], "Brezza")){
                     carImage.setVisibility(View.VISIBLE);
                     carImage.setImageResource(R.drawable.marutibrezza);
@@ -152,6 +193,7 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
                     carImage.setVisibility(View.VISIBLE);
                     carImage.setImageResource(R.drawable.renaultkwid);
                 }else{
+                    type_spinner.setEnabled(false);
                     carImage.setVisibility(View.INVISIBLE);
                 }
                 ((TextView) v).setTypeface(custom_font_light);
@@ -186,8 +228,8 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
                 return v;
             }
         };
-        model_spinner.setEnabled(true);
-        model_spinner.setClickable(true);
+        //model_spinner.setEnabled(true);
+        //model_spinner.setClickable(true);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         model_spinner.setAdapter(adapter);
     }
@@ -238,6 +280,8 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
                 return v;
             }
         };
+        //type_spinner.setEnabled(true);
+        //type_spinner.setClickable(true);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         type_spinner.setAdapter(adapter);
     }
@@ -252,19 +296,23 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
 
-                if (position==0){
+                if (position == 0) {
                     //Log.d("position :", String.valueOf(position));
                     //car_models[1]="Brezza";
-                    model_items[1]="";
-                }else if (position == 1){
-                    model_items[1]="Brezza";
-                }else if (position == 2){
-                    model_items[1]="Bolero";
-                }else if(position == 3){
-                    model_items[1]= "KWID";
+                    model_items[1] = "";
+                    model_spinner.setEnabled(false);
+                    type_spinner.setEnabled(false);
+                } else {
+                    model_spinner.setEnabled(true);
+                    if (position == 1) {
+                        model_items[1] = "Brezza";
+                    } else if (position == 2) {
+                        model_items[1] = "Bolero";
+                    } else if (position == 3) {
+                        model_items[1] = "KWID";
+                    }
                 }
-                model_spinner.setEnabled(false);
-                //type_spinner.setEnabled(false);
+
                 ((TextView) v).setTypeface(custom_font_light);
 
                 return v;

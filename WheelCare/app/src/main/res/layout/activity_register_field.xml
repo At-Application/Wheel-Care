@@ -114,7 +114,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginLeft="50dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Inavlide Referral code!"/>
+            android:text="Invalid Referral code!"/>
         <Button
             android:id="@+id/btn_submit"
             android:layout_width="250dp"
