@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -60,7 +61,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.wheelcare_login_field);
+        setContentView(R.layout.activity_main_login);
 
         Bundle extra = getIntent().getExtras();
         if(extra != null) {
@@ -77,14 +78,14 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         header= (TextView)findViewById(R.id.header) ;
         txt_title=(TextView)findViewById(R.id.txt_title);
         Button btn_submit = (Button) findViewById(R.id.btn_submit);
-        ImageView chech_box = (ImageView) findViewById(R.id.chech_box);
+        final ImageView chech_box = (ImageView) findViewById(R.id.chech_box);
         TextView forgot_password = (TextView) findViewById(R.id.text_forgot_password);
         text_mobile_error= (TextView)findViewById(R.id.text_mobile_error);
         text_invalid_password = (TextView)findViewById(R.id.text_invalid_password);
         text_password_error= (TextView)findViewById(R.id.text_password_error);
         forgot_password.setPaintFlags(forgot_password.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        text_password_error.setPaintFlags(text_password_error.getPaintFlags()|Paint.UNDERLINE_TEXT_FLAG);
-        text_mobile_error.setPaintFlags(text_mobile_error.getPaintFlags()|Paint.UNDERLINE_TEXT_FLAG);
+        //text_password_error.setPaintFlags(text_password_error.getPaintFlags()|Paint.UNDERLINE_TEXT_FLAG);
+        //text_mobile_error.setPaintFlags(text_mobile_error.getPaintFlags()|Paint.UNDERLINE_TEXT_FLAG);
 
         text_mobile_error.setVisibility(View.INVISIBLE);
         text_password_error.setVisibility(View.INVISIBLE);
@@ -116,10 +117,24 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
                     edit_userpass.setInputType(129);
                     edit_userpass.setTypeface(custom_font_light);
                     is_hidden = false;
+                    Drawable res = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        res = getResources().getDrawable(R.drawable.password_hide, null);
+                    } else {
+                        res = getResources().getDrawable(R.drawable.password_hide);
+                    }
+                    chech_box.setImageDrawable(res);
                 } else {
                     edit_userpass.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     edit_userpass.setTypeface(custom_font_light);
                     is_hidden= true;
+                    Drawable res = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        res = getResources().getDrawable(R.drawable.password_show, null);
+                    } else {
+                        res = getResources().getDrawable(R.drawable.password_show);
+                    }
+                    chech_box.setImageDrawable(res);
                 }
             }
         });
@@ -163,11 +178,11 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
                     text_password_error.setVisibility(View.INVISIBLE);
                     isValidPassword= true;
                 }else if(edit_userpass.getText().toString().matches("^ ")){
-                    text_password_error.setText("should be atleast 8 characters long");
+                    text_password_error.setText("Should be atleast 8 characters long");
                     text_password_error.setVisibility(View.VISIBLE);
                     isValidPassword= false;
                } else{
-                    //text_invalid_password.setText("Should contain atleast one alphabet,Number and special characters");
+                    //text_invalid_password.setText("Should have atleast one alphabet, number and special character");
                     text_password_error.setVisibility(View.VISIBLE);
                     isValidPassword=false;
                }

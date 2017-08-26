@@ -48,9 +48,9 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         super.onClick(view);
         if (isValidCarNumber){
             //startActivity()
-            Toast.makeText(getApplicationContext(),"Valid Car number",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Car added successfully!",Toast.LENGTH_LONG).show();
         }else if(et_carRegno.getText().toString().length()==0){
-            text_invalid_regno.setText("This field cannot be Empty!");
+            text_invalid_regno.setText("This field cannot be empty!");
             text_invalid_regno.setVisibility(View.VISIBLE);
         }
     }

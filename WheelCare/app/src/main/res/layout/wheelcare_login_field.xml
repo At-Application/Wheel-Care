@@ -73,7 +73,7 @@
             >
             <EditText
                 android:id="@+id/edit_userpass"
-                android:layout_width="223dp"
+                android:layout_width="226dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:background="@drawable/custom_edit_box"
