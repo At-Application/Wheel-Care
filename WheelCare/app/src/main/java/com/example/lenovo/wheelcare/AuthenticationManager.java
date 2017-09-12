@@ -1,6 +1,7 @@
 package com.example.lenovo.wheelcare;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -99,6 +100,8 @@ public class AuthenticationManager {
 
     private String baseTokenExpirationDateKey = "baseTokenExpDate";
 
+    GlobalClass globalClass;
+
     // MARK: Initializer
 
     public static AuthenticationManager getInstance() {
@@ -167,28 +170,46 @@ public class AuthenticationManager {
     private void setAccessToken(String token, Long expiryTime) {
         this.accessToken = token;
         this.accessTokenExpirationDate = expiryTime;
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("AccessToken", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("token", token);
+        editor.putLong("expiry", expiryTime);
+        editor.apply();
     }
 
     public String getAccessToken() {
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("AccessToken", Context.MODE_PRIVATE);
+        this.accessToken = preferences.getString("token", null);
         return this.accessToken;
         // TODO: Add code to check if access token has expired
     }
 
     private Long getAccessTokenExpiry() {
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("AccessToken", Context.MODE_PRIVATE);
+        this.accessTokenExpirationDate = preferences.getLong("expiry", 0);
         return this.accessTokenExpirationDate;
     }
 
     private void setBaseToken(String token, Long expiryTime) {
         this.baseToken = token;
         this.baseTokenExpirationDate = expiryTime;
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("BaseToken", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("token", token);
+        editor.putLong("expiry", expiryTime);
+        editor.apply();
     }
 
     public String getBaseToken() {
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("BaseToken", Context.MODE_PRIVATE);
+        this.baseToken = preferences.getString("token", null);
         return this.baseToken;
         // TODO: Add code to check if base token has expired
     }
 
     private Long getBaseTokenExpiry() {
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("BaseToken", Context.MODE_PRIVATE);
+        this.baseTokenExpirationDate = preferences.getLong("expiry", 0);
         return this.baseTokenExpirationDate;
     }
 

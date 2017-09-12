@@ -45,13 +45,12 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
 
     private EditText edit_mobile;
     private EditText edit_userpass;
-    private Typeface custom_font_light;
+    private Typeface calibri;
     private TextView text_invalid_password;
     private boolean  isValidMobile;
     private boolean isValidPassword;
     private TextView text_mobile_error;
     private TextView text_password_error;
-    private TextView txt_title;
     boolean is_hidden = true;
     private TextView header;
 
@@ -73,10 +72,10 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         edit_mobile =(EditText)findViewById(R.id.edit_mobile);
         edit_userpass =(EditText)findViewById(R.id.edit_userpass);
 
-        custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
+        calibri = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
 
         header= (TextView)findViewById(R.id.header) ;
-        txt_title=(TextView)findViewById(R.id.txt_title);
+
         Button btn_submit = (Button) findViewById(R.id.btn_submit);
         final ImageView chech_box = (ImageView) findViewById(R.id.chech_box);
         TextView forgot_password = (TextView) findViewById(R.id.text_forgot_password);
@@ -92,18 +91,14 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         btn_submit.setOnClickListener(this);
         text_invalid_password.setVisibility(View.INVISIBLE);
 
-        header.setTypeface(custom_font_light);
-        //txt_title.setTypeface(custom_font_light);
-        edit_mobile.setTypeface(custom_font_light);
-        text_password_error.setTypeface(custom_font_light);
-        text_mobile_error.setTypeface(custom_font_light);
-        edit_userpass.setTypeface(custom_font_light);
-        btn_submit.setTypeface(custom_font_light);
-        text_invalid_password.setTypeface(custom_font_light);
-        forgot_password.setTypeface(custom_font_light);
-
-        //create_account.setTypeface(custom_font_light);
-
+        header.setTypeface(calibri);
+        edit_mobile.setTypeface(calibri);
+        text_password_error.setTypeface(calibri);
+        text_mobile_error.setTypeface(calibri);
+        edit_userpass.setTypeface(calibri);
+        btn_submit.setTypeface(calibri);
+        text_invalid_password.setTypeface(calibri);
+        forgot_password.setTypeface(calibri);
 
         /**************************** Password Show  ****************************/
 
@@ -115,7 +110,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
 
                 if (is_hidden) {
                     edit_userpass.setInputType(129);
-                    edit_userpass.setTypeface(custom_font_light);
+                    edit_userpass.setTypeface(calibri);
                     is_hidden = false;
                     Drawable res = null;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -126,7 +121,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
                     chech_box.setImageDrawable(res);
                 } else {
                     edit_userpass.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    edit_userpass.setTypeface(custom_font_light);
+                    edit_userpass.setTypeface(calibri);
                     is_hidden= true;
                     Drawable res = null;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -144,7 +139,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         edit_mobile.addTextChangedListener(new TextWatcher(){
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-
                 if (edit_mobile.getText().toString().matches("^ ") ){
                     Log.d("match", "onTextChanged: ");
                     text_mobile_error.setVisibility(View.VISIBLE);
@@ -227,7 +221,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         if ((isValidPassword)&&(isValidMobile)) {
-
             login();
         }
     }
@@ -263,14 +256,20 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     @Override
     public void loginSuccess(JSONObject response) {
         try {
-            if (Objects.equals((String) response.get("statusDesc"), "account already exist")) {
-                Toast.makeText(getApplicationContext(), "User already registered", Toast.LENGTH_LONG).show();
-            } else {
-                Log.i(TAG, "Login Successful");
-                Bundle send_number = new Bundle();
-                send_number.putString("mobile_number",edit_mobile.getText().toString());
+            if(userType == "usr") {
+                if (Objects.equals((String) response.get("statusDesc"), "account already exist")) {
+                    Toast.makeText(getApplicationContext(), "User already registered", Toast.LENGTH_LONG).show();
+                } else {
+                    Log.i(TAG, "Login Successful");
+                    Bundle send_number = new Bundle();
+                    send_number.putString("mobile_number",edit_mobile.getText().toString());
 
-                startActivity(new Intent(getApplicationContext(), OtpActivity.class).putExtras(send_number));
+                    startActivity(new Intent(getApplicationContext(), OtpActivity.class).putExtras(send_number));
+                }
+            } else {
+                if (Objects.equals((String) response.get("statusDesc"), "SP login authentication successful")) {
+                    startActivity(new Intent(getApplicationContext(), PendingServices.class));
+                }
             }
         } catch (JSONException e) {
             Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();

@@ -40,7 +40,6 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
    // private EditText et_fullname;
     private TextView text_fullname_error;
     private EditText et_fullname;
-    private TextView txt_title;
     private boolean isValidRefferral = false;
 
     @Override
@@ -51,7 +50,6 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
         setupRegistrationURL();
 
         welcome_text= (TextView)findViewById(R.id.welcome_text);
-        txt_title = (TextView)findViewById(R.id.txt_title);
         et_user = (EditText) findViewById(R.id.et_email);
         et_referral = (EditText) findViewById(R.id.et_referal);
         et_fullname= (EditText)findViewById(R.id.et_fullname);
@@ -68,7 +66,6 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
         Typeface custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
 
 
-        //txt_title.setTypeface(custom_font_light);
         welcome_text.setTypeface(custom_font_light);
         et_user.setTypeface(custom_font_light);
         text_referal_error.setTypeface(custom_font_light);

@@ -17,4 +17,5 @@
         <item>Uranus</item>
         <item>Neptune</item>
     </string-array>
+    <string name="title_activity_service_provider_info">ServiceProviderInfo</string>
 </resources>

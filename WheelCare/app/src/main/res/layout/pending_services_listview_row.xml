@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/vehiclenumber"
+        android:layout_width="150dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="6dp"
+        android:text="TextView"
+        android:textColor="#8f216f"
+        android:textSize="25sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/date_slot"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="0dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vehiclenumber" />
+
+    <Button
+        android:id="@+id/ButtonVerifyCode"
+        android:layout_width="172dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/round_edge"
+        android:text="VERIFY CODE"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/ButtonContinue"
+        android:layout_width="16dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="24dp"
+        android:background="@mipmap/tick"
+        android:visibility="invisible"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/tick" />
+
+    <Button
+        android:id="@+id/ButtonCancel"
+        android:layout_width="16dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="24dp"
+        android:background="@mipmap/cross"
+        android:visibility="invisible"
+        app:layout_constraintRight_toLeftOf="@+id/ButtonContinue"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/cross" />
+
+    <EditText
+        android:id="@+id/code"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="21dp"
+        android:backgroundTint="@color/btn_color"
+        android:ems="10"
+        android:hint="Enter Code"
+        android:inputType="text"
+        android:paddingBottom="7dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textColorHint="?android:attr/textColorSecondaryNoDisable"
+        android:textSize="25sp"
+        android:visibility="invisible"
+        app:layout_constraintRight_toLeftOf="@+id/ButtonCancel"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

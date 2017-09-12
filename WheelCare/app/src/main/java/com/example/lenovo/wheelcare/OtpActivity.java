@@ -48,7 +48,6 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
     private TextView text_resend_sms;
     protected TextView text_otp_error;
     private boolean isValid;
-    private TextView txt_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +59,6 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
 
         otpManager.requestOTP(this.getApplicationContext(), this);
 
-        txt_title= (TextView)findViewById(R.id.txt_title);
         text_auto_detect= (TextView)findViewById(R.id.text_auto_detect);
         progressBar1= (ProgressBar)findViewById(R.id.progressBar1);
         or_border=(TextView)findViewById(R.id.or_border);
@@ -79,7 +77,6 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
         custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "serenity-light.ttf");
 
         text_otp_error.setVisibility(View.INVISIBLE);
-//        txt_title.setTypeface(custom_font_light);
         text_auto_detect.setTypeface(custom_font_light);
         or_border.setTypeface(custom_font_light);
         //text_manual_code.setTypeface(custom_font_light);
