@@ -1,6 +1,5 @@
 package com.example.lenovo.wheelcare;
 
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,8 +12,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -73,8 +70,8 @@ public class History extends RootActivity {
                 view = getLayoutInflater().inflate(R.layout.pending_service_info_detail_view, null);
                 final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
                 final TextView username = (TextView) view.findViewById(R.id.username);
-                final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignment);
-                final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancing);
+                final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
+                final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
                 final TextView code = (TextView) view.findViewById(R.id.Code);
                 final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
                 final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);

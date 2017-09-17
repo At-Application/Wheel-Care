@@ -58,7 +58,8 @@ public class GlobalClass extends Application {
 
     public void arrangePendingAndHistoryList(JSONArray jsonArray) {
         ArrayList<VehicleDetails> services = new ArrayList<>();
-
+        pending.clear();
+        history.clear();
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -106,7 +107,6 @@ public class GlobalClass extends Application {
     }
 
     public void getServicesDetails(final PendingServicesListener callback) {
-
         JSONObject object = createJSONObject();
         if(object != null) {
             getServiceProviderServiceList(callback, object);

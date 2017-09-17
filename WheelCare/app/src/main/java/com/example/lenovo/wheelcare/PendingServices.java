@@ -3,7 +3,6 @@ package com.example.lenovo.wheelcare;
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
@@ -164,7 +163,7 @@ public class PendingServices extends Activity implements PendingServicesListener
                                     if (code.getText().toString().trim().equals(service.code)) {
                                         service.serviceStatus = ServiceStatus.VERIFIED;
                                         ((GlobalClass) getApplicationContext()).pending.set((i - 1), service);
-                                        ((GlobalClass)getApplicationContext()).setServicesStatus(listener, service);
+                                        ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
                                     } else {
                                         code.setText("Failed");
                                     }
@@ -182,8 +181,8 @@ public class PendingServices extends Activity implements PendingServicesListener
                             view = getLayoutInflater().inflate(R.layout.pending_service_info_detail_view, null);
                             final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
                             final TextView username = (TextView) view.findViewById(R.id.username);
-                            final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignment);
-                            final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancing);
+                            final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
+                            final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
                             final TextView code = (TextView) view.findViewById(R.id.Code);
                             final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
                             final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
@@ -231,7 +230,7 @@ public class PendingServices extends Activity implements PendingServicesListener
                                 public void onClick(View view) {
                                     service.serviceStatus = ServiceStatus.STARTED;
                                     ((GlobalClass) getApplicationContext()).pending.set(i - 1, service);
-                                    ((GlobalClass)getApplicationContext()).setServicesStatus(listener, service);
+                                    ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
                                     notifyDataSetChanged();
                                 }
                             });
@@ -241,7 +240,7 @@ public class PendingServices extends Activity implements PendingServicesListener
                                 public void onClick(View view) {
                                     service.serviceStatus = ServiceStatus.IN_PROGRESS;
                                     ((GlobalClass) getApplicationContext()).pending.set(i - 1, service);
-                                    ((GlobalClass)getApplicationContext()).setServicesStatus(listener, service);
+                                    ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
                                     notifyDataSetChanged();
                                 }
                             });
@@ -251,7 +250,7 @@ public class PendingServices extends Activity implements PendingServicesListener
                                 public void onClick(View view) {
                                     service.serviceStatus = ServiceStatus.FINALIZING;
                                     ((GlobalClass) getApplicationContext()).pending.set(i - 1, service);
-                                    ((GlobalClass)getApplicationContext()).setServicesStatus(listener, service);
+                                    ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
                                     notifyDataSetChanged();
                                 }
                             });
@@ -261,7 +260,10 @@ public class PendingServices extends Activity implements PendingServicesListener
                                 public void onClick(View view) {
                                     service.serviceStatus = ServiceStatus.DONE;
                                     ((GlobalClass) getApplicationContext()).pending.set(i - 1, service);
-                                    ((GlobalClass)getApplicationContext()).setServicesStatus(listener, service);
+                                    // Removing from pending list and adding to history list
+                                    ((GlobalClass) getApplicationContext()).history.add(0, service);
+                                    ((GlobalClass) getApplicationContext()).pending.remove(i - 1);
+                                    ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
                                     notifyDataSetChanged();
                                 }
                             });

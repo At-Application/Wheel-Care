@@ -14,7 +14,7 @@
         tools:layout_editor_absoluteY="8dp">
 
         <TextView
-            android:id="@+id/WheelAlignment"
+            android:id="@+id/WheelAlignmentCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_marginLeft="10dp"
@@ -24,7 +24,7 @@
             android:textColor="@color/black"
             android:textSize="20sp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/WheelBalancing" />
+            app:layout_constraintTop_toBottomOf="@+id/WheelBalancingCheckBox" />
 
         <TextView
             android:id="@+id/username"
@@ -69,7 +69,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/WheelBalancing"
+            android:id="@+id/WheelBalancingCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_marginLeft="10dp"
@@ -94,7 +94,7 @@
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/WheelAlignment"
+            app:layout_constraintTop_toBottomOf="@+id/WheelAlignmentCheckBox"
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView

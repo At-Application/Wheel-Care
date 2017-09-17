@@ -5,13 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 
@@ -79,8 +75,8 @@ public class DismissService extends RootActivity {
                 view = getLayoutInflater().inflate(R.layout.issue_service_detail_view, null);
                 final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
                 final TextView username = (TextView) view.findViewById(R.id.username);
-                final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignment);
-                final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancing);
+                final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
+                final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
                 final TextView code = (TextView) view.findViewById(R.id.Code);
                 final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
                 final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
