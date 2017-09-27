@@ -7,6 +7,8 @@ import android.graphics.Typeface;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ViewListener;
+
 import org.w3c.dom.Text;
 import org.w3c.dom.TypeInfo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -30,6 +36,7 @@ import java.util.HashMap;
 public class ServiceProviderInfo extends RootActivity {
 
     private Typeface calibri;
+    private int index;
 
     private int ServiceProviderID;
     private String Name = "Service Provider Name";
@@ -37,10 +44,8 @@ public class ServiceProviderInfo extends RootActivity {
     private String Address = "One two three four five six seven eight nine ten eleven twelve";
     private String PhoneNumber = "9743722774";
     private String Website = "serviceprovider.com";
-    private Bitmap ProviderImage = null;
-    HashMap<String, Integer> SlotDetails = null;
-    Date CurrentDate;
-
+    private ArrayList<String> ProviderImages = null;
+    private int currentPosition = 0;
     // MARK: Initialization
 
     @Override
@@ -48,7 +53,7 @@ public class ServiceProviderInfo extends RootActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_provider_info);
         calibri = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
-        //setupIntentData();
+        setupIntentData();
         setupToolbar();
         setupListView();
         setupServiceButton();
@@ -58,15 +63,14 @@ public class ServiceProviderInfo extends RootActivity {
 
     private void setupIntentData() {
         Bundle extras = getIntent().getExtras();
-        ServiceProviderID = extras.getInt("serviceProviderID");
-        Name = extras.getString("name");
+        index = extras.getInt("index");
         Distance = extras.getString("distance");
-        Address = extras.getString("address");
-        PhoneNumber = extras.getString("phone_number");
-        Website = extras.getString("website");
-        ProviderImage = BitmapFactory.decodeByteArray(getIntent().getByteArrayExtra("image"), 0, getIntent().getByteArrayExtra("image").length);
-        SlotDetails = (HashMap<String, Integer>) getIntent().getSerializableExtra("slotDetails");
-        CurrentDate = (Date) getIntent().getSerializableExtra("currentDate");
+        ServiceProviderDetails details = ((GlobalClass)getApplicationContext()).serviceProviders.get(index);
+        ServiceProviderID = details.getId();
+        Name = details.getCompanyName();
+        Address = details.getAddress();
+        PhoneNumber = details.getContactNumber();
+        Website = details.getWebsite();
     }
 
     // MARK: Setup Tool Bar
@@ -106,16 +110,52 @@ public class ServiceProviderInfo extends RootActivity {
 
             if (position == 0) {
                 convertView = getLayoutInflater().inflate(R.layout.service_provider_image, null);
-                ImageView serviceProviderImage = (ImageView) convertView.findViewById(R.id.serviceProviderImage);
+                convertView = getLayoutInflater().inflate(R.layout.service_provider_image, null);
+                final CarouselView serviceProviderImage = (CarouselView) convertView.findViewById(R.id.serviceProviderImage);
                 TextView serviceProviderName = (TextView) convertView.findViewById(R.id.serviceProviderName);
                 TextView serviceProviderDistance = (TextView) convertView.findViewById(R.id.serviceProviderDistance);
+
+                serviceProviderImage.setPageCount(ProviderImages != null ? ProviderImages.size() : 1);
+
+                serviceProviderImage.setViewListener(new ViewListener() {
+                    @Override
+                    public View setViewForPosition(int position) {
+                        View view = getLayoutInflater().inflate(R.layout.car_view, null);
+                        ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
+                        if(ProviderImages != null) {
+                            byte[] decodedString = Base64.decode(ProviderImages.get(position), Base64.DEFAULT);
+                            imageView.setImageBitmap(BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length));
+                        } else {
+                            imageView.setImageResource(R.drawable.image_view_placeholder);
+                        }
+                        return view;
+                    }
+                });
+
+                serviceProviderImage.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        currentPosition = position;
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
+
+                serviceProviderImage.setCurrentItem(currentPosition);
+
 
                 serviceProviderName.setTypeface(calibri);
                 serviceProviderDistance.setTypeface(calibri);
 
-                if (ProviderImage != null) {
-                    serviceProviderImage.setImageBitmap(ProviderImage);
-                }
                 serviceProviderName.setText(Name);
                 serviceProviderDistance.setText(Distance);
                 if (Distance.contentEquals("1.0") || Distance.contentEquals("1")) {
@@ -186,6 +226,7 @@ public class ServiceProviderInfo extends RootActivity {
         // Service Provider ID, Current Date, Slots with details
         // Wheel Alignment and Wheel Balancing Amount
         Intent i = new Intent(getApplicationContext(), SelectServices.class);
+        i.putExtra("index", index);
         startActivity(i);
     }
 }

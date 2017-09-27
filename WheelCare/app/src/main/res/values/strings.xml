@@ -7,6 +7,12 @@
     <string name="password">Password</string>
     <string name="user_name">User Name</string>
     <string name="full_name">Full Name</string>
+    <string name="menu_home"><font fgcolor="#8f216f" size="18"><b>Home</b></font></string>
+    <string name="menu_myprofile"><font fgcolor="#8f216f" size="18"><b>My Profile</b></font></string>
+    <string name="menu_history"><font fgcolor="#8f216f" size="18"><b>History</b></font></string>
+    <string name="menu_help"><font fgcolor="#8f216f" size="18"><b>Helpline</b></font></string>
+    <string name="menu_logout"><font fgcolor="#8f216f" size="18"><b>Logout</b></font></string>
+    <string name="menu_mycars"><font fgcolor="#8f216f" size="18"><b>My Cars</b></font></string>
     <string-array name="car_brand_array">
         <item>Maruti</item>
         <item>Alto</item>
@@ -18,4 +24,10 @@
         <item>Neptune</item>
     </string-array>
     <string name="title_activity_service_provider_info">ServiceProviderInfo</string>
+    <string name="title_activity_service_provider_dashboard">ServiceProviderDashboard</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_user_dashboard">UserDashboard</string>
+    <string name="title_activity_user_home">Map</string>
 </resources>

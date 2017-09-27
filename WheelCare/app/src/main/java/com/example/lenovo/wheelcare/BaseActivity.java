@@ -1,5 +1,6 @@
 package com.example.lenovo.wheelcare;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -12,6 +13,8 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.Objects;
 
 /**
  * Created by Lenovo on 8/6/2017.
@@ -34,19 +37,44 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         Bundle bundle= new Bundle();
-        switch (view.getId()){
-            case R.id.text_user:
-                Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                i.putExtra("user_type", "usr");
-                startActivity(i);
-                break;
-            case R.id.text_provider:
-                Intent j = new Intent(getApplicationContext(),MainActivity.class);
-                j.putExtra("user_type", "sp");
-                startActivity(j);
-                break;
-            default:
-                 break;
+        Intent i;
+
+        if(AuthenticationManager.getInstance().isSessionValid() == SessionValidity.VALID) {
+            i = new Intent(getApplicationContext(), MainActivity.class);
+            switch (view.getId()){
+                case R.id.text_user:
+                    i.putExtra("user_type", "usr");
+                    break;
+                case R.id.text_provider:
+                    i.putExtra("user_type", "sp");
+                    break;
+            }
+            startActivity(i);
+        } else {
+            String userType = ((GlobalClass)getApplicationContext()).getUserType();
+            switch(view.getId()) {
+                case R.id.text_user:
+                    if (userType != null && Objects.equals(userType, "usr")) {
+                        ((GlobalClass) getApplicationContext()).setUserType("usr");
+                        i = new Intent(getApplicationContext(), UserDashboard.class);
+                    } else {
+                        i = new Intent(getApplicationContext(), MainActivity.class);
+                        i.putExtra("user_type", "usr");
+                    }
+                    startActivity(i);
+                    break;
+
+                case R.id.text_provider:
+                    if(userType != null && Objects.equals(userType, "sp")) {
+                        ((GlobalClass)getApplicationContext()).setUserType("sp");
+                        i = new Intent(getApplicationContext(), ServiceProviderDashboard.class);
+                    } else {
+                        i = new Intent(getApplicationContext(), MainActivity.class);
+                        i.putExtra("user_type", "sp");
+                    }
+                    startActivity(i);
+                    break;
+            }
         }
     }
 
@@ -71,5 +99,7 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
 
         et_user.setOnClickListener(this);
         et_service.setOnClickListener(this);
+
+        AuthenticationManager.getInstance().startTokenExpiryCheck();
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.lenovo.wheelcare">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -7,16 +8,33 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
 
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the 'MyLocation' functionality. 
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-sdk tools:overrideLibrary="org.lucasr.twowayview, org.lucasr.twowayview.widget, jp.wasabeef.recyclerview" />
+
     <application
+        android:name=".GlobalClass"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:hardwareAccelerated="false"
-        android:largeHeap="true"
+        android:icon="@drawable/wheelcare"
         android:label="Wheel Care"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".GlobalClass"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar"
+        tools:node="replace">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBwPuS9GhkGW6-e7sx43Mt_VVYclJvOkv8" />
+
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+
         <activity
             android:name=".SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -70,19 +88,31 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".PendingServices"
-            android:configChanges="orientation"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".History"
-            android:configChanges="orientation"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".DismissService"
+            android:configChanges="orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PaymentStatus"
+            android:configChanges="orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ServiceInfo"
+            android:configChanges="orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ServiceProviderDashboard"
+            android:configChanges="orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UserDashboard"
             android:configChanges="orientation"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

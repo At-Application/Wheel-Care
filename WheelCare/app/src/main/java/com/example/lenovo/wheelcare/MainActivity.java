@@ -1,6 +1,8 @@
 package com.example.lenovo.wheelcare;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -10,6 +12,8 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -68,6 +72,8 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         }
 
         setupAuthentication();
+
+        checkInternetPermission();
 
         edit_mobile =(EditText)findViewById(R.id.edit_mobile);
         edit_userpass =(EditText)findViewById(R.id.edit_userpass);
@@ -202,9 +208,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -244,6 +247,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         JSONObject object = new JSONObject();
         try {
             object.put("usertype", userType);
+            ((GlobalClass)getApplicationContext()).setUserType(userType);
             object.put("mobilenumber", edit_mobile.getText().toString());
             object.put("password", edit_userpass.getText().toString());
         } catch (JSONException e) {
@@ -255,20 +259,28 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
 
     @Override
     public void loginSuccess(JSONObject response) {
+        Log.i(TAG, "Login Success: " + userType);
         try {
-            if(userType == "usr") {
+            if(Objects.equals(userType, "usr")) {
                 if (Objects.equals((String) response.get("statusDesc"), "account already exist")) {
+                    Log.i(TAG, "Account already Exists");
                     Toast.makeText(getApplicationContext(), "User already registered", Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(getApplicationContext(), UserDashboard.class));
+                } else if(Objects.equals((String) response.get("statusDesc"), "user not registered")) {
+                    Log.i(TAG, "User not registered");
+                    startActivity(new Intent(getApplicationContext(), RegisterationActicvity.class));
+                } else if(Objects.equals((String) response.get("statusDesc"), "car not registered")) {
+                    Log.i(TAG, "Car not registered");
+                    startActivity(new Intent(getApplicationContext(), CarRegistration.class));
                 } else {
                     Log.i(TAG, "Login Successful");
                     Bundle send_number = new Bundle();
                     send_number.putString("mobile_number",edit_mobile.getText().toString());
-
                     startActivity(new Intent(getApplicationContext(), OtpActivity.class).putExtras(send_number));
                 }
             } else {
                 if (Objects.equals((String) response.get("statusDesc"), "SP login authentication successful")) {
-                    startActivity(new Intent(getApplicationContext(), PendingServices.class));
+                    startActivity(new Intent(getApplicationContext(), ServiceProviderDashboard.class));
                 }
             }
         } catch (JSONException e) {
@@ -280,5 +292,37 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     @Override
     public void loginFailed(VolleyError error) {
         Log.e(TAG, error.toString());
+    }
+
+    public static final int MY_PERMISSIONS_INTERNET = 99;
+    public boolean checkInternetPermission(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.INTERNET)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.INTERNET},
+                        MY_PERMISSIONS_INTERNET);
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.INTERNET},
+                        MY_PERMISSIONS_INTERNET);
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 }

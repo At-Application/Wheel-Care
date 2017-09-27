@@ -1,6 +1,8 @@
 package com.example.lenovo.wheelcare;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
@@ -29,24 +31,46 @@ import java.util.Objects;
 
 public class GlobalClass extends Application {
 
+    public ArrayList<ServiceProviderDetails> serviceProviders;
+
     public static final String TAG = GlobalClass.class.getSimpleName();
+
+    public boolean freezeStatus = false;
+
+    public String userType;
 
     private static final String SUCCESS = "200";
 
     public ArrayList<VehicleDetails> pending = null;
     public ArrayList<VehicleDetails> history = null;
     public ArrayList<String> issues = null;
-
+    public ArrayList<UserCarList> userCarLists = null;
     // MARK: URLs
 
     private static final String ServiceProviderInfoURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/spInfo";
     private static final String SetServiceStatusURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/serviceStatus";
+    private static final String FreezeServicesURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/setOpenStatus";
 
     public GlobalClass() {
         AuthenticationManager.getInstance().globalClass = this;
         pending = new ArrayList<>();
         history = new ArrayList<>();
         issues = new ArrayList<>();
+        userCarLists = new ArrayList<>();
+    }
+
+    public String getUserType() {
+        SharedPreferences preferences = this.getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        this.userType = preferences.getString("userType", null);
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+        SharedPreferences preferences = this.getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("userType", userType);
+        editor.apply();
     }
 
     public void getIssueList() {
@@ -71,8 +95,8 @@ public class GlobalClass extends Application {
                 Details.date_slot = new Date(date);
                 Details.code = (String) obj.get("code");
                 Details.customername = (String) obj.get("user_name");
-                Details.serviceStatus = ServiceStatus.NOT_VERIFIED;
-                //Details.serviceStatus = (ServiceStatus) obj.get("service_status");
+                //Details.serviceStatus = ServiceStatus.NOT_VERIFIED;
+                Details.serviceStatus = (ServiceStatus) obj.get("service_status");
 
                 Details.serviceRequired = new ArrayList<>();
                 String service_required = obj.getString("service_type");
@@ -140,8 +164,10 @@ public class GlobalClass extends Application {
                                         // Actual data received here
                                         JSONArray jsonArray = (JSONArray) response.get("services");
                                         Log.d("JSON Object", jsonArray.toString());
+                                        String freeze = response.get("open_status").toString();
+                                        freezeStatus = (Boolean)(freeze.trim().equals("freeze"));
                                         arrangePendingAndHistoryList(jsonArray);
-                                        callback.RetrievedServices();
+                                        if(callback != null) callback.RetrievedServices();
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -152,7 +178,7 @@ public class GlobalClass extends Application {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 Log.d(TAG, error.toString());
-                                callback.RetrievingServicesFailed(error);
+                                if(callback != null) callback.RetrievingServicesFailed(error);
                             }
                         }
                 ) {
@@ -190,11 +216,11 @@ public class GlobalClass extends Application {
 
     // MARK: For setting the status
 
-    public void setServicesStatus(final PendingServicesListener callback, VehicleDetails detail) {
+    public void setServicesStatus(VehicleDetails detail) {
 
         JSONObject object = createStatusJSONObject(detail);
         if(object != null) {
-            setServiceStatusCall(callback, object);
+            setServiceStatusCall(object);
         } else {
             Log.e(TAG, "Failed to create JSON object for fetching service provider info");
         }
@@ -204,7 +230,17 @@ public class GlobalClass extends Application {
         JSONObject object = new JSONObject();
         try {
             object.put("reg_no", detail.vehicleRegistrationNumber);
-            object.put("service_status", String.valueOf(detail.serviceStatus.ordinal()));
+            String status = new String();
+            switch(detail.serviceStatus) {
+                case NOT_VERIFIED: status = "not_verified"; break;
+                case VERIFIED: status = "verified"; break;
+                case STARTED: status = "started"; break;
+                case IN_PROGRESS: status = "inprogress"; break;
+                case FINALIZING: status = "finalizing";break;
+                case DONE: status = "done"; break;
+                case DISMISS: status = "cancelled"; break;
+            }
+            object.put("service_status", status);
             object.put("issue", detail.issue);
             object.put("comment", detail.comment);
         } catch (JSONException e) {
@@ -214,7 +250,7 @@ public class GlobalClass extends Application {
         return object;
     }
 
-    private void setServiceStatusCall(final PendingServicesListener callback, final JSONObject object) {
+    private void setServiceStatusCall(final JSONObject object) {
         // Add the request to the RequestQueue.
         WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
                 // Request a string response from the provided URL.
@@ -226,7 +262,7 @@ public class GlobalClass extends Application {
                                 try {
                                     if (Objects.equals(response.get("statusCode"), SUCCESS)) {
                                         // Actual data received here
-                                        callback.RetrievedServices();
+
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -237,7 +273,6 @@ public class GlobalClass extends Application {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 Log.d(TAG, error.toString());
-                                callback.RetrievingServicesFailed(error);
                             }
                         }
                 ) {
@@ -272,4 +307,88 @@ public class GlobalClass extends Application {
                 }
         );
     }
+
+    // MARK: For setting the status
+
+    public void freezeServices(PendingServicesListener listner, boolean freeze) {
+
+        JSONObject object = createFreezeJSONObject(freeze);
+        if(object != null) {
+            freezeCall(listner, object);
+        } else {
+            Log.e(TAG, "Failed to create JSON object for fetching service provider info");
+        }
+    }
+
+    public JSONObject createFreezeJSONObject(boolean freeze) {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("userId", AuthenticationManager.getInstance().getUserID());
+            object.put("open_status", freeze ? "freeze" : "unfreeze");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return object;
+    }
+
+    private void freezeCall(final PendingServicesListener listener, final JSONObject object) {
+        // Add the request to the RequestQueue.
+        WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
+                // Request a string response from the provided URL.
+                new JsonObjectRequest(Request.Method.POST, FreezeServicesURL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d(TAG, response.toString());
+                                try {
+                                    if (Objects.equals(response.get("statusCode"), SUCCESS)) {
+                                        // Actual data received here
+                                        listener.RetrievedServices();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, error.toString());
+                                listener.RetrievingServicesFailed(error);
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String,String> header = new HashMap<>();
+                        header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
+                        Log.e(TAG,"header "+header);
+                        return header;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() {
+                        try {
+                            return object == null ? null : object.toString().getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                        Log.d(TAG, "StatusCode: "+String.valueOf(response.statusCode));
+                        return super.parseNetworkResponse(response);
+                    }
+                }
+        );
+    }
+
 }

@@ -1,10 +1,12 @@
 package com.example.lenovo.wheelcare;
 
-import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -20,7 +22,7 @@ import java.text.SimpleDateFormat;
 
 import static android.graphics.Typeface.BOLD;
 
-public class PendingServices extends Activity implements PendingServicesListener {
+public class PendingServices extends Fragment implements PendingServicesListener {
 
     private static final String TAG = PendingServices.class.getSimpleName();
 
@@ -32,12 +34,22 @@ public class PendingServices extends Activity implements PendingServicesListener
 
     public PendingServicesListener listener;
 
+    private Button freezeButton;
+
+    private ListView listView;
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.service_provider_dashboard);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.service_provider_dashboard, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         listener = this;
-        mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        freezeButton = (Button) view.findViewById(R.id.button_freeze);
+        mySwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         mySwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -47,27 +59,30 @@ public class PendingServices extends Activity implements PendingServicesListener
                     }
                 }
         );
-        calibri = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
-        getListVehicleDetails();
-        setupListView();
+        calibri = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "Calibri.ttf");
+        freezeButton.setTypeface(calibri);
+        freezeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((GlobalClass)getActivity().getApplicationContext()).freezeStatus = !((GlobalClass)getActivity().getApplicationContext()).freezeStatus;
+                ((GlobalClass)getActivity().getApplicationContext()).freezeServices(listener, (((GlobalClass) getActivity().getApplicationContext()).freezeStatus));
+            }
+        });
+        GlobalClass context = ((GlobalClass)getActivity().getApplicationContext());
+        if((context.pending.size() == 0) && (context.history.size() == 0)) {
+            getListVehicleDetails();
+        }
+        setupListView(view);
     }
-
-    // TODO: Fetch the list from the server
 
     private void getListVehicleDetails() {
-        ((GlobalClass)getApplicationContext()).getServicesDetails(this);
-    }
-
-    // TODO: Freeze Service Provider for the day
-
-    public void freezeServices(View view) {
-
+        ((GlobalClass)getActivity().getApplicationContext()).getServicesDetails(this);
     }
 
     // MARK: List view related functions
 
-    private void setupListView() {
-        ListView listView = (ListView) findViewById(R.id.pending_services_listview);
+    private void setupListView(View view) {
+        listView = (ListView) view.findViewById(R.id.pending_services_listview);
         adapter = new PendingServiceAdapter();
         listView.setAdapter(adapter);
     }
@@ -78,6 +93,11 @@ public class PendingServices extends Activity implements PendingServicesListener
     public void RetrievedServices() {
         if(mySwipeRefreshLayout.isRefreshing()) {
             mySwipeRefreshLayout.setRefreshing(false);
+        }
+        if(((GlobalClass)getActivity().getApplicationContext()).freezeStatus) {
+            freezeButton.setText("FREEZE");
+        } else{
+            freezeButton.setText("UN-FREEZE");
         }
         adapter.notifyDataSetChanged();
     }
@@ -94,7 +114,7 @@ public class PendingServices extends Activity implements PendingServicesListener
 
         @Override
         public int getCount() {
-            return (((GlobalClass)getApplicationContext()).pending.size() + 1);
+            return (((GlobalClass)getActivity().getApplicationContext()).pending.size() + 1);
         }
 
         @Override
@@ -112,7 +132,7 @@ public class PendingServices extends Activity implements PendingServicesListener
 
             final int i = pos;
             if(i > 0) {
-                final VehicleDetails service = ((GlobalClass)getApplicationContext()).pending.get(i-1);
+                final VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i-1);
 
                 SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
                 String date = fmt.format(service.date_slot);
@@ -121,7 +141,7 @@ public class PendingServices extends Activity implements PendingServicesListener
 
                     case NOT_VERIFIED:
                         {
-                            view = getLayoutInflater().inflate(R.layout.pending_services_listview_row, null);
+                            view = getLayoutInflater(null).inflate(R.layout.pending_services_listview_row, null);
                             final Button verifyButton = (Button) view.findViewById(R.id.ButtonVerifyCode);
                             final Button cancel = (Button) view.findViewById(R.id.ButtonCancel);
                             final Button verify = (Button) view.findViewById(R.id.ButtonContinue);
@@ -162,8 +182,8 @@ public class PendingServices extends Activity implements PendingServicesListener
                                 public void onClick(View view) {
                                     if (code.getText().toString().trim().equals(service.code)) {
                                         service.serviceStatus = ServiceStatus.VERIFIED;
-                                        ((GlobalClass) getApplicationContext()).pending.set((i - 1), service);
-                                        ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
+                                        ((GlobalClass) getActivity().getApplicationContext()).pending.set((i - 1), service);
+                                        ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
                                     } else {
                                         code.setText("Failed");
                                     }
@@ -178,7 +198,7 @@ public class PendingServices extends Activity implements PendingServicesListener
                     case IN_PROGRESS:
                     case FINALIZING:
                         {
-                            view = getLayoutInflater().inflate(R.layout.pending_service_info_detail_view, null);
+                            view = getLayoutInflater(null).inflate(R.layout.pending_service_info_detail_view, null);
                             final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
                             final TextView username = (TextView) view.findViewById(R.id.username);
                             final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
@@ -229,8 +249,8 @@ public class PendingServices extends Activity implements PendingServicesListener
                                 @Override
                                 public void onClick(View view) {
                                     service.serviceStatus = ServiceStatus.STARTED;
-                                    ((GlobalClass) getApplicationContext()).pending.set(i - 1, service);
-                                    ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
+                                    ((GlobalClass) getActivity().getApplicationContext()).pending.set(i - 1, service);
+                                    ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
                                     notifyDataSetChanged();
                                 }
                             });
@@ -239,8 +259,8 @@ public class PendingServices extends Activity implements PendingServicesListener
                                 @Override
                                 public void onClick(View view) {
                                     service.serviceStatus = ServiceStatus.IN_PROGRESS;
-                                    ((GlobalClass) getApplicationContext()).pending.set(i - 1, service);
-                                    ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
+                                    ((GlobalClass) getActivity().getApplicationContext()).pending.set(i - 1, service);
+                                    ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
                                     notifyDataSetChanged();
                                 }
                             });
@@ -249,8 +269,8 @@ public class PendingServices extends Activity implements PendingServicesListener
                                 @Override
                                 public void onClick(View view) {
                                     service.serviceStatus = ServiceStatus.FINALIZING;
-                                    ((GlobalClass) getApplicationContext()).pending.set(i - 1, service);
-                                    ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
+                                    ((GlobalClass) getActivity().getApplicationContext()).pending.set(i - 1, service);
+                                    ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
                                     notifyDataSetChanged();
                                 }
                             });
@@ -259,30 +279,30 @@ public class PendingServices extends Activity implements PendingServicesListener
                                 @Override
                                 public void onClick(View view) {
                                     service.serviceStatus = ServiceStatus.DONE;
-                                    ((GlobalClass) getApplicationContext()).pending.set(i - 1, service);
+                                    ((GlobalClass) getActivity().getApplicationContext()).pending.set(i - 1, service);
                                     // Removing from pending list and adding to history list
-                                    ((GlobalClass) getApplicationContext()).history.add(0, service);
-                                    ((GlobalClass) getApplicationContext()).pending.remove(i - 1);
-                                    ((GlobalClass) getApplicationContext()).setServicesStatus(listener, service);
+                                    ((GlobalClass) getActivity().getApplicationContext()).history.add(0, service);
+                                    ((GlobalClass) getActivity().getApplicationContext()).pending.remove(i - 1);
+                                    ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
                                     notifyDataSetChanged();
                                 }
                             });
 
                             switch (service.serviceStatus) {
                                 case DONE:
-                                    done.setBackground(getDrawable(R.color.green));
+                                    done.setBackground(getActivity().getApplicationContext().getDrawable(R.color.green));
                                     done.setClickable(false);
 
                                 case FINALIZING:
-                                    finalizing.setBackground(getDrawable(R.drawable.border_green));
+                                    finalizing.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
                                     finalizing.setClickable(false);
 
                                 case IN_PROGRESS:
-                                    inProgress.setBackground(getDrawable(R.drawable.border_green));
+                                    inProgress.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
                                     inProgress.setClickable(false);
 
                                 case STARTED:
-                                    started.setBackground(getDrawable(R.drawable.border_green));
+                                    started.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
                                     started.setClickable(false);
                             }
                         }
@@ -296,7 +316,7 @@ public class PendingServices extends Activity implements PendingServicesListener
                         break;
                 }
             } else {
-                view = new View(getApplicationContext());
+                view = new View(getActivity().getApplicationContext());
                 view.setMinimumHeight(5);
                 view.setBackgroundResource(R.color.white);
             }

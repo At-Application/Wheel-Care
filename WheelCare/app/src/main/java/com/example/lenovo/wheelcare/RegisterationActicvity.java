@@ -210,12 +210,15 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
     @Override
     public void registrationSuccessful() {
         Log.i(TAG, "Registration Successful");
-        Toast.makeText(this.getApplicationContext(), "Registration Successful", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this.getApplicationContext(), "Registration Successful", Toast.LENGTH_LONG).show();
         startActivity(new Intent(getApplicationContext(),CarRegistration.class));
     }
 
     @Override
     public void registrationFailed(VolleyError error) {
         Log.e(TAG, error.toString());
+        if(error.networkResponse.statusCode == 409) {
+            Toast.makeText(this.getApplicationContext(), "Email already registered", Toast.LENGTH_LONG).show();
+        }
     }
 }

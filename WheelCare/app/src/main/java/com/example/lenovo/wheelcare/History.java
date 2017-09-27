@@ -2,7 +2,10 @@ package com.example.lenovo.wheelcare;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -19,22 +22,27 @@ import static android.graphics.Typeface.BOLD;
  * Created by Vimal on 10-09-2017.
  */
 
-public class History extends RootActivity {
+public class History extends Fragment {
 
     private Typeface calibri;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.history);
-        calibri = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
-        setupListView();
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.history, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        calibri = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "Calibri.ttf");
+        setupListView(view);
     }
 
     // MARK: List view related functions
 
-    private void setupListView() {
-        ListView listView = (ListView) findViewById(R.id.pending_services_listview);
+    private void setupListView(View view) {
+        ListView listView = (ListView) view.findViewById(R.id.pending_services_listview);
         HistoryAdapter adapter = new HistoryAdapter();
         listView.setAdapter(adapter);
     }
@@ -43,8 +51,8 @@ public class History extends RootActivity {
 
         @Override
         public int getCount() {
-            Log.d("SIZE", String.valueOf(((GlobalClass)getApplicationContext()).history.size()));
-            return ((GlobalClass)getApplicationContext()).history.size();
+            Log.d("SIZE", String.valueOf(((GlobalClass)getActivity().getApplicationContext()).history.size()));
+            return ((GlobalClass)getActivity().getApplicationContext()).history.size();
         }
 
         @Override
@@ -60,14 +68,14 @@ public class History extends RootActivity {
         @Override
         public View getView(int position, View view, ViewGroup parent) {
 
-            final VehicleDetails service = ((GlobalClass)getApplicationContext()).history.get(position);
+            final VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).history.get(position);
 
             if(service.serviceStatus == ServiceStatus.DONE || service.serviceStatus == ServiceStatus.DISMISS) {
 
                 SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
                 String date = fmt.format(service.date_slot);
 
-                view = getLayoutInflater().inflate(R.layout.pending_service_info_detail_view, null);
+                view = getLayoutInflater(null).inflate(R.layout.pending_service_info_detail_view, null);
                 final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
                 final TextView username = (TextView) view.findViewById(R.id.username);
                 final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
@@ -111,7 +119,7 @@ public class History extends RootActivity {
                 // Main Logic
                 if (service.issue != null) {
                     historyStatus.setText(service.issue);
-                    historyStatus.setBackground(getDrawable(R.color.red));
+                    historyStatus.setBackground(getActivity().getDrawable(R.color.red));
                 }
             } else {
                 view = null;

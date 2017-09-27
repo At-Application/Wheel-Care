@@ -56,17 +56,22 @@
             app:layout_constraintVertical_bias="0.52" />
     </android.support.constraint.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/slotView"
-        android:layout_width="match_parent"
-        android:layout_height="50dp">
-
-    </LinearLayout>
-
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/time_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.52" />
 
         <TextView
             android:id="@+id/SelectedSlot"
@@ -77,7 +82,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical|start"
             android:paddingLeft="10dp"
-            android:text="Selected Slot"
+            android:text="Select Slot"
             android:textColor="@color/btn_color"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -89,14 +94,14 @@
             android:id="@+id/slot"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="15dp"
             android:layout_marginTop="0dp"
             android:gravity="center_vertical|start"
-            android:text="0"
+            android:text="15:00"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/button4"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
     </android.support.constraint.ConstraintLayout>

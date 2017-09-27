@@ -33,7 +33,7 @@ import java.util.Objects;
  * Description: This framework is designed for At Application to be its default OTP request and verification framework
  */
 
-public class OTPManager extends BroadcastReceiver {
+public class OTPManager {
 
     // MARK: Enums
 
@@ -182,53 +182,5 @@ public class OTPManager extends BroadcastReceiver {
                     }
                 }
         );
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-
-        Log.d(TAG, "onReceive");
-        // Retrieves a map of extended data from the intent.
-        final Bundle bundle = intent.getExtras();
-
-        try {
-
-            if (bundle != null) {
-
-                final Object[] pdusObj = (Object[]) bundle.get("pdus");
-
-                for (int i = 0; i < pdusObj.length; i++) {
-
-                    SmsMessage currentMessage;
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        String format = bundle.getString("format");
-                        currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i], format);
-                    }
-                    else {
-                        currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
-                    }
-
-                    Log.d(TAG, currentMessage.getDisplayOriginatingAddress());
-
-                    String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-
-                    String senderNum = phoneNumber;
-                    String message = currentMessage.getDisplayMessageBody().split(":")[1];
-
-                    message = message.substring(0, message.length()-1);
-                    Log.i("SmsReceiver", "senderNum: " + senderNum + "; message: " + message);
-
-                    Intent myIntent = new Intent("otp");
-                    myIntent.putExtra("message", message);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(myIntent);
-                    // Show Alert
-
-                } // end for loop
-            } // bundle is null
-
-        } catch (Exception e) {
-            Log.e("SmsReceiver", "Exception smsReceiver" +e);
-        }
     }
 }

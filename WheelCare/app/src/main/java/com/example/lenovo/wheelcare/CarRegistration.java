@@ -1,5 +1,6 @@
 package com.example.lenovo.wheelcare;
 
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -23,14 +24,29 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * Created by Lenovo on 8/9/2017.
  */
 
-public class CarRegistration extends BaseActivity implements View.OnClickListener{
+public class CarRegistration extends BaseActivity implements View.OnClickListener {
     private Typeface custom_font_light;
     private ArrayAdapter<CharSequence> adapter;
     public Spinner brand_spinner,model_spinner,type_spinner;
@@ -43,14 +59,19 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
     private boolean isValidCarNumber= false;
     private Button submit_btn;
 
+    private static final String TAG = UserHome.class.getSimpleName();
+
+    private static final String CarRegistrationURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/carRegistration";
+
+    private static final String SUCCESS = "200";
+
     @Override
     public void onClick(View view) {
         super.onClick(view);
         if (isValidCarNumber){
-            //startActivity()
-            Toast.makeText(getApplicationContext(),"Car added successfully!",Toast.LENGTH_LONG).show();
+            registerCar();
         }else if(et_carRegno.getText().toString().length()==0){
-            text_invalid_regno.setText("This field cannot be empty!");
+            text_invalid_regno.setText("All field are required");
             text_invalid_regno.setVisibility(View.VISIBLE);
         }
     }
@@ -60,7 +81,6 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_registration);
-
 
         //txt_title= (TextView)findViewById(R.id.txt_title);
         brand_spinner = (Spinner) findViewById(R.id.brand_spinner);
@@ -74,6 +94,7 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
        // spinner_text= (TextView)findViewById(R.id.spinner_text);
         carImage = (ImageView)findViewById(R.id.carImage);
         et_carRegno= (EditText)findViewById(R.id.et_carRegno);
+        et_carRegno.setEnabled(false);
         submit_btn= (Button)findViewById(R.id.btn_submit);
         custom_font_light = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
 
@@ -162,6 +183,7 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
                 TextView selectedText = (TextView) adapterView.getChildAt(0);
                 if (selectedText != null && selectedText.getText() != "Vehicle Type") {
                     selectedText.setTextColor(Color.BLACK);
+                    et_carRegno.setEnabled(true);
                 }
             }
 
@@ -194,7 +216,8 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
                     carImage.setImageResource(R.drawable.renaultkwid);
                 }else{
                     type_spinner.setEnabled(false);
-                    carImage.setVisibility(View.INVISIBLE);
+                    carImage.setVisibility(View.VISIBLE);
+                    carImage.setImageResource(R.drawable.dummy_car);
                 }
                 ((TextView) v).setTypeface(custom_font_light);
                 return v;
@@ -353,5 +376,88 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
         //type_spinner.setClickable(false);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         brand_spinner.setAdapter(adapter);
+    }
+
+    private void startCarRegistration() {
+        Toast.makeText(getApplicationContext(), "Car added successfully!", Toast.LENGTH_LONG).show();
+        startActivity(new Intent(getApplicationContext(), UserDashboard.class));
+    }
+
+    // MARK: For registering CAR
+
+    public void registerCar() {
+        JSONObject object = createJSONObject();
+        if(object != null) {
+            ServiceProviderCall(object);
+        } else {
+            Log.e(TAG, "Failed to create JSON object for fetching service provider info");
+        }
+    }
+
+    public JSONObject createJSONObject() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("userId", AuthenticationManager.getInstance().getUserID());
+            object.put("carManufacture", brand_spinner.getSelectedItem().toString());
+            object.put("regNo", et_carRegno.getText());
+            object.put("carName", model_spinner.getSelectedItem().toString());
+            object.put("carType", type_spinner.getSelectedItem().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return object;
+    }
+
+    private void ServiceProviderCall(final JSONObject object) {
+        // Add the request to the RequestQueue.
+        WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
+                // Request a string response from the provided URL.
+                new JsonObjectRequest(Request.Method.POST, CarRegistrationURL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d(TAG, response.toString());
+                                // Actual data received here
+                                startCarRegistration();
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, error.toString());
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String,String> header = new HashMap<>();
+                        header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
+                        Log.e(TAG,"header "+header);
+                        return header;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() {
+                        try {
+                            return object == null ? null : object.toString().getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                        Log.d(TAG, "StatusCode: "+String.valueOf(response.statusCode));
+                        return super.parseNetworkResponse(response);
+                    }
+                }
+        );
     }
 }

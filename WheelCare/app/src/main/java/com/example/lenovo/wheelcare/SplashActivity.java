@@ -24,10 +24,9 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent base_intent = new Intent(SplashActivity.this,BaseActivity.class);
+                Intent base_intent = new Intent(SplashActivity.this, BaseActivity.class);
                 SplashActivity.this.startActivity(base_intent);
                 SplashActivity.this.finish();
-
             }
         },SPLASH_DISPLAY_LENGTH);
         /*splash_background= getResources().getDrawable(R.drawable.splash_background);

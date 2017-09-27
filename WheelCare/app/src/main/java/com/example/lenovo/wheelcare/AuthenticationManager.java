@@ -16,9 +16,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Module Name: Authentication Manager
@@ -100,6 +103,10 @@ public class AuthenticationManager {
 
     private String baseTokenExpirationDateKey = "baseTokenExpDate";
 
+    private TimerTask timerTask;
+
+    private static long PriorTime = (1000 * 60 * 5); // 5 min
+
     GlobalClass globalClass;
 
     // MARK: Initializer
@@ -143,9 +150,15 @@ public class AuthenticationManager {
 
     private void setUserID(String userID) {
         this.userID = userID;
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("userID", userID);
+        editor.apply();
     }
 
     public String getUserID() {
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        this.userID = preferences.getString("userID", null);
         return this.userID;
     }
 
@@ -188,6 +201,47 @@ public class AuthenticationManager {
         SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("AccessToken", Context.MODE_PRIVATE);
         this.accessTokenExpirationDate = preferences.getLong("expiry", 0);
         return this.accessTokenExpirationDate;
+    }
+
+    private boolean isTokenExpired(Long expiryTime) {
+        if(expiryTime == null) return true;
+
+        Date expiry = new Date(expiryTime);
+        Date current = new Date();
+        if(expiry.getTime() < current.getTime()) {
+            return true;
+        }
+        return false;
+    }
+
+    public void startTokenExpiryCheck() {
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(isTokenExpired(getBaseTokenExpiry())) {
+                    // Base Token is expired. User has to login again.
+                    // This situation will never come as new Base token is generated while renewing
+                } else {
+                    // Base Token not expired. Renew the session
+                    renewToken(globalClass.getApplicationContext());
+                }
+            }
+        };
+
+        if(getUserID() != null) {
+            if(isTokenExpired(getAccessTokenExpiry())) {
+                if(isTokenExpired(getBaseTokenExpiry())) {
+                    setSession(SessionValidity.INVALID);
+                } else {
+                    renewToken(globalClass.getApplicationContext());
+                }
+            } else {
+                Long current = new Date().getTime();
+                new Timer().schedule(timerTask, (getAccessTokenExpiry() - current - PriorTime));
+            }
+        } else {
+            setSession(SessionValidity.INVALID);
+        }
     }
 
     private void setBaseToken(String token, Long expiryTime) {
@@ -240,9 +294,11 @@ public class AuthenticationManager {
                                     case SSO: break;
                                     default:
                                         setAccessToken((String) response.get(accessTokenKey), (Long) response.get(accessTokenExpirationDateKey));
-                                        setAccessToken((String) response.get(baseTokenKey), (Long) response.get(baseTokenExpirationDateKey));
+                                        setBaseToken((String) response.get(baseTokenKey), (Long) response.get(baseTokenExpirationDateKey));
                                 }
                                 setUserID((String) response.get("userId"));
+                                setSession(SessionValidity.VALID);
+                                startTokenExpiryCheck();
                                 callback.loginSuccess(response);
                             }
                         } catch (JSONException e) {
@@ -363,7 +419,16 @@ public class AuthenticationManager {
                                 try {
                                     if (Objects.equals((String) response.get("statusCode"), SUCCESS)) {
                                         Log.d(TAG, "Inside");
-
+                                        AuthenticationType type = getAuthenticationType();
+                                        switch(type) {
+                                            case NORMAL: break;
+                                            case SSO: break;
+                                            default:
+                                                setAccessToken((String) response.get(accessTokenKey), (Long) response.get(accessTokenExpirationDateKey));
+                                                setBaseToken((String) response.get(baseTokenKey), (Long) response.get(baseTokenExpirationDateKey));
+                                        }
+                                        setSession(SessionValidity.VALID);
+                                        startTokenExpiryCheck();
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -381,7 +446,7 @@ public class AuthenticationManager {
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String,String> header = new HashMap<>();
-                        header.put("X-BASE-TOKEN", getAccessToken());
+                        header.put("X-BASE-TOKEN", getBaseToken());
                         Log.e(TAG,"header "+header);
                         return header;
                     }

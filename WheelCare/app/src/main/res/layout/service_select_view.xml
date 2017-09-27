@@ -56,6 +56,7 @@
             android:layout_marginStart="10dp"
             android:text="Wheel Alignment"
             android:textSize="18sp"
+            app:buttonTint="@color/btn_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -93,6 +94,7 @@
             android:layout_marginStart="10dp"
             android:text="Wheel Balancing"
             android:textSize="18sp"
+            app:buttonTint="@color/btn_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

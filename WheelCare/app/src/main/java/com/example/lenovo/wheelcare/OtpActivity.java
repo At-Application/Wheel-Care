@@ -1,14 +1,18 @@
 package com.example.lenovo.wheelcare;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.telephony.SmsMessage;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -34,6 +38,9 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
 
     private OTPManager otpManager = new OTPManager();
 
+    IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+
+
     private static final String otpRequestURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/loginOTP";
     private static final String otpVerifyURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/loginOTPValidate";
 
@@ -56,7 +63,6 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
 
         otpManager.setOTPRequestURL(otpRequestURL);
         otpManager.setOTPVerifyURL(otpVerifyURL);
-
         otpManager.requestOTP(this.getApplicationContext(), this);
 
         text_auto_detect= (TextView)findViewById(R.id.text_auto_detect);
@@ -84,6 +90,8 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
         btn_submit.setTypeface(custom_font_light);
         text_resend_sms.setTypeface(custom_font_light);
         text_otp_error.setTypeface(custom_font_light);
+
+        checkSMSPermission();
 
         btn_submit.setOnClickListener(this);
 
@@ -120,15 +128,13 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
     protected void onResume() {
         super.onResume();
 
-        IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+          final Bundle bundle = intent.getExtras();
 
                 Log.d(TAG, "onReceive");
                 // Retrieves a map of extended data from the intent.
-                final Bundle bundle = intent.getExtras();
 
                 try {
 
@@ -153,13 +159,18 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
                                 String phoneNumber = currentMessage.getDisplayOriginatingAddress();
 
                                 String senderNum = phoneNumber;
-                                String message = currentMessage.getDisplayMessageBody().split(":")[1];
+                                String message = currentMessage.getDisplayMessageBody();
 
-                                message = message.substring(0, message.length() - 1);
-                                Log.i("SmsReceiver", "senderNum: " + senderNum + "; message: " + message);
-
-                                Intent myIntent = new Intent("otp");
-                                myIntent.putExtra("message", message);
+                                message = message.substring(22,26);
+                                try
+                                {
+                                if (senderNum.equals("IM-WHEELC"))
+                                {
+                                    et_otp.setText(message);
+                                    btn_submit.performClick();
+                                    btn_submit.setPressed(true);
+                                }
+                            } catch(Exception e){}
                                 // Show Alert
 
                             } // end for loop
@@ -194,6 +205,7 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
         // Nothing to be done
     }
 
+
     @Override
     public void OTPRequestFailed(VolleyError error) {
         Log.e(TAG, error.toString());
@@ -207,5 +219,37 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
     @Override
     public void OTPVerificationFailed(VolleyError error) {
         Log.e(TAG, error.toString());
+    }
+
+   public static final int MY_PERMISSIONS_RECEIVE_SMS = 99;
+    public boolean checkSMSPermission(){
+         if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.RECEIVE_SMS)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECEIVE_SMS},
+                        MY_PERMISSIONS_RECEIVE_SMS);
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECEIVE_SMS},
+                        MY_PERMISSIONS_RECEIVE_SMS);
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 }

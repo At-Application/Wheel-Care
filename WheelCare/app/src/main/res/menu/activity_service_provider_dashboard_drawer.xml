@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/home">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@mipmap/home"
+            android:title="@string/menu_home"
+            />
+    </group>
+
+    <group android:id="@+id/user">
+        <item
+            android:id="@+id/nav_user"
+            android:icon="@mipmap/user"
+            android:title="@string/menu_myprofile" />
+    </group>
+
+    <group android:id="@+id/history">
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@mipmap/history"
+            android:title="@string/menu_history" />
+    </group>
+
+    <group android:id="@+id/helpline">
+        <item
+            android:id="@+id/nav_helpline"
+            android:icon="@mipmap/phicon"
+            android:title="@string/menu_help" />
+    </group>
+    <group android:id="@+id/logout">
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@mipmap/wheel"
+            android:title="@string/menu_logout" />
+
+    </group>
+
+
+</menu>
