@@ -1,5 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.lenovo.wheelcare.MainActivity">
+    tools:context="com.wheelcare.lenovo.wheelcare.com.example.wheelcare.MainActivity">
 </menu>

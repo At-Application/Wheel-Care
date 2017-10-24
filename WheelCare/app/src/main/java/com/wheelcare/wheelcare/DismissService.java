@@ -1,0 +1,156 @@
+package com.wheelcare.wheelcare;
+
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.wheelcare.wheelcare.R;
+
+import java.text.SimpleDateFormat;
+
+import static android.graphics.Typeface.BOLD;
+
+/**
+ * Created by Vimal on 10-09-2017.
+ */
+
+public class DismissService extends RootActivity {
+
+    private Typeface calibri;
+    private Button dismiss_submit_btn;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.issues);
+        calibri = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
+        dismiss_submit_btn= (Button)findViewById(R.id.dismissbutton);
+        getIssuesList();
+        setupListView();
+
+        Bundle bundle = getIntent().getExtras();
+        final int removePosition = bundle.getInt("position");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        dismiss_submit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((GlobalClass)getApplicationContext()).history.add(((GlobalClass)getApplicationContext()).pending.get(removePosition - 1));
+                ((GlobalClass)getApplicationContext()).pending.remove(removePosition - 1);
+            }
+        });
+
+    }
+
+    private void getIssuesList() {
+        ((GlobalClass)getApplicationContext()).getIssueList();
+    }
+
+    private void setupListView() {
+        ListView listView = (ListView) findViewById(R.id.issuesList);
+        IssuesAdapter adapter = new IssuesAdapter();
+        listView.setAdapter(adapter);
+    }
+
+    private class IssuesAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return ((GlobalClass)getApplicationContext()).issues.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View view, ViewGroup parent) {
+
+            if(position > 0) {
+                view = getLayoutInflater().inflate(R.layout.issue_list_row, null);
+                TextView issueString = (TextView) view.findViewById(R.id.textView);
+                issueString.setTypeface(calibri, BOLD);
+
+                issueString.setText(((GlobalClass) getApplicationContext()).issues.get(position - 1));
+            } else {
+                // TODO: Should be the position from previous screen
+                final VehicleDetails service = ((GlobalClass)getApplicationContext()).history.get(position);
+                SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
+                String date = fmt.format(service.date_slot);
+
+                view = getLayoutInflater().inflate(R.layout.issue_service_detail_view, null);
+                final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
+                final TextView username = (TextView) view.findViewById(R.id.username);
+                final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
+                final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
+                final TextView code = (TextView) view.findViewById(R.id.Code);
+                final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
+                final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
+
+                registrationNumber.setTypeface(calibri);
+                username.setTypeface(calibri, BOLD);
+                wheelAlignment.setTypeface(calibri);
+                wheelBalancing.setTypeface(calibri);
+                code.setTypeface(calibri, BOLD);
+                dateSlot.setTypeface(calibri);
+
+                registrationNumber.setText(service.vehicleRegistrationNumber);
+                username.setText(service.customername);
+                if (service.serviceRequired.contains(ServiceType.WHEEL_ALIGNMENT)) {
+                    wheelAlignment.setHeight(20);
+                } else {
+                    wheelAlignment.setHeight(0);
+                }
+
+                if (service.serviceRequired.contains(ServiceType.WHEEL_BALANCING)) {
+                    wheelBalancing.setHeight(20);
+                } else {
+                    wheelBalancing.setHeight(0);
+                }
+                dateSlot.setText(date);
+                code.setText("CODE: ");
+                code.append(service.code);
+                vehicleImage.setImageBitmap(service.vehicleImage);
+
+                // TODO: Implement On click for sending the status
+            }
+            return view;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+}

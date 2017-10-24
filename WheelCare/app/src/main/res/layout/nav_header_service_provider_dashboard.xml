@@ -10,7 +10,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:backgroundTint="#8f216f">
+    style="@style/navHeaderColor">
 
     <!--<ImageView-->
     <!--android:id="@+id/imageView"-->

@@ -35,4 +35,9 @@
     <style name="AppTheme.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="navHeaderColor" parent="Base.TextAppearance.AppCompat.Button" >
+        <item name="backgroundTint">@color/btn_color</item>
+    </style>
+
 </resources>
