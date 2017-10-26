@@ -64,7 +64,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
 
     private static final String TAG = UserHome.class.getSimpleName();
 
-    private static final String ServiceProviderListURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/getSPInfos";
+    private static final String ServiceProviderListURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getSPInfos";
 
     private static final String SUCCESS = "200";
 
@@ -112,7 +112,8 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
         distance =(TextView)view.findViewById(R.id.providerDistance);
         serviceProvider.setTypeface(calibri);
         distance.setTypeface(calibri);
-        infoView.setVisibility(View.VISIBLE);
+        infoView.setVisibility(View.INVISIBLE);
+        infoView.setClickable(false);
 
         progressBar = (ConstraintLayout) view.findViewById(R.id.ProgressBar);
         regNo = (TextView) progressBar.findViewById(R.id.textView2);
@@ -132,6 +133,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
         finalizing.setTypeface(calibri, BOLD);
         done.setTypeface(calibri, BOLD);
         progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setClickable(false);
 
         if(mapview != null){
             mapview.onCreate(null);
@@ -176,6 +178,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
                                 case IN_PROGRESS:
                                 case FINALIZING:
                                     progressBar.setVisibility(View.VISIBLE);
+                                    infoView.setClickable(false);
                                     proceed = false;
                                     break;
 
@@ -196,6 +199,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
                     newLocation.setLatitude(m.getPosition().latitude);
                     newLocation.setLongitude(m.getPosition().longitude);
                     infoView.setVisibility(View.VISIBLE);
+                    infoView.setClickable(true);
                     progressBar.setVisibility(View.INVISIBLE);
                     Distance = String.format("%.1f", mLastLocation.distanceTo(newLocation) / 1000);
                     //Toast.makeText(MapsActivity.this, Float.toString(mLastLocation.distanceTo(newLocation)/1000), Toast.LENGTH_LONG).show();
@@ -236,6 +240,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
             @Override
             public void onMapClick(LatLng latLng) {
                 infoView.setVisibility(View.INVISIBLE);
+                infoView.setClickable(false);
                 for(UserCarList obj:((GlobalClass)context).userCarLists) {
                     if (obj.getServiceStatus() != null){
                         switch(obj.getServiceStatus()) {
@@ -493,12 +498,14 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
                         slot.setText(obj.getSlot());
                         progressBar.setVisibility(View.VISIBLE);
                         infoView.setVisibility(View.INVISIBLE);
+                        infoView.setClickable(false);
                         break;
 
                     case DONE:
                     case DISMISS:
                         progressBar.setVisibility(View.INVISIBLE);
                         infoView.setVisibility(infoView.getVisibility());
+                        infoView.setClickable(infoView.getVisibility() == View.VISIBLE);
                         break;
                 }
                 break;

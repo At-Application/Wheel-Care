@@ -60,7 +60,7 @@ public class UserCarList {
                 }
                 Slot = (String) response.get("slot");
                 Code = (String) response.get("code");
-                ServiceProivderID = (Integer) response.get("spId");
+                ServiceProivderID = Integer.parseInt((String)response.get("spId"));
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -55,7 +55,7 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
 
     private static final String TAG = UserHome.class.getSimpleName();
 
-    private static final String CarRegistrationURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/carRegistration";
+    private static final String CarRegistrationURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carRegistration";
 
     private static final String SUCCESS = "200";
 

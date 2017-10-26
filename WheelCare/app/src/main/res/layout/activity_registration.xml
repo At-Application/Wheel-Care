@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.wheelcare.lenovo.wheelcare.com.example.wheelcare.RegisterationActicvity">
+    tools:context="com.wheelcare.wheelcare.RegisterationActicvity">
 
     <LinearLayout
         android:layout_width="match_parent"

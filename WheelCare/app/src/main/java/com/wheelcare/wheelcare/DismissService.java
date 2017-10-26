@@ -27,31 +27,53 @@ public class DismissService extends RootActivity {
 
     private Typeface calibri;
     private Button dismiss_submit_btn;
+    private int removePosition;
+    private Issues issue;
+    private TextView comment;
+
+    private VehicleDetails service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.issues);
+
         calibri = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
         dismiss_submit_btn= (Button)findViewById(R.id.dismissbutton);
         getIssuesList();
         setupListView();
 
         Bundle bundle = getIntent().getExtras();
-        final int removePosition = bundle.getInt("position");
+        removePosition = bundle.getInt("position");
+        service = ((GlobalClass)getApplicationContext()).pending.get(removePosition);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setupToolbar();
+
+        comment = (TextView)findViewById(R.id.Comments);
 
         dismiss_submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((GlobalClass)getApplicationContext()).history.add(((GlobalClass)getApplicationContext()).pending.get(removePosition - 1));
-                ((GlobalClass)getApplicationContext()).pending.remove(removePosition - 1);
+                ((GlobalClass)getApplicationContext()).pending.remove(removePosition);
+                service.serviceStatus = ServiceStatus.DISMISS;
+                service.issue = issue.issue;
+                service.comment = comment.getText().toString();
+                ((GlobalClass)getApplicationContext()).pending.get(removePosition).serviceStatus = ServiceStatus.DISMISS;
+                ((GlobalClass)getApplicationContext()).pending.get(removePosition).issue = issue.issue;
+                ((GlobalClass)getApplicationContext()).pending.get(removePosition).comment = comment.getText().toString();
+                ((GlobalClass)getApplicationContext()).setServicesStatus(service);
             }
         });
+    }
 
+    private void setupToolbar() {
+        TextView title = (TextView) findViewById(R.id.toolbar_title);
+        title.setText("Dismiss Service");
     }
 
     private void getIssuesList() {
@@ -82,17 +104,29 @@ public class DismissService extends RootActivity {
         }
 
         @Override
-        public View getView(int position, View view, ViewGroup parent) {
+        public View getView(final int position, View view, ViewGroup parent) {
 
             if(position > 0) {
                 view = getLayoutInflater().inflate(R.layout.issue_list_row, null);
                 TextView issueString = (TextView) view.findViewById(R.id.textView);
+                ImageView tick = (ImageView) view.findViewById(R.id.tick);
                 issueString.setTypeface(calibri, BOLD);
 
-                issueString.setText(((GlobalClass) getApplicationContext()).issues.get(position - 1));
+                issueString.setText(((GlobalClass) getApplicationContext()).issues.get(position - 1).issue);
+                tick.setVisibility(((GlobalClass) getApplicationContext()).issues.get(position - 1).status == true ? View.VISIBLE : View.INVISIBLE);
+
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        for(int j = 0; j < ((GlobalClass) getApplicationContext()).issues.size(); j++)
+                            ((GlobalClass) getApplicationContext()).issues.get(j).status = false;
+                        ((GlobalClass) getApplicationContext()).issues.get(position - 1).status = true;
+                        issue = ((GlobalClass) getApplicationContext()).issues.get(position - 1);
+                        notifyDataSetChanged();
+                    }
+                });
             } else {
                 // TODO: Should be the position from previous screen
-                final VehicleDetails service = ((GlobalClass)getApplicationContext()).history.get(position);
                 SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
                 String date = fmt.format(service.date_slot);
 
@@ -129,8 +163,6 @@ public class DismissService extends RootActivity {
                 code.setText("CODE: ");
                 code.append(service.code);
                 vehicleImage.setImageBitmap(service.vehicleImage);
-
-                // TODO: Implement On click for sending the status
             }
             return view;
         }
@@ -152,5 +184,4 @@ public class DismissService extends RootActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }

@@ -40,18 +40,20 @@ public class GlobalClass extends Application {
 
     public String userType;
 
+    public static final String IPAddress = "139.59.77.103:8080";
+
     private static final String SUCCESS = "200";
 
     public ArrayList<VehicleDetails> pending = null;
     public ArrayList<VehicleDetails> history = null;
-    public ArrayList<String> issues = null;
+    public ArrayList<Issues> issues = null;
     public ArrayList<UserCarList> userCarLists = null;
     public ArrayList<VehicleDetails> userhistory = null;
     // MARK: URLs
 
-    private static final String ServiceProviderInfoURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/spInfo";
-    private static final String SetServiceStatusURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/serviceStatus";
-    private static final String FreezeServicesURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/setOpenStatus";
+    private static final String ServiceProviderInfoURL = "http://" + IPAddress + "/wheelcare/rest/consumer/spInfo";
+    private static final String SetServiceStatusURL = "http://" + IPAddress + "/wheelcare/rest/consumer/serviceStatus";
+    private static final String FreezeServicesURL = "http://" + IPAddress + "/wheelcare/rest/consumer/setOpenStatus";
 
     public GlobalClass() {
         AuthenticationManager.getInstance().globalClass = this;
@@ -78,7 +80,9 @@ public class GlobalClass extends Application {
 
     public void getIssueList() {
         for (int i = 0; i < 10; i++) {
-            String value = "Issue " + (i+1);
+            Issues value = new Issues();
+            value.issue = "Issue " + (i+1);
+            value.status = false;
             issues.add(value);
         }
     }
@@ -98,8 +102,17 @@ public class GlobalClass extends Application {
                 Details.date_slot = new Date(date);
                 Details.code = (String) obj.get("code");
                 Details.customername = (String) obj.get("user_name");
-                //Details.serviceStatus = ServiceStatus.NOT_VERIFIED;
-                Details.serviceStatus = (ServiceStatus) obj.get("service_status");
+
+                String serviceStatusString = (String) obj.get("service_status");
+                switch(serviceStatusString) {
+                    case "not_verified": Details.serviceStatus = ServiceStatus.NOT_VERIFIED; break;
+                    case "verified": Details.serviceStatus = ServiceStatus.VERIFIED; break;
+                    case "started": Details.serviceStatus = ServiceStatus.STARTED; break;
+                    case "inprogress": Details.serviceStatus = ServiceStatus.IN_PROGRESS; break;
+                    case "finalizing": Details.serviceStatus = ServiceStatus.FINALIZING; break;
+                    case "done": Details.serviceStatus = ServiceStatus.DONE; break;
+                    case "cancelled": Details.serviceStatus = ServiceStatus.DISMISS; break;
+                }
 
                 Details.serviceRequired = new ArrayList<>();
                 String service_required = obj.getString("service_type");
@@ -114,9 +127,9 @@ public class GlobalClass extends Application {
                     Details.serviceRequired.add(ServiceType.WHEEL_BALANCING);
                 }
                 Details.vehicleImage = BitmapFactory.decodeResource(getResources(), R.drawable.alto);
-                Details.issue = (String) obj.get("issue");
+                Details.issue = obj.isNull("issue") ? "" : (String) obj.get("issue");
                 Details.userID = (String) obj.get("uId");
-                Details.comment = (String) obj.get("comment");
+                Details.comment = obj.isNull("comment") ? "" : (String) obj.get("comment");
 
                 services.add(Details);
             }

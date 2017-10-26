@@ -47,8 +47,8 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     boolean is_hidden = true;
     private TextView header;
 
-    public static final String loginURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/mobileLoginAuth";
-    public static final String renewURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/getRefreshToken";
+    public static final String loginURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/mobileLoginAuth";
+    public static final String renewURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getRefreshToken";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,9 +213,9 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        if ((isValidPassword)&&(isValidMobile)) {
+        //if ((isValidPassword)&&(isValidMobile)) {
             login();
-        }
+        //}
     }
 
     public void setupAuthentication() {
@@ -237,7 +237,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         JSONObject object = new JSONObject();
         try {
             object.put("usertype", userType);
-            ((GlobalClass)getApplicationContext()).setUserType(userType);
             object.put("mobilenumber", edit_mobile.getText().toString());
             object.put("password", edit_userpass.getText().toString());
         } catch (JSONException e) {
@@ -251,6 +250,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     public void loginSuccess(JSONObject response) {
         Log.i(TAG, "Login Success: " + userType);
         try {
+            ((GlobalClass)getApplicationContext()).setUserType(userType);
             if(Objects.equals(userType, "usr")) {
                 if (Objects.equals((String) response.get("statusDesc"), "account already exist")) {
                     Log.i(TAG, "Account already Exists");

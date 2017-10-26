@@ -83,7 +83,7 @@ public class ServiceInfo extends RootActivity {
                 Address = obj.getAddress();
                 PhoneNumber = obj.getContactNumber();
                 Website = obj.getWebsite();
-                ProviderImage = BitmapFactory.decodeByteArray(getIntent().getByteArrayExtra("image"), 0, getIntent().getByteArrayExtra("image").length);
+                //ProviderImage = BitmapFactory.decodeByteArray(getIntent().getByteArrayExtra("image"), 0, getIntent().getByteArrayExtra("image").length);
             }
         }
     }

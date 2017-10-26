@@ -83,7 +83,6 @@ public class UserDashboard extends AppCompatActivity
         } else if(id == R.id.nav_my_cars) {
             title.setText("MyCars");
             fragment = new MyCars();
-
         } else if (id == R.id.nav_history) {
             title.setText("History");
             fragment = new UserHistory();

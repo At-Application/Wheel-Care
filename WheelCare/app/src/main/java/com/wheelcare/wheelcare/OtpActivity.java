@@ -39,8 +39,8 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
     IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 
 
-    private static final String otpRequestURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/loginOTP";
-    private static final String otpVerifyURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/loginOTPValidate";
+    private static final String otpRequestURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/loginOTP";
+    private static final String otpVerifyURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/loginOTPValidate";
 
     private Typeface custom_font_light;
     private TextView text_auto_detect;

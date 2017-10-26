@@ -30,10 +30,10 @@ public class ServiceProviderDetails {
             Latitude = Double.parseDouble((String)response.get("lat"));
             Longitude = Double.parseDouble((String)response.get("lng"));
             Address = (String) response.get("address");
-            Website = (String) response.get("website");
+            Website = response.isNull("website") ? "" : (String) response.get("website");
             ContactNumber = (String) response.get("contactNo");
-            WheelBalancingAmount = Float.parseFloat((String)response.get("wheel_balancing_service"));
-            WheelAlignmentAmount = Float.parseFloat((String)response.get("wheel_alignment_service"));
+            WheelBalancingAmount = response.isNull("wheel_balancing_service") ? 0 : Float.parseFloat((String)response.get("wheel_balancing_service"));
+            WheelAlignmentAmount = response.isNull("wheel_alignment_service") ? 0 : Float.parseFloat((String)response.get("wheel_alignment_service"));
         } catch(JSONException e) {
             e.printStackTrace();
         }

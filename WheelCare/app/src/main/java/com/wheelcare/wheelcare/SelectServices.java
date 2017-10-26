@@ -54,7 +54,7 @@ public class SelectServices extends RootActivity {
 
     private static final String TAG = UserHome.class.getSimpleName();
 
-    private static final String getSlotURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/getSlot";
+    private static final String getSlotURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getSlot";
 
     private static final String SUCCESS = "200";
 

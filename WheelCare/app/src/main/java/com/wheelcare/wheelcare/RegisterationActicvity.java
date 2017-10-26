@@ -27,7 +27,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
 
     private static final String TAG = RegisterationActicvity.class.getSimpleName();
 
-    public static final String registrationURL = "http://139.59.11.210:8080/wheelcare/rest/consumer/doRegistration";
+    public static final String registrationURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/doRegistration";
 
     private TextView welcome_text;
     private EditText et_user;
