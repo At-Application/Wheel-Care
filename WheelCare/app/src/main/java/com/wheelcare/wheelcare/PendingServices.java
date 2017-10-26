@@ -119,9 +119,6 @@ public class PendingServices extends Fragment implements PendingServicesListener
     }
 
     private class PendingServiceAdapter extends BaseSwipeAdapter{
-//            implements SwipeItemMangerInterface, SwipeAdapterInterface {
-//        protected SwipeItemAdapterMangerImpl mItemManger = new SwipeItemAdapterMangerImpl(this);
-
 
         @Override
         public int getCount() {
@@ -151,7 +148,7 @@ public class PendingServices extends Fragment implements PendingServicesListener
             View view = null ;
             final int i = pos;
                 final VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
-
+                Log.d(TAG, "code: " + service.code + " status:" + service.serviceStatus.toString());
                 SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
                 String date = fmt.format(service.date_slot);
 
@@ -160,7 +157,7 @@ public class PendingServices extends Fragment implements PendingServicesListener
                     case NOT_VERIFIED:
                     {
                         view = getLayoutInflater(null).inflate(R.layout.pending_services_listview_row, null);
-                        SwipeLayout swipeLayout = (SwipeLayout)view.findViewById(getSwipeLayoutResourceId(pos));
+                        final SwipeLayout swipeLayout = (SwipeLayout)view.findViewById(getSwipeLayoutResourceId(pos));
                         swipeLayout.addSwipeListener(new SimpleSwipeListener() {
                             @Override
                             public void onOpen(SwipeLayout layout) {
@@ -173,6 +170,7 @@ public class PendingServices extends Fragment implements PendingServicesListener
                                 Toast.makeText(getActivity().getApplicationContext(), String.valueOf(pos), Toast.LENGTH_SHORT).show();
                                 //call backend to delete item
                                 //add intent here
+                                swipeLayout.close();
                                 Intent intent = new Intent(getActivity().getApplicationContext(),DismissService.class);
                                 intent.putExtra("position", i);
                                 startActivity(intent);
@@ -237,7 +235,7 @@ public class PendingServices extends Fragment implements PendingServicesListener
                     case FINALIZING:
                     {
                         view = getLayoutInflater(null).inflate(R.layout.pending_service_info_detail_view, null);
-                        SwipeLayout swipeLayout = (SwipeLayout)view.findViewById(getSwipeLayoutResourceId(pos));
+                        final SwipeLayout swipeLayout = (SwipeLayout)view.findViewById(getSwipeLayoutResourceId(pos));
                         swipeLayout.addSwipeListener(new SimpleSwipeListener() {
                             @Override
                             public void onOpen(SwipeLayout layout) {
@@ -249,6 +247,7 @@ public class PendingServices extends Fragment implements PendingServicesListener
                             public void onClick(View view) {
                                 //call backend to delete item
                                 //add intent here
+                                swipeLayout.close();
                                 Intent intent = new Intent(getActivity().getApplicationContext(),DismissService.class);
                                 Log.d(TAG, "POS: " + i);
                                 intent.putExtra("position", i);
@@ -339,8 +338,8 @@ public class PendingServices extends Fragment implements PendingServicesListener
                                 // Removing from pending list and adding to history list
                                 ((GlobalClass) getActivity().getApplicationContext()).history.add(0, service);
                                 ((GlobalClass) getActivity().getApplicationContext()).pending.remove(i);
-                                ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
                                 notifyDataSetChanged();
+                                ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
                             }
                         });
 

@@ -20,4 +20,17 @@ public class VehicleDetails {
     public String issue;
     public String comment;
     public String userID;
+
+    public void clear()
+    {
+        vehicleImage = null;
+        vehicleRegistrationNumber = null;
+        customername = null;
+        date_slot = null;
+        serviceRequired.clear();
+        serviceStatus = null;
+        issue = null;
+        comment = null;
+        userID = null;
+    }
 }

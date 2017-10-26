@@ -72,7 +72,6 @@ public class History extends Fragment {
 
             final VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).history.get(position);
 
-            if(service.serviceStatus == ServiceStatus.DONE || service.serviceStatus == ServiceStatus.DISMISS) {
 
                 SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
                 String date = fmt.format(service.date_slot);
@@ -113,19 +112,23 @@ public class History extends Fragment {
                 } else {
                     wheelBalancing.setHeight(0);
                 }
-                dateSlot.setText(date);
-                code.setText("CODE: ");
-                code.append(service.code);
-                vehicleImage.setImageBitmap(service.vehicleImage);
 
-                // Main Logic
-                if (service.issue != null) {
-                    historyStatus.setText(service.issue);
-                    historyStatus.setBackground(getActivity().getDrawable(R.color.red));
-                }
-            } else {
-                view = null;
+            dateSlot.setText(date);
+            code.setText("CODE: ");
+            code.append(service.code);
+            vehicleImage.setImageBitmap(service.vehicleImage);
+
+            // Main Logic
+            if (service.issue != null && service.issue != "") {
+                historyStatus.setText(service.issue);
             }
+
+            if(service.serviceStatus == ServiceStatus.DONE) {
+                historyStatus.setBackground(getActivity().getDrawable(R.color.green));
+            } else if(service.serviceStatus == ServiceStatus.DISMISS) {
+                historyStatus.setBackground(getActivity().getDrawable(R.color.red));
+            }
+
             return view;
         }
     }
