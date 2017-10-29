@@ -9,31 +9,24 @@
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clickable="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="30dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginBottom="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="30dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </com.google.android.gms.maps.MapView>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/spInfoLayout"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="45dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/map"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.0">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
 
         <TextView
             android:id="@+id/providerDistance"
@@ -69,16 +62,13 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/ProgressBar"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="30dp"
         android:background="@color/white"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/spInfoLayout"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
 
         <TextView
             android:id="@+id/textView2"
@@ -131,12 +121,9 @@
 
         <LinearLayout
             android:id="@+id/StatusBar"
-            android:layout_width="368dp"
+            android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_below="@+id/slot"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
             android:orientation="horizontal"
             android:visibility="visible"
             android:weightSum="4"

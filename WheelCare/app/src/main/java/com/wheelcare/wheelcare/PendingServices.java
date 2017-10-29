@@ -147,232 +147,464 @@ public class PendingServices extends Fragment implements PendingServicesListener
         public View generateView(final int pos, ViewGroup viewGroup) {
             View view = null ;
             final int i = pos;
-                final VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
-                Log.d(TAG, "code: " + service.code + " status:" + service.serviceStatus.toString());
-                SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
-                String date = fmt.format(service.date_slot);
+            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+            switch (service.serviceStatus) {
 
-                switch(service.serviceStatus) {
-
-                    case NOT_VERIFIED:
-                    {
-                        view = getLayoutInflater(null).inflate(R.layout.pending_services_listview_row, null);
-                        final SwipeLayout swipeLayout = (SwipeLayout)view.findViewById(getSwipeLayoutResourceId(pos));
-                        swipeLayout.addSwipeListener(new SimpleSwipeListener() {
-                            @Override
-                            public void onOpen(SwipeLayout layout) {
-                                YoYo.with(Techniques.Tada).duration(500).delay(100).playOn(layout.findViewById(R.id.trash));
-                            }
-                        });
-                        view.findViewById(R.id.trash).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Toast.makeText(getActivity().getApplicationContext(), String.valueOf(pos), Toast.LENGTH_SHORT).show();
-                                //call backend to delete item
-                                //add intent here
-                                swipeLayout.close();
-                                Intent intent = new Intent(getActivity().getApplicationContext(),DismissService.class);
-                                intent.putExtra("position", i);
-                                startActivity(intent);
-//
-
-                            }
-                        });
-                        final Button verifyButton = (Button) view.findViewById(R.id.ButtonVerifyCode);
-                        final Button cancel = (Button) view.findViewById(R.id.ButtonCancel);
-                        final Button verify = (Button) view.findViewById(R.id.ButtonContinue);
-                        final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
-                        final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
-                        final EditText code = (EditText) view.findViewById(R.id.code);
-
-                        verifyButton.setTypeface(calibri);
-                        registrationNumber.setTypeface(calibri);
-                        dateSlot.setTypeface(calibri);
-                        code.setTypeface(calibri);
-
-                        registrationNumber.setText(service.vehicleRegistrationNumber);
-                        dateSlot.setText(date);
-
-                        verifyButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                verifyButton.setVisibility(View.INVISIBLE);
-                                cancel.setVisibility(View.VISIBLE);
-                                verify.setVisibility(View.VISIBLE);
-                                code.setVisibility(View.VISIBLE);
-                            }
-                        });
-
-                        cancel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                verifyButton.setVisibility(View.VISIBLE);
-                                cancel.setVisibility(View.INVISIBLE);
-                                verify.setVisibility(View.INVISIBLE);
-                                code.setVisibility(View.INVISIBLE);
-                            }
-                        });
-
-                        verify.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (code.getText().toString().trim().equals(service.code)) {
-                                    service.serviceStatus = ServiceStatus.VERIFIED;
-                                    ((GlobalClass) getActivity().getApplicationContext()).pending.set((i), service);
-                                    ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                                } else {
-                                    code.setText("Failed");
-                                }
-                                notifyDataSetChanged();
-                            }
-                        });
-                    }
+                case NOT_VERIFIED:
+                    view = getLayoutInflater(null).inflate(R.layout.pending_services_listview_row, null);
                     break;
-
-                    case VERIFIED:
-                    case STARTED:
-                    case IN_PROGRESS:
-                    case FINALIZING:
-                    {
-                        view = getLayoutInflater(null).inflate(R.layout.pending_service_info_detail_view, null);
-                        final SwipeLayout swipeLayout = (SwipeLayout)view.findViewById(getSwipeLayoutResourceId(pos));
-                        swipeLayout.addSwipeListener(new SimpleSwipeListener() {
-                            @Override
-                            public void onOpen(SwipeLayout layout) {
-                                YoYo.with(Techniques.Tada).duration(500).delay(100).playOn(layout.findViewById(R.id.trash));
-                            }
-                        });
-                        view.findViewById(R.id.trash).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                //call backend to delete item
-                                //add intent here
-                                swipeLayout.close();
-                                Intent intent = new Intent(getActivity().getApplicationContext(),DismissService.class);
-                                Log.d(TAG, "POS: " + i);
-                                intent.putExtra("position", i);
-                                startActivity(intent);
-                            }
-                        });
-                        final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
-                        final TextView username = (TextView) view.findViewById(R.id.username);
-                        final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
-                        final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
-                        final TextView code = (TextView) view.findViewById(R.id.Code);
-                        final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
-                        final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
-                        final Button started = (Button) view.findViewById(R.id.Started);
-                        final Button inProgress = (Button) view.findViewById(R.id.InProgress);
-                        final Button finalizing = (Button) view.findViewById(R.id.Finalizing);
-                        final Button done = (Button) view.findViewById(R.id.Done);
-                        final TextView historyStatus = (TextView) view.findViewById(R.id.CompletionStatus);
-
-                        historyStatus.setVisibility(View.INVISIBLE);
-
-                        registrationNumber.setTypeface(calibri);
-                        username.setTypeface(calibri, BOLD);
-                        wheelAlignment.setTypeface(calibri);
-                        wheelBalancing.setTypeface(calibri);
-                        code.setTypeface(calibri, BOLD);
-                        dateSlot.setTypeface(calibri);
-
-                        started.setTextSize(12);
-                        inProgress.setTextSize(12);
-                        finalizing.setTextSize(12);
-                        done.setTextSize(12);
-                        code.setTextSize(25);
-
-                        registrationNumber.setText(service.vehicleRegistrationNumber);
-                        username.setText(service.customername);
-                        if (service.serviceRequired.contains(ServiceType.WHEEL_ALIGNMENT)) {
-                            wheelAlignment.setHeight(20);
-                        } else {
-                            wheelAlignment.setHeight(0);
-                        }
-
-                        if (service.serviceRequired.contains(ServiceType.WHEEL_BALANCING)) {
-                            wheelBalancing.setHeight(20);
-                        } else {
-                            wheelBalancing.setHeight(0);
-                        }
-                        dateSlot.setText(date);
-                        code.setText("CODE: ");
-                        code.append(service.code);
-                        vehicleImage.setImageBitmap(service.vehicleImage);
-
-                        started.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                service.serviceStatus = ServiceStatus.STARTED;
-                                ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
-                                ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                                notifyDataSetChanged();
-                            }
-                        });
-
-                        inProgress.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                service.serviceStatus = ServiceStatus.IN_PROGRESS;
-                                ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
-                                ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                                notifyDataSetChanged();
-                            }
-                        });
-
-                        finalizing.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                service.serviceStatus = ServiceStatus.FINALIZING;
-                                ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
-                                ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                                notifyDataSetChanged();
-                            }
-                        });
-
-                        done.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                service.serviceStatus = ServiceStatus.DONE;
-                                ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
-                                // Removing from pending list and adding to history list
-                                ((GlobalClass) getActivity().getApplicationContext()).history.add(0, service);
-                                ((GlobalClass) getActivity().getApplicationContext()).pending.remove(i);
-                                notifyDataSetChanged();
-                                ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                            }
-                        });
-
-                        switch (service.serviceStatus) {
-                            case DONE:
-                                done.setBackground(getActivity().getApplicationContext().getDrawable(R.color.green));
-                                done.setClickable(false);
-
-                            case FINALIZING:
-                                finalizing.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
-                                finalizing.setClickable(false);
-
-                            case IN_PROGRESS:
-                                inProgress.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
-                                inProgress.setClickable(false);
-
-                            case STARTED:
-                                started.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
-                                started.setClickable(false);
-                        }
-                    }
-                    break;
-
-                    case DONE:
-                    case DISMISS:
-                    {
-                        view = null;
-                    }
-                    break;
+                case VERIFIED:
+                case STARTED:
+                case IN_PROGRESS:
+                case FINALIZING:
+                    view = getLayoutInflater(null).inflate(R.layout.pending_service_info_detail_view, null);
+            }
+            final SwipeLayout swipeLayout = (SwipeLayout) view.findViewById(getSwipeLayoutResourceId(pos));
+            swipeLayout.addSwipeListener(new SimpleSwipeListener() {
+                @Override
+                public void onOpen(SwipeLayout layout) {
+                    YoYo.with(Techniques.Tada).duration(500).delay(100).playOn(layout.findViewById(R.id.trash));
                 }
-
+            });
+            view.findViewById(R.id.trash).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getActivity().getApplicationContext(), String.valueOf(pos), Toast.LENGTH_SHORT).show();
+                    //call backend to delete item
+                    //add intent here
+                    swipeLayout.close();
+                    Intent intent = new Intent(getActivity().getApplicationContext(), DismissService.class);
+                    intent.putExtra("position", i);
+                    startActivity(intent);
+                }
+            });
             return view;
         }
+
+
+        @Override
+        public void fillValues(final int pos, View view) {
+            final int i = pos;
+            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+            Log.d(TAG, "code: " + service.code + " status:" + service.serviceStatus.toString());
+            SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
+            String date = fmt.format(service.date_slot);
+
+            switch (service.serviceStatus) {
+
+                case NOT_VERIFIED: {
+                    final Button verifyButton = (Button) view.findViewById(R.id.ButtonVerifyCode);
+                    final Button cancel = (Button) view.findViewById(R.id.ButtonCancel);
+                    final Button verify = (Button) view.findViewById(R.id.ButtonContinue);
+                    final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
+                    final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
+                    final EditText code = (EditText) view.findViewById(R.id.code);
+
+                    verifyButton.setTypeface(calibri);
+                    registrationNumber.setTypeface(calibri);
+                    dateSlot.setTypeface(calibri);
+                    code.setTypeface(calibri);
+
+                    registrationNumber.setText(service.vehicleRegistrationNumber);
+                    dateSlot.setText(date);
+
+                    verifyButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            verifyButton.setVisibility(View.INVISIBLE);
+                            cancel.setVisibility(View.VISIBLE);
+                            verify.setVisibility(View.VISIBLE);
+                            code.setVisibility(View.VISIBLE);
+                        }
+                    });
+
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            verifyButton.setVisibility(View.VISIBLE);
+                            cancel.setVisibility(View.INVISIBLE);
+                            verify.setVisibility(View.INVISIBLE);
+                            code.setVisibility(View.INVISIBLE);
+                        }
+                    });
+
+                    verify.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            if (code.getText().toString().trim().equals(service.code)) {
+                                service.serviceStatus = ServiceStatus.VERIFIED;
+                                ((GlobalClass) getActivity().getApplicationContext()).pending.set((i), service);
+                                ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                                adapter.notifyDataSetChanged();
+                            } else {
+                                code.setText("Failed");
+                            }
+                        }
+                    });
+                }
+                break;
+
+                case VERIFIED:
+                case STARTED:
+                case IN_PROGRESS:
+                case FINALIZING: {
+                    final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
+                    final TextView username = (TextView) view.findViewById(R.id.username);
+                    final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
+                    final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
+                    final TextView code = (TextView) view.findViewById(R.id.Code);
+                    final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
+                    final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
+                    final Button started = (Button) view.findViewById(R.id.Started);
+                    final Button inProgress = (Button) view.findViewById(R.id.InProgress);
+                    final Button finalizing = (Button) view.findViewById(R.id.Finalizing);
+                    final Button done = (Button) view.findViewById(R.id.Done);
+                    final TextView historyStatus = (TextView) view.findViewById(R.id.CompletionStatus);
+
+                    historyStatus.setVisibility(View.INVISIBLE);
+
+                    registrationNumber.setTypeface(calibri);
+                    username.setTypeface(calibri, BOLD);
+                    wheelAlignment.setTypeface(calibri);
+                    wheelBalancing.setTypeface(calibri);
+                    code.setTypeface(calibri, BOLD);
+                    dateSlot.setTypeface(calibri);
+
+                    started.setTextSize(12);
+                    inProgress.setTextSize(12);
+                    finalizing.setTextSize(12);
+                    done.setTextSize(12);
+                    code.setTextSize(25);
+
+                    registrationNumber.setText(service.vehicleRegistrationNumber);
+                    username.setText(service.customername);
+                    if (service.serviceRequired.contains(ServiceType.WHEEL_ALIGNMENT)) {
+                        wheelAlignment.setHeight(20);
+                    } else {
+                        wheelAlignment.setHeight(0);
+                    }
+
+                    if (service.serviceRequired.contains(ServiceType.WHEEL_BALANCING)) {
+                        wheelBalancing.setHeight(20);
+                    } else {
+                        wheelBalancing.setHeight(0);
+                    }
+                    dateSlot.setText(date);
+                    code.setText("CODE: ");
+                    code.append(service.code);
+                    vehicleImage.setImageBitmap(service.vehicleImage);
+
+                    switch (service.serviceStatus) {
+                        case DONE:
+                            Log.d(TAG, "DONE colour");
+                            done.setBackground(getActivity().getApplicationContext().getDrawable(R.color.green));
+                            done.setClickable(false);
+
+                        case FINALIZING:
+                            Log.d(TAG, "FINALIZING colour");
+                            finalizing.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
+                            finalizing.setClickable(false);
+
+                        case IN_PROGRESS:
+                            Log.d(TAG, "IN PROGRESS colour");
+                            inProgress.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
+                            inProgress.setClickable(false);
+
+                        case STARTED:
+                            Log.d(TAG, "STARTED colour");
+                            started.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
+                            started.setClickable(false);
+                    }
+
+                    started.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            service.serviceStatus = ServiceStatus.STARTED;
+                            ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                            ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    inProgress.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            service.serviceStatus = ServiceStatus.IN_PROGRESS;
+                            ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                            ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    finalizing.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            service.serviceStatus = ServiceStatus.FINALIZING;
+                            ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                            ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    done.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            service.serviceStatus = ServiceStatus.DONE;
+                            //((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                            // Removing from pending list and adding to history list
+                            ((GlobalClass) getActivity().getApplicationContext()).history.add(0, service);
+                            ((GlobalClass) getActivity().getApplicationContext()).pending.remove(i);
+                            ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+                break;
+            }
+        }
+
+        /*@Override
+        public View generateView(final int pos, ViewGroup viewGroup) {
+            View view = null ;
+            final int i = pos;
+            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+            Log.d(TAG, "code: " + service.code + " status:" + service.serviceStatus.toString());
+            SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
+            String date = fmt.format(service.date_slot);
+
+            switch (service.serviceStatus) {
+
+                case NOT_VERIFIED: {
+                    view = getLayoutInflater(null).inflate(R.layout.pending_services_listview_row, null);
+                    final SwipeLayout swipeLayout = (SwipeLayout) view.findViewById(getSwipeLayoutResourceId(pos));
+                    swipeLayout.addSwipeListener(new SimpleSwipeListener() {
+                        @Override
+                        public void onOpen(SwipeLayout layout) {
+                            YoYo.with(Techniques.Tada).duration(500).delay(100).playOn(layout.findViewById(R.id.trash));
+                        }
+                    });
+                    view.findViewById(R.id.trash).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(getActivity().getApplicationContext(), String.valueOf(pos), Toast.LENGTH_SHORT).show();
+                            //call backend to delete item
+                            //add intent here
+                            swipeLayout.close();
+                            Intent intent = new Intent(getActivity().getApplicationContext(), DismissService.class);
+                            intent.putExtra("position", i);
+                            startActivity(intent);
+//
+
+                        }
+                    });
+                    final Button verifyButton = (Button) view.findViewById(R.id.ButtonVerifyCode);
+                    final Button cancel = (Button) view.findViewById(R.id.ButtonCancel);
+                    final Button verify = (Button) view.findViewById(R.id.ButtonContinue);
+                    final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
+                    final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
+                    final EditText code = (EditText) view.findViewById(R.id.code);
+
+                    verifyButton.setTypeface(calibri);
+                    registrationNumber.setTypeface(calibri);
+                    dateSlot.setTypeface(calibri);
+                    code.setTypeface(calibri);
+
+                    registrationNumber.setText(service.vehicleRegistrationNumber);
+                    dateSlot.setText(date);
+
+                    verifyButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            verifyButton.setVisibility(View.INVISIBLE);
+                            cancel.setVisibility(View.VISIBLE);
+                            verify.setVisibility(View.VISIBLE);
+                            code.setVisibility(View.VISIBLE);
+                        }
+                    });
+
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            verifyButton.setVisibility(View.VISIBLE);
+                            cancel.setVisibility(View.INVISIBLE);
+                            verify.setVisibility(View.INVISIBLE);
+                            code.setVisibility(View.INVISIBLE);
+                        }
+                    });
+
+                    verify.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            if (code.getText().toString().trim().equals(service.code)) {
+                                service.serviceStatus = ServiceStatus.VERIFIED;
+                                ((GlobalClass) getActivity().getApplicationContext()).pending.set((i), service);
+                                ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            } else {
+                                code.setText("Failed");
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+                break;
+
+                case VERIFIED:
+                case STARTED:
+                case IN_PROGRESS:
+                case FINALIZING: {
+                    view = getLayoutInflater(null).inflate(R.layout.pending_service_info_detail_view, null);
+                    final SwipeLayout swipeLayout = (SwipeLayout) view.findViewById(getSwipeLayoutResourceId(pos));
+                    swipeLayout.addSwipeListener(new SimpleSwipeListener() {
+                        @Override
+                        public void onOpen(SwipeLayout layout) {
+                            YoYo.with(Techniques.Tada).duration(500).delay(100).playOn(layout.findViewById(R.id.trash));
+                        }
+                    });
+                    view.findViewById(R.id.trash).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //call backend to delete item
+                            //add intent here
+                            swipeLayout.close();
+                            Intent intent = new Intent(getActivity().getApplicationContext(), DismissService.class);
+                            Log.d(TAG, "POS: " + i);
+                            intent.putExtra("position", i);
+                            startActivity(intent);
+                        }
+                    });
+
+                    final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
+                    final TextView username = (TextView) view.findViewById(R.id.username);
+                    final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
+                    final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
+                    final TextView code = (TextView) view.findViewById(R.id.Code);
+                    final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
+                    final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
+                    final Button started = (Button) view.findViewById(R.id.Started);
+                    final Button inProgress = (Button) view.findViewById(R.id.InProgress);
+                    final Button finalizing = (Button) view.findViewById(R.id.Finalizing);
+                    final Button done = (Button) view.findViewById(R.id.Done);
+                    final TextView historyStatus = (TextView) view.findViewById(R.id.CompletionStatus);
+
+                    historyStatus.setVisibility(View.INVISIBLE);
+
+                    registrationNumber.setTypeface(calibri);
+                    username.setTypeface(calibri, BOLD);
+                    wheelAlignment.setTypeface(calibri);
+                    wheelBalancing.setTypeface(calibri);
+                    code.setTypeface(calibri, BOLD);
+                    dateSlot.setTypeface(calibri);
+
+                    started.setTextSize(12);
+                    inProgress.setTextSize(12);
+                    finalizing.setTextSize(12);
+                    done.setTextSize(12);
+                    code.setTextSize(25);
+
+                    registrationNumber.setText(service.vehicleRegistrationNumber);
+                    username.setText(service.customername);
+                    if (service.serviceRequired.contains(ServiceType.WHEEL_ALIGNMENT)) {
+                        wheelAlignment.setHeight(20);
+                    } else {
+                        wheelAlignment.setHeight(0);
+                    }
+
+                    if (service.serviceRequired.contains(ServiceType.WHEEL_BALANCING)) {
+                        wheelBalancing.setHeight(20);
+                    } else {
+                        wheelBalancing.setHeight(0);
+                    }
+                    dateSlot.setText(date);
+                    code.setText("CODE: ");
+                    code.append(service.code);
+                    vehicleImage.setImageBitmap(service.vehicleImage);
+
+                    switch (service.serviceStatus) {
+                        case DONE:
+                            Log.d(TAG, "DONE colour");
+                            done.setBackground(getActivity().getApplicationContext().getDrawable(R.color.green));
+                            done.setClickable(false);
+
+                        case FINALIZING:
+                            Log.d(TAG, "FINALIZING colour");
+                            finalizing.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
+                            finalizing.setClickable(false);
+
+                        case IN_PROGRESS:
+                            Log.d(TAG, "IN PROGRESS colour");
+                            inProgress.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
+                            inProgress.setClickable(false);
+
+                        case STARTED:
+                            Log.d(TAG, "STARTED colour");
+                            started.setBackground(getActivity().getApplicationContext().getDrawable(R.drawable.border_green));
+                            started.setClickable(false);
+                    }
+
+                    started.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            service.serviceStatus = ServiceStatus.STARTED;
+                            ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                            ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    inProgress.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            service.serviceStatus = ServiceStatus.IN_PROGRESS;
+                            ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                            ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    finalizing.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            service.serviceStatus = ServiceStatus.FINALIZING;
+                            ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                            ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    done.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).pending.get(i);
+                            service.serviceStatus = ServiceStatus.DONE;
+                            //((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                            // Removing from pending list and adding to history list
+                            ((GlobalClass) getActivity().getApplicationContext()).history.add(0, service);
+                            ((GlobalClass) getActivity().getApplicationContext()).pending.remove(i);
+                            ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+                break;
+
+                case DONE:
+                case DISMISS: {
+                    view = null;
+                }
+                break;
+            }
+
+            return view;
+        }*/
 
         /*
         @Override
@@ -613,9 +845,5 @@ public class PendingServices extends Fragment implements PendingServicesListener
             return view;
         }*/
 
-        @Override
-        public void fillValues(int i, View view) {
-
-        }
     }
 }

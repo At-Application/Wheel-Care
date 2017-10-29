@@ -105,7 +105,7 @@ public class SelectServices extends RootActivity {
         setupDate();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupToolbar();
         setupListView();
         setupServiceButton();
