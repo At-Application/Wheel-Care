@@ -13,6 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
 import com.wheelcare.wheelcare.R;
 
 import org.json.JSONArray;
@@ -21,8 +22,10 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -405,6 +408,29 @@ public class GlobalClass extends Application {
                     }
                 }
         );
+    }
+
+    public ArrayList<Vehicle> getCarList() {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("CarList", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = preferences.getString("list", "");
+        Vehicle[] vlist = gson.fromJson(json, Vehicle[].class);
+        try {
+            List<Vehicle> vehiclelist = Arrays.asList(vlist);
+            return new ArrayList<Vehicle>(vehiclelist);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public void saveCarList(ArrayList<Vehicle> list) {
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("CarList", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        Gson gson =  new Gson();
+        String json = gson.toJson(list);
+        editor.putString("list", json);
+        editor.apply();
     }
 
 }

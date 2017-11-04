@@ -494,6 +494,7 @@ public class SelectServices extends RootActivity {
                 }
         );
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

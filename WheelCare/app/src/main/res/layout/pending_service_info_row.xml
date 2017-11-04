@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.daimajia.swipe.SwipeLayout
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <LinearLayout
+        android:layout_width="130dp"
+        android:layout_height="80dp"
+        android:background="@color/red_press"
+        android:gravity="center"
+        android:tag="Bottom3"
+        android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/trash"
+            android:src="@drawable/trash"
+            android:layout_width="30dp"
+            android:layout_gravity="center"
+            android:layout_height="30dp" />
+    </LinearLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/detailsView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp">
+
+            <TextView
+                android:id="@+id/WheelAlignmentCheckBox"
+                android:layout_width="0dp"
+                android:layout_height="21dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="3dp"
+                android:gravity="center_vertical|start"
+                android:text="Wheel Alignment"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/WheelBalancingCheckBox" />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="0dp"
+                android:layout_height="21dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="2dp"
+                android:gravity="center_vertical|start"
+                android:text="TextView"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vehiclenumber" />
+
+            <TextView
+                android:id="@+id/Code"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="9dp"
+                android:gravity="bottom|end"
+                android:text="CODE: ABCDEF"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <TextView
+                android:id="@+id/vehiclenumber"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical|start"
+                android:text="TextView"
+                android:textColor="#8f216f"
+                android:textSize="23sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/WheelBalancingCheckBox"
+                android:layout_width="0dp"
+                android:layout_height="21dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="2dp"
+                android:gravity="center_vertical|start"
+                android:text="Wheel Balancing"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/username" />
+
+            <TextView
+                android:id="@+id/date_slot"
+                android:layout_width="0dp"
+                android:layout_height="21dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="2dp"
+                android:gravity="center_vertical|start"
+                android:text="TextView"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/WheelAlignmentCheckBox"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <ImageView
+                android:id="@+id/Vehicle"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/alto"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/StatusBar"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_below="@+id/detailsView"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            android:weightSum="4">
+
+            <Button
+                android:id="@+id/Started"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border_yellow"
+                android:orientation="vertical"
+                android:text="Started"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/InProgress"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border_yellow"
+                android:orientation="vertical"
+                android:text="in progress"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/Finalizing"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border_yellow"
+                android:orientation="vertical"
+                android:text="Finalizing"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/Done"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/yellow"
+                android:orientation="vertical"
+                android:text="DONE"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/VerifyTab"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_below="@+id/detailsView"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/ButtonVerifyCode"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_edge"
+                android:text="VERIFY CODE"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                swipe:layout_constraintRight_toRightOf="parent"
+                swipe:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/ButtonContinue"
+                android:layout_width="16dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="24dp"
+                android:background="@mipmap/tick"
+                android:visibility="invisible"
+                swipe:layout_constraintRight_toRightOf="parent"
+                swipe:layout_constraintTop_toTopOf="parent"
+                swipe:srcCompat="@mipmap/tick" />
+
+            <Button
+                android:id="@+id/ButtonCancel"
+                android:layout_width="16dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="24dp"
+                android:background="@mipmap/cross"
+                android:visibility="invisible"
+                swipe:layout_constraintRight_toLeftOf="@+id/ButtonContinue"
+                swipe:layout_constraintTop_toTopOf="parent"
+                swipe:srcCompat="@mipmap/cross" />
+
+            <EditText
+                android:id="@+id/code"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/btn_color"
+                android:ems="10"
+                android:gravity="bottom"
+                android:hint="Enter Code"
+                android:inputType="text"
+                android:paddingBottom="7dp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textColorHint="?android:attr/textColorSecondaryNoDisable"
+                android:textSize="25sp"
+                android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="parent"
+                swipe:layout_constraintRight_toLeftOf="@+id/ButtonCancel"
+                swipe:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </RelativeLayout>
+</com.daimajia.swipe.SwipeLayout>
