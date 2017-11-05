@@ -6,10 +6,13 @@ import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
@@ -79,6 +82,8 @@ public class AuthenticationManager {
 
     private String renewURL;
 
+    private String forgotPasswordURL;
+
     private boolean isSessionValid = false;
 
     private AuthenticationType authenticationType = AuthenticationType.OAUTH;
@@ -102,6 +107,8 @@ public class AuthenticationManager {
     private String baseTokenKey = "baseToken";
 
     private String baseTokenExpirationDateKey = "baseTokenExpDate";
+
+    private Timer timer;
 
     private TimerTask timerTask;
 
@@ -135,6 +142,8 @@ public class AuthenticationManager {
     public void setRenewURL(String renewURL) {
         this.renewURL = renewURL;
     }
+
+    public void setForgotPasswordURL(String forgotPasswordURL) { this.forgotPasswordURL = forgotPasswordURL; }
 
     public void setAuthenticationType(AuthenticationType authenticationType) {
         this.authenticationType = authenticationType;
@@ -237,11 +246,16 @@ public class AuthenticationManager {
                 }
             } else {
                 Long current = new Date().getTime();
-                new Timer().schedule(timerTask, (getAccessTokenExpiry() - current - PriorTime));
+                timer = new Timer();
+                timer.schedule(timerTask, (getAccessTokenExpiry() - current - PriorTime));
             }
         } else {
             setSession(SessionValidity.INVALID);
         }
+    }
+
+    public void stopTimer() {
+        timer.cancel();
     }
 
     private void setBaseToken(String token, Long expiryTime) {
@@ -274,6 +288,39 @@ public class AuthenticationManager {
     }
 
     // MARK: Web Services related Functions
+
+    public void logout(final LogoutListener callback) {
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+
+        preferences = globalClass.getApplicationContext().getSharedPreferences("AccessToken", Context.MODE_PRIVATE);
+        editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+
+        preferences = globalClass.getApplicationContext().getSharedPreferences("BaseToken", Context.MODE_PRIVATE);
+        editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+
+        preferences = globalClass.getApplicationContext().getSharedPreferences("CarList", Context.MODE_PRIVATE);
+        editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+
+        this.stopTimer();
+
+        WebServiceManager.getInstance(globalClass.getApplicationContext()).getRequestQueue().cancelAll(new RequestQueue.RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                return true;
+            }
+        });
+
+        callback.loginSuccess();
+    }
 
     public void login(Context context, final LoginListener callback, final JSONObject object) {
 
@@ -474,4 +521,64 @@ public class AuthenticationManager {
                 }
         );
     }
+
+    public void forgotPassword(Context context, final ForgotPasswordListener listener, final JSONObject object) {
+
+        // Add the request to the RequestQueue.
+        WebServiceManager.getInstance(context).addToRequestQueue(
+                // Request a string response from the provided URL.
+                new JsonObjectRequest(Request.Method.POST, forgotPasswordURL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                listener.ResponseSuccess(response);
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, "Got error");
+                                listener.ResponseFailure(error);
+                            }
+                        }
+                ) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() {
+                        try {
+                            return object == null ? null : object.toString().getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                        Log.d(TAG, String.valueOf(response.statusCode));
+                        try {
+                            String jsonString = new String(response.data,
+                                    HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+
+                            JSONObject result = null;
+
+                            if (jsonString != null && jsonString.length() > 0)
+                                result = new JSONObject(jsonString);
+
+                            return Response.success(result,
+                                    HttpHeaderParser.parseCacheHeaders(response));
+                        } catch (UnsupportedEncodingException e) {
+                            return Response.error(new ParseError(e));
+                        } catch (JSONException je) {
+                            return Response.error(new ParseError(je));
+                        }
+                    }
+                }
+        );
+    }
+
 }

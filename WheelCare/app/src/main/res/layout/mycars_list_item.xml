@@ -51,12 +51,11 @@
         android:layout_alignStart="@+id/registrationnumber"
         android:layout_below="@+id/registrationnumber"
         android:layout_marginEnd="10dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:text="TextView"
         android:textColor="#000000"
         android:textSize="16dp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/carimage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/registrationnumber" />

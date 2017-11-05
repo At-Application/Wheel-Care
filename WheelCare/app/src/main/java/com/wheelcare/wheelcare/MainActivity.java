@@ -49,6 +49,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
 
     public static final String loginURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/mobileLoginAuth";
     public static final String renewURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getRefreshToken";
+    public static final String forgotPasswordURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/forgotPassword";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
 
         Button btn_submit = (Button) findViewById(R.id.btn_submit);
         final ImageView chech_box = (ImageView) findViewById(R.id.chech_box);
-        TextView forgot_password = (TextView) findViewById(R.id.text_forgot_password);
+        Button forgot_password = (Button) findViewById(R.id.text_forgot_password);
         text_mobile_error= (TextView)findViewById(R.id.text_mobile_error);
         text_invalid_password = (TextView)findViewById(R.id.text_invalid_password);
         text_password_error= (TextView)findViewById(R.id.text_password_error);
@@ -95,6 +96,13 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         btn_submit.setTypeface(calibri);
         text_invalid_password.setTypeface(calibri);
         forgot_password.setTypeface(calibri);
+
+        forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendForgotPasswordRequest();
+            }
+        });
 
         /**************************** Password Show  ****************************/
 
@@ -222,6 +230,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         AuthenticationManager.getInstance().setAuthenticationType(AuthenticationType.OAUTH);
         AuthenticationManager.getInstance().setLoginURL(loginURL);
         AuthenticationManager.getInstance().setRenewURL(renewURL);
+        AuthenticationManager.getInstance().setForgotPasswordURL(forgotPasswordURL);
     }
 
     public void login() {
@@ -314,5 +323,10 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         } else {
             return true;
         }
+    }
+
+    private void sendForgotPasswordRequest() {
+        Intent intent = new Intent(this, ForgotPassword.class);
+        startActivity(intent);
     }
 }

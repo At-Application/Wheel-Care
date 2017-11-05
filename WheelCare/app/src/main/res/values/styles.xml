@@ -40,4 +40,8 @@
         <item name="backgroundTint">@color/btn_color</item>
     </style>
 
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/btn_color</item>
+    </style>
+
 </resources>

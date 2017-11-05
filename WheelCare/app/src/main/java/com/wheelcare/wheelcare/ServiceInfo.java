@@ -8,6 +8,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,24 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.wheelcare.wheelcare.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -31,6 +48,11 @@ public class ServiceInfo extends RootActivity {
 
     private Typeface calibri;
 
+    private static final String TAG = ServiceInfo.class.getSimpleName();
+    private static final String URL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/cancelBookingService";
+
+    InfoAdapter serviceProviderInfoAdapter;
+
     private int ServiceProviderID;
     private String RegistrationNumber = "KA 04 JD 1234";
     private String Name = "Service Provider Name";
@@ -41,7 +63,7 @@ public class ServiceInfo extends RootActivity {
     private ArrayList<ServiceType> serviceTypes;
     private ServiceStatus serviceStatus = ServiceStatus.FINALIZING;
     String date, boldCode;
-
+    int index = 0;
     Context context;
 
     // MARK: Initialization
@@ -55,7 +77,7 @@ public class ServiceInfo extends RootActivity {
         setupIntentData();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupToolbar();
         setupListView();
         setupServiceButton();
@@ -64,25 +86,27 @@ public class ServiceInfo extends RootActivity {
     // MARK: Setup Intent Data
 
     private void setupIntentData() {
-        for(UserCarList obj:((GlobalClass)context).userCarLists) {
-            if (obj.getServiceStatus() != null){
-                RegistrationNumber = obj.getRegistrationNumber();
-                serviceStatus = obj.getServiceStatus();
-                date = obj.getSlot();
-                boldCode = obj.getCode();
-                serviceTypes = obj.getServiceType();
-                ServiceProviderID = obj.getServiceProivderID();
-                //ProviderImage = obj.getImage();
-                break;
-            }
+        Bundle extra = getIntent().getExtras();
+        if (extra != null) {
+            index = (int) extra.get("UserCarListIndex");
+        }
+        UserCarList obj = ((GlobalClass)context).userCarLists.get(index);
+        if (obj.getServiceStatus() != null) {
+            RegistrationNumber = obj.getRegistrationNumber();
+            serviceStatus = obj.getServiceStatus();
+            date = obj.getSlot();
+            boldCode = obj.getCode();
+            serviceTypes = obj.getServiceType();
+            ServiceProviderID = obj.getServiceProivderID();
+            //ProviderImage = obj.getImage();
         }
 
-        for(ServiceProviderDetails obj: ((GlobalClass)context).serviceProviders) {
-            if(obj.getId() == ServiceProviderID) {
-                Name = obj.getCompanyName();
-                Address = obj.getAddress();
-                PhoneNumber = obj.getContactNumber();
-                Website = obj.getWebsite();
+        for(ServiceProviderDetails sobj: ((GlobalClass)context).serviceProviders) {
+            if(sobj.getId() == ServiceProviderID) {
+                Name = sobj.getCompanyName();
+                Address = sobj.getAddress();
+                PhoneNumber = sobj.getContactNumber();
+                Website = sobj.getWebsite();
                 //ProviderImage = BitmapFactory.decodeByteArray(getIntent().getByteArrayExtra("image"), 0, getIntent().getByteArrayExtra("image").length);
             }
         }
@@ -99,7 +123,7 @@ public class ServiceInfo extends RootActivity {
 
     private void setupListView() {
         ListView listView = (ListView) findViewById(R.id.listView);
-        InfoAdapter serviceProviderInfoAdapter = new InfoAdapter();
+        serviceProviderInfoAdapter = new InfoAdapter();
         listView.setAdapter(serviceProviderInfoAdapter);
     }
 
@@ -252,16 +276,92 @@ public class ServiceInfo extends RootActivity {
         Button serviceButton = (Button) findViewById(R.id.proceedToService);
         serviceButton.setText("CANCEL");
         serviceButton.setTypeface(calibri);
+        if(serviceStatus != ServiceStatus.NOT_VERIFIED) {
+            serviceButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     // MARK: Button Pressed
 
+    private void closeActivity() {
+        this.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+        this.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
+    }
+
     public void proceedToService(View view) {
-        // Send information as Intent to the next screen
-        // Service Provider ID, Current Date, Slots with details
-        // Wheel Alignment and Wheel Balancing Amount
-        Intent i = new Intent(getApplicationContext(), SelectServices.class);
-        startActivity(i);
+        final JSONObject object = new JSONObject();
+        try {
+            object.put("userId", AuthenticationManager.getInstance().getUserID());
+            object.put("reg_no", RegistrationNumber);
+            object.put("service_status", "not_verified");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(object == null) return;
+
+        WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
+                // Request a string response from the provided URL.
+                new JsonObjectRequest(Request.Method.POST, URL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                ((GlobalClass)context).userCarLists.remove(index);
+                                closeActivity();
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, error.toString());
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> header = new HashMap<>();
+                        header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
+                        Log.e(TAG, "header " + header);
+                        return header;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() {
+                        try {
+                            return object == null ? null : object.toString().getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                        Log.d(TAG, "StatusCode: " + String.valueOf(response.statusCode));
+                        try {
+                            String jsonString = new String(response.data,
+                                    HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+
+                            JSONObject result = null;
+
+                            if (jsonString != null && jsonString.length() > 0)
+                                result = new JSONObject(jsonString);
+
+                            return Response.success(result,
+                                    HttpHeaderParser.parseCacheHeaders(response));
+                        } catch (UnsupportedEncodingException e) {
+                            return Response.error(new ParseError(e));
+                        } catch (JSONException je) {
+                            return Response.error(new ParseError(je));
+                        }
+                    }
+                }
+        );
     }
 
     @Override

@@ -5,7 +5,9 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -22,8 +24,12 @@ public class UserCarList {
     private String serviceStatusString;
     private ServiceStatus serviceStatus;
     private ArrayList<ServiceType> serviceType;
-    private String Slot;
+    private long Slot;
     private String Code;
+
+    public UserCarList() {
+
+    }
 
     public UserCarList(JSONObject response) {
         try {
@@ -58,7 +64,7 @@ public class UserCarList {
                         serviceType.add(ServiceType.WHEEL_BALANCING);
                         break;
                 }
-                Slot = (String) response.get("slot");
+                Slot = Long.valueOf((String) response.get("slot"));
                 Code = (String) response.get("code");
                 ServiceProivderID = Integer.parseInt((String)response.get("spId"));
             }
@@ -105,9 +111,16 @@ public class UserCarList {
     }
 
     public String getSlot() {
-        //SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
-        //return fmt.format(Slot);
-        return "";
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
+        return fmt.format(Slot);
+    }
+
+    public long getSlotValue() {
+        return Slot;
+    }
+
+    public void setSlotValue(long value) {
+        Slot = value;
     }
 
     void display() {

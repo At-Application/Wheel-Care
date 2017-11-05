@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -374,14 +375,17 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
     }
 
     private void startCarRegistration() {
-        Toast.makeText(getApplicationContext(), "Car added successfully!", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Car added successfully!", Toast.LENGTH_LONG).show();
         ((GlobalClass)getApplicationContext()).saveCarList(list);
         Bundle extra = getIntent().getExtras();
         Boolean fromMycars = false;
         if (extra != null) {
             fromMycars = extra.getBoolean("MyCars");
         }
-        if (fromMycars) this.finish();
+        if (fromMycars) {
+            this.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+            this.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
+        }
         else startActivity(new Intent(getApplicationContext(), UserDashboard.class));
     }
 
@@ -410,7 +414,7 @@ public class CarRegistration extends BaseActivity implements View.OnClickListene
             car.manufacturer = brand_spinner.getSelectedItem().toString();
             car.registration_number = et_carRegno.getText().toString();
             car.type = type_spinner.getSelectedItem().toString();
-            car.image = carImage;
+            car.image = byteArray;
             list.add(car);
         } catch (JSONException e) {
             e.printStackTrace();

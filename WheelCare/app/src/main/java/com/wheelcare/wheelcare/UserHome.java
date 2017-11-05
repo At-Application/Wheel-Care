@@ -60,7 +60,7 @@ import java.util.Objects;
 import static android.graphics.Typeface.BOLD;
 
 
-public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private static final String TAG = UserHome.class.getSimpleName();
 
@@ -80,9 +80,11 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
     Location mLastLocation;
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
-    TextView serviceProvider,distance, regNo, boldCode, codeVerified, slot;
+    TextView serviceProvider, distance, regNo, boldCode, codeVerified, slot;
     Button started, inProgress, finalizing, done;
     ConstraintLayout infoView, progressBar;
+
+    UserCarList userCarListObj;
 
     @Nullable
     @Override
@@ -98,7 +100,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
     }
 
     @Override
-    public void onViewCreated(View view,  Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getActivity().getApplicationContext();
         calibri = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "Calibri.ttf");
@@ -106,10 +108,10 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
 //            checkLocationPermission();
 //        }
         //you can set the title for your toolbar here for different fragments different titles
-        mapview = (MapView)view.findViewById(R.id.map);
+        mapview = (MapView) view.findViewById(R.id.map);
         infoView = (ConstraintLayout) view.findViewById(R.id.spInfoLayout);
-        serviceProvider =(TextView)view.findViewById(R.id.serviceProviderName);
-        distance =(TextView)view.findViewById(R.id.providerDistance);
+        serviceProvider = (TextView) view.findViewById(R.id.serviceProviderName);
+        distance = (TextView) view.findViewById(R.id.providerDistance);
         serviceProvider.setTypeface(calibri);
         distance.setTypeface(calibri);
         infoView.setVisibility(View.INVISIBLE);
@@ -135,7 +137,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
         progressBar.setVisibility(View.INVISIBLE);
         progressBar.setClickable(false);
 
-        if(mapview != null){
+        if (mapview != null) {
             mapview.onCreate(null);
             mapview.onResume();
             mapview.getMapAsync(this);
@@ -152,7 +154,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
         progressBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity().getApplicationContext(), ServiceInfo.class));
+                startActivity(new Intent(getActivity().getApplicationContext(), ServiceInfo.class).putExtra("UserCarListIndex", ((GlobalClass)context).userCarLists.indexOf(userCarListObj)));
             }
         });
     }
@@ -162,13 +164,13 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
 
         MapsInitializer.initialize(getContext());
         googlemap = googleMap;
-        googlemap.setMyLocationEnabled(true);
+        //googlemap.setMyLocationEnabled(true);
         googlemap.getUiSettings().setMyLocationButtonEnabled(true);
         googlemap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker m) {
                 boolean proceed = true;
-                if(((GlobalClass)context).userCarLists.size() > 0) {
+                if (((GlobalClass) context).userCarLists.size() > 0) {
                     for (UserCarList obj : ((GlobalClass) context).userCarLists) {
                         if (obj.getServiceStatus() != null) {
                             switch (obj.getServiceStatus()) {
@@ -194,7 +196,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
                         }
                     }
                 }
-                if(proceed) {
+                if (proceed) {
                     Location newLocation = new Location("newlocation");
                     newLocation.setLatitude(m.getPosition().latitude);
                     newLocation.setLongitude(m.getPosition().longitude);
@@ -228,7 +230,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
         googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                if(mLastLocation != null) {
+                if (mLastLocation != null) {
                     getServiceProviders();
                 }
                 return false;
@@ -241,9 +243,9 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
             public void onMapClick(LatLng latLng) {
                 infoView.setVisibility(View.INVISIBLE);
                 infoView.setClickable(false);
-                for(UserCarList obj:((GlobalClass)context).userCarLists) {
-                    if (obj.getServiceStatus() != null){
-                        switch(obj.getServiceStatus()) {
+                for (UserCarList obj : ((GlobalClass) context).userCarLists) {
+                    if (obj.getServiceStatus() != null) {
+                        switch (obj.getServiceStatus()) {
                             case NOT_VERIFIED:
                             case VERIFIED:
                             case STARTED:
@@ -300,7 +302,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest,this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
 
     }
@@ -337,10 +339,10 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
 
         //stop location updates
         if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
 
-        if(mLastLocation != null) {
+        if (mLastLocation != null) {
             getServiceProviders();
         }
     }
@@ -383,6 +385,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
             return true;
         }
     }
+
     public BitmapDescriptor getMarkerIcon(String color) {
         float[] hsv = new float[3];
         Color.colorToHSV(Color.parseColor(color), hsv);
@@ -392,8 +395,9 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
     // MARK: For setting the status
 
     public void getServiceProviders() {
+        if(!this.isVisible()) return;
         JSONObject object = createJSONObject();
-        if(object != null) {
+        if (object != null) {
             ServiceProviderCall(object);
         } else {
             Log.e(TAG, "Failed to create JSON object for fetching service provider info");
@@ -441,9 +445,9 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
                 ) {
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String,String> header = new HashMap<>();
+                        Map<String, String> header = new HashMap<>();
                         header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
-                        Log.e(TAG,"header "+header);
+                        Log.e(TAG, "header " + header);
                         return header;
                     }
 
@@ -464,38 +468,59 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
 
                     @Override
                     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                        Log.d(TAG, "StatusCode: "+String.valueOf(response.statusCode));
+                        Log.d(TAG, "StatusCode: " + String.valueOf(response.statusCode));
                         return super.parseNetworkResponse(response);
                     }
                 }
         );
     }
 
-    private void populateUserCarData(JSONArray response) {
-        if(response.length() > 0) {
-            try {
-                ArrayList<UserCarList> list = new ArrayList<>();
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject obj = response.getJSONObject(i);
-                    UserCarList car = new UserCarList(obj);
-                    list.add(car);
+    @Override
+    public void onResume() {
+        super.onResume();
+        UserCarList lowest = new UserCarList();
+        lowest.setSlotValue(0);
+        for (UserCarList obj : ((GlobalClass) context).userCarLists) {
+            if (obj.getServiceStatus() != null) {
+                switch (obj.getServiceStatus()) {
+                    case FINALIZING:
+                    case IN_PROGRESS:
+                    case STARTED:
+                    case VERIFIED:
+                    case NOT_VERIFIED:
+                        if (lowest.getSlotValue() == 0 || obj.getSlotValue() < lowest.getSlotValue()) {
+                            lowest = obj;
+                            userCarListObj = lowest;
+                        }
+                        break;
+
+                    case DONE:
+                    case DISMISS:
+                        break;
                 }
-                ((GlobalClass)context).userCarLists = list;
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
-        for(UserCarList obj:((GlobalClass)context).userCarLists) {
-            if (obj.getServiceStatus() != null){
-                switch(obj.getServiceStatus()) {
-                    case FINALIZING: finalizing.setBackground(getActivity().getDrawable(R.drawable.border_green));
-                    case IN_PROGRESS: inProgress.setBackground(getActivity().getDrawable(R.drawable.border_green));
-                    case STARTED: started.setBackground(getActivity().getDrawable(R.drawable.border_green));
-                    case VERIFIED: codeVerified.setText("Code Verified");
-                    case NOT_VERIFIED: if(!Objects.equals(codeVerified.getText().toString(), "Code Verified")) codeVerified.setText("Code Not Verified");
-                        regNo.setText(obj.getRegistrationNumber());
-                        boldCode.setText("CODE: " + obj.getCode());
-                        slot.setText(obj.getSlot());
+        if (lowest.getSlotValue() == 0) {
+            progressBar.setVisibility(View.INVISIBLE);
+            infoView.setVisibility(infoView.getVisibility());
+            infoView.setClickable(infoView.getVisibility() == View.VISIBLE);
+        } else {
+            if (lowest.getServiceStatus() != null) {
+                switch (lowest.getServiceStatus()) {
+                    case FINALIZING:
+                        finalizing.setBackground(getActivity().getDrawable(R.drawable.border_green));
+                    case IN_PROGRESS:
+                        inProgress.setBackground(getActivity().getDrawable(R.drawable.border_green));
+                    case STARTED:
+                        started.setBackground(getActivity().getDrawable(R.drawable.border_green));
+                    case VERIFIED:
+                        codeVerified.setText("Code Verified");
+                    case NOT_VERIFIED:
+                        if (lowest.getServiceStatus() == ServiceStatus.NOT_VERIFIED)
+                            codeVerified.setText("Code Not Verified");
+                        regNo.setText(lowest.getRegistrationNumber());
+                        boldCode.setText("CODE: " + lowest.getCode());
+                        slot.setText(lowest.getSlot());
                         progressBar.setVisibility(View.VISIBLE);
                         infoView.setVisibility(View.INVISIBLE);
                         infoView.setClickable(false);
@@ -508,7 +533,79 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
                         infoView.setClickable(infoView.getVisibility() == View.VISIBLE);
                         break;
                 }
-                break;
+            }
+        }
+    }
+
+    private void populateUserCarData(JSONArray response) {
+        if (response.length() > 0) {
+            try {
+                ArrayList<UserCarList> list = new ArrayList<>();
+                for (int i = 0; i < response.length(); i++) {
+                    JSONObject obj = response.getJSONObject(i);
+                    UserCarList car = new UserCarList(obj);
+                    list.add(car);
+                }
+                ((GlobalClass) context).userCarLists = list;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        UserCarList lowest = new UserCarList();
+        lowest.setSlotValue(0);
+        for (UserCarList obj : ((GlobalClass) context).userCarLists) {
+            if (obj.getServiceStatus() != null) {
+                switch (obj.getServiceStatus()) {
+                    case FINALIZING:
+                    case IN_PROGRESS:
+                    case STARTED:
+                    case VERIFIED:
+                    case NOT_VERIFIED:
+                        if (lowest.getSlotValue() == 0 || obj.getSlotValue() < lowest.getSlotValue()) {
+                            lowest = obj;
+                            userCarListObj = lowest;
+                        }
+                        break;
+
+                    case DONE:
+                    case DISMISS:
+                        break;
+                }
+            }
+        }
+        if (lowest.getSlotValue() == 0) {
+            progressBar.setVisibility(View.INVISIBLE);
+            infoView.setVisibility(infoView.getVisibility());
+            infoView.setClickable(infoView.getVisibility() == View.VISIBLE);
+        } else {
+            if (lowest.getServiceStatus() != null) {
+                switch (lowest.getServiceStatus()) {
+                    case FINALIZING:
+                        finalizing.setBackground(getActivity().getDrawable(R.drawable.border_green));
+                    case IN_PROGRESS:
+                        inProgress.setBackground(getActivity().getDrawable(R.drawable.border_green));
+                    case STARTED:
+                        started.setBackground(getActivity().getDrawable(R.drawable.border_green));
+                    case VERIFIED:
+                        codeVerified.setText("Code Verified");
+                    case NOT_VERIFIED:
+                        if (lowest.getServiceStatus() == ServiceStatus.NOT_VERIFIED)
+                            codeVerified.setText("Code Not Verified");
+                        regNo.setText(lowest.getRegistrationNumber());
+                        boldCode.setText("CODE: " + lowest.getCode());
+                        slot.setText(lowest.getSlot());
+                        progressBar.setVisibility(View.VISIBLE);
+                        infoView.setVisibility(View.INVISIBLE);
+                        infoView.setClickable(false);
+                        break;
+
+                    case DONE:
+                    case DISMISS:
+                        progressBar.setVisibility(View.INVISIBLE);
+                        infoView.setVisibility(infoView.getVisibility());
+                        infoView.setClickable(infoView.getVisibility() == View.VISIBLE);
+                        break;
+                }
             }
         }
     }

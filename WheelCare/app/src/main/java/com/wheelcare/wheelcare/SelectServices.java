@@ -3,6 +3,9 @@ package com.wheelcare.wheelcare;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -40,6 +43,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +59,7 @@ public class SelectServices extends RootActivity {
     private static final String TAG = UserHome.class.getSimpleName();
 
     private static final String getSlotURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getSlot";
+    private static final String bookServiceURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carBookingService";
 
     private static final String SUCCESS = "200";
 
@@ -91,10 +96,10 @@ public class SelectServices extends RootActivity {
     static final int DATE_PICKER_ID = 1111;
     static final int TIME_PICKER_ID = 1112;
 
-    int[] MyCars = {R.drawable.alto, R.drawable.mahindrabolero, R.drawable.marutibrezza};
-    String[] Registrations = {"KA 04 MJ 2332", "KA 04 MJ 2333", "KA 04 MJ 2334"};
     int currentPosition = 0;
     // MARK: Initialization
+
+    ArrayList<Vehicle> vehicles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +111,7 @@ public class SelectServices extends RootActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        vehicles = ((GlobalClass)getApplicationContext()).getCarList();
         setupToolbar();
         setupListView();
         setupServiceButton();
@@ -182,7 +188,7 @@ public class SelectServices extends RootActivity {
                 TextView selectedCar = (TextView) convertView.findViewById(R.id.serviceProviderName);
                 final TextView registrationNumber = (TextView) convertView.findViewById(R.id.serviceProviderDistance);
 
-                serviceProviderImage.setPageCount(MyCars.length);
+                serviceProviderImage.setPageCount(vehicles.size());
 
                 selectedCar.setTypeface(calibri);
                 registrationNumber.setTypeface(calibri);
@@ -197,7 +203,8 @@ public class SelectServices extends RootActivity {
                     public View setViewForPosition(int position) {
                         View view = getLayoutInflater().inflate(R.layout.car_view, null);
                         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
-                        imageView.setImageResource(MyCars[position]);
+                        Bitmap bmp = BitmapFactory.decodeByteArray( vehicles.get(position).image, 0, vehicles.get(position).image.length);
+                        imageView.setImageBitmap(bmp);
                         return view;
                     }
                 });
@@ -212,7 +219,7 @@ public class SelectServices extends RootActivity {
                     @Override
                     public void onPageSelected(int position) {
                         currentPosition = position;
-                        registrationNumber.setText(Registrations[position]);
+                        registrationNumber.setText(vehicles.get(position).registration_number);
                     }
 
                     @Override
@@ -222,7 +229,7 @@ public class SelectServices extends RootActivity {
                 });
 
                 serviceProviderImage.setCurrentItem(currentPosition);
-                registrationNumber.setText(Registrations[currentPosition]);
+                registrationNumber.setText(vehicles.get(position).registration_number);
 
 
             } else if(position == 1) {
@@ -335,6 +342,7 @@ public class SelectServices extends RootActivity {
         Log.d("Button pressed", "Proceed to pay");
         if(alignmentChecked || balancingChecked) {
             Log.d("Button pressed", "Will Proceed to pay");
+            bookService();
         } else {
             Toast.makeText(this.getApplicationContext(), "Please select service type", Toast.LENGTH_LONG).show();
         }
@@ -348,11 +356,11 @@ public class SelectServices extends RootActivity {
                 // open datepicker dialog.
                 // set date picker for current date
                 // add pickerListener listner to date picker
-                return new DatePickerDialog(this, pickerListener, year, month,day);
+                return new DatePickerDialog(this, R.style.DialogTheme , pickerListener, year, month,day);
 
             case TIME_PICKER_ID:
 
-                return new TimePickerDialog(this, timeSetListener, hour, minutes, true);
+                return new TimePickerDialog(this, R.style.DialogTheme, timeSetListener, hour, minutes, true);
         }
         return null;
     }
@@ -495,6 +503,105 @@ public class SelectServices extends RootActivity {
         );
     }
 
+    public void bookService() {
+        JSONObject object = createServiceJSONObject();
+        if(object != null) {
+            bookingCall(object);
+        } else {
+            Log.e(TAG, "Failed to create JSON object for fetching service provider info");
+        }
+    }
+
+    public JSONObject createServiceJSONObject() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("spId", String.valueOf(((GlobalClass)getApplicationContext()).serviceProviders.get(index).getId()));
+            object.put("slotDateTime", getSlotTime());
+            object.put("userId", AuthenticationManager.getInstance().getUserID());
+            object.put("reg_no", vehicles.get(currentPosition).registration_number);
+            object.put("service_status", "not_verified");
+            object.put("booking_service_amount", String.valueOf(finalAmount));
+            String serviceType = "";
+            if(balancingChecked && alignmentChecked) {
+                serviceType = "balancing alignment";
+            } else if(!alignmentChecked) {
+                serviceType = "wheel balancing";
+            } else {
+                serviceType = "wheel alignment";
+            }
+            object.put("serviceType", serviceType);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return object;
+    }
+
+    private void backToDashboard() {
+        Intent intent = new Intent(this,
+                UserDashboard.class);
+        intent.putExtra("reload", true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    private void bookingCall(final JSONObject object) {
+        // Add the request to the RequestQueue.
+        WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
+                // Request a string response from the provided URL.
+                new JsonObjectRequest(Request.Method.POST, bookServiceURL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d(TAG, response.toString());
+                                // Actual data received here
+//                                try {
+                                    // TODO: Add code for confirmation after payment
+                                    backToDashboard();
+//                                } catch (JSONException e) {
+//                                    e.printStackTrace();
+//                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, error.toString());
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String,String> header = new HashMap<>();
+                        header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
+                        Log.e(TAG,"header "+header);
+                        return header;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() {
+                        try {
+                            return object == null ? null : object.toString().getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                        Log.d(TAG, "StatusCode: "+String.valueOf(response.statusCode));
+                        return super.parseNetworkResponse(response);
+                    }
+                }
+        );
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -506,5 +613,4 @@ public class SelectServices extends RootActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }

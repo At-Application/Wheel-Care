@@ -51,12 +51,13 @@ public class GlobalClass extends Application {
     public ArrayList<VehicleDetails> history = null;
     public ArrayList<Issues> issues = null;
     public ArrayList<UserCarList> userCarLists = null;
-    public ArrayList<VehicleDetails> userhistory = null;
+    public ArrayList<UserHistoryDetails> userhistory = null;
     // MARK: URLs
 
     private static final String ServiceProviderInfoURL = "http://" + IPAddress + "/wheelcare/rest/consumer/spInfo";
     private static final String SetServiceStatusURL = "http://" + IPAddress + "/wheelcare/rest/consumer/serviceStatus";
     private static final String FreezeServicesURL = "http://" + IPAddress + "/wheelcare/rest/consumer/setOpenStatus";
+    public static final String UserHistoryURL = "http://" + IPAddress + "/wheelcare/rest/consumer/getUserHistory";
 
     public GlobalClass() {
         AuthenticationManager.getInstance().globalClass = this;
@@ -416,6 +417,7 @@ public class GlobalClass extends Application {
         String json = preferences.getString("list", "");
         Vehicle[] vlist = gson.fromJson(json, Vehicle[].class);
         try {
+            Log.d(TAG, "list = " + vlist[0].model);
             List<Vehicle> vehiclelist = Arrays.asList(vlist);
             return new ArrayList<Vehicle>(vehiclelist);
         } catch (Exception e) {
@@ -432,5 +434,4 @@ public class GlobalClass extends Application {
         editor.putString("list", json);
         editor.apply();
     }
-
 }
