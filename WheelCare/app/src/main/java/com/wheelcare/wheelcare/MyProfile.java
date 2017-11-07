@@ -83,7 +83,8 @@ public class MyProfile extends Fragment {
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Launch Change Password API
+                Intent intent = new Intent(getActivity().getApplicationContext(), ChangePassword.class);
+                startActivity(intent);
             }
         });
 

@@ -84,6 +84,8 @@ public class AuthenticationManager {
 
     private String forgotPasswordURL;
 
+    private String changePasswordURL;
+
     private boolean isSessionValid = false;
 
     private AuthenticationType authenticationType = AuthenticationType.OAUTH;
@@ -144,6 +146,10 @@ public class AuthenticationManager {
     }
 
     public void setForgotPasswordURL(String forgotPasswordURL) { this.forgotPasswordURL = forgotPasswordURL; }
+
+    public void setChangePasswordURL(String changePasswordURL) {
+        this.changePasswordURL = changePasswordURL;
+    }
 
     public void setAuthenticationType(AuthenticationType authenticationType) {
         this.authenticationType = authenticationType;
@@ -319,7 +325,7 @@ public class AuthenticationManager {
             }
         });
 
-        callback.loginSuccess();
+        callback.logoutSuccess();
     }
 
     public void login(Context context, final LoginListener callback, final JSONObject object) {
@@ -581,4 +587,70 @@ public class AuthenticationManager {
         );
     }
 
+    public void changePassword(Context context, final ChangePasswordListener listener, final JSONObject object) {
+
+        // Add the request to the RequestQueue.
+        WebServiceManager.getInstance(context).addToRequestQueue(
+                // Request a string response from the provided URL.
+                new JsonObjectRequest(Request.Method.POST, forgotPasswordURL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                listener.ResponseSuccess(response);
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, "Got error");
+                                listener.ResponseFailure(error);
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String,String> header = new HashMap<>();
+                        header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
+                        Log.e(TAG,"header "+header);
+                        return header;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() {
+                        try {
+                            return object == null ? null : object.toString().getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                        Log.d(TAG, String.valueOf(response.statusCode));
+                        try {
+                            String jsonString = new String(response.data,
+                                    HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+
+                            JSONObject result = null;
+
+                            if (jsonString != null && jsonString.length() > 0)
+                                result = new JSONObject(jsonString);
+
+                            return Response.success(result,
+                                    HttpHeaderParser.parseCacheHeaders(response));
+                        } catch (UnsupportedEncodingException e) {
+                            return Response.error(new ParseError(e));
+                        } catch (JSONException je) {
+                            return Response.error(new ParseError(je));
+                        }
+                    }
+                }
+        );
+    }
 }

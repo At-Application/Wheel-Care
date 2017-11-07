@@ -10,7 +10,7 @@ import java.util.Date;
  */
 
 public class VehicleDetails {
-    public Bitmap vehicleImage;
+    public int model_id;
     public String vehicleRegistrationNumber;
     public String customername;
     public Date date_slot;
@@ -20,17 +20,4 @@ public class VehicleDetails {
     public String issue;
     public String comment;
     public String userID;
-
-    public void clear()
-    {
-        vehicleImage = null;
-        vehicleRegistrationNumber = null;
-        customername = null;
-        date_slot = null;
-        serviceRequired.clear();
-        serviceStatus = null;
-        issue = null;
-        comment = null;
-        userID = null;
-    }
 }

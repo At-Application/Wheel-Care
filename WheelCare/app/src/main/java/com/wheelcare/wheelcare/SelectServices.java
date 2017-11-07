@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -413,17 +414,37 @@ public class SelectServices extends RootActivity {
     };
 
     private long getSlotTime() {
-        return new Date(year, month, day, hour, 0).getTime();
+        String dateString = String.valueOf(year) + " " + (month+1) + " " + day + " " + hour + ":00:00 GMT+5:30";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd HH:mm:ss z");
+        try {
+            Date date = sdf.parse(dateString);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     // MARK: For registering CAR
 
     public void checkSlotValidity() {
-        JSONObject object = createJSONObject();
-        if(object != null) {
-            ServiceProviderCall(object);
+        Log.e("Current Time", String.valueOf(new Date().getTime()));
+        Log.e("Sent Time", String.valueOf(getSlotTime()));
+        if(getSlotTime() < new Date().getTime()) {
+            year = todayYear;
+            month = todayMonth;
+            day = todayDay;
+            hour = todayHour;
+            minutes = todayMinutes;
+            Toast.makeText(getApplicationContext(), "This slot is not available", Toast.LENGTH_LONG).show();
+            adapter.notifyDataSetChanged();
         } else {
-            Log.e(TAG, "Failed to create JSON object for fetching service provider info");
+            JSONObject object = createJSONObject();
+            if (object != null) {
+                ServiceProviderCall(object);
+            } else {
+                Log.e(TAG, "Failed to create JSON object for fetching service provider info");
+            }
         }
     }
 
@@ -521,7 +542,7 @@ public class SelectServices extends RootActivity {
             object.put("reg_no", vehicles.get(currentPosition).registration_number);
             object.put("service_status", "not_verified");
             object.put("booking_service_amount", String.valueOf(finalAmount));
-            String serviceType = "";
+            String serviceType;
             if(balancingChecked && alignmentChecked) {
                 serviceType = "balancing alignment";
             } else if(!alignmentChecked) {

@@ -50,6 +50,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     public static final String loginURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/mobileLoginAuth";
     public static final String renewURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getRefreshToken";
     public static final String forgotPasswordURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/forgotPassword";
+    public static final String changePasswordURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/changePassword";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,6 +232,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         AuthenticationManager.getInstance().setLoginURL(loginURL);
         AuthenticationManager.getInstance().setRenewURL(renewURL);
         AuthenticationManager.getInstance().setForgotPasswordURL(forgotPasswordURL);
+        AuthenticationManager.getInstance().setChangePasswordURL(changePasswordURL);
     }
 
     public void login() {

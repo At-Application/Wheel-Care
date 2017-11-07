@@ -3,15 +3,19 @@ package com.wheelcare.wheelcare;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.wheelcare.wheelcare.R;
@@ -28,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Vimal on 10-09-2017.
@@ -43,21 +49,32 @@ public class GlobalClass extends Application {
 
     public String userType;
 
+    public long endTime = 0;
+
     public static final String IPAddress = "139.59.77.103:8080";
 
     private static final String SUCCESS = "200";
+
+    private Timer timer;
+
+    public PendingServicesListener listener;
+
+    private TimerTask timerTask;
 
     public ArrayList<VehicleDetails> pending = null;
     public ArrayList<VehicleDetails> history = null;
     public ArrayList<Issues> issues = null;
     public ArrayList<UserCarList> userCarLists = null;
     public ArrayList<UserHistoryDetails> userhistory = null;
+    public ArrayList<Vehicle> vehicles = null;
     // MARK: URLs
 
     private static final String ServiceProviderInfoURL = "http://" + IPAddress + "/wheelcare/rest/consumer/spInfo";
     private static final String SetServiceStatusURL = "http://" + IPAddress + "/wheelcare/rest/consumer/serviceStatus";
     private static final String FreezeServicesURL = "http://" + IPAddress + "/wheelcare/rest/consumer/setOpenStatus";
+    private static final String TempFreezeServicesURL = "http://" + IPAddress + "/wheelcare/rest/consumer/tempFreeze";
     public static final String UserHistoryURL = "http://" + IPAddress + "/wheelcare/rest/consumer/getUserHistory";
+    private static final String ImageURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carImg";
 
     public GlobalClass() {
         AuthenticationManager.getInstance().globalClass = this;
@@ -66,6 +83,26 @@ public class GlobalClass extends Application {
         issues = new ArrayList<>();
         userCarLists = new ArrayList<>();
         userhistory = new ArrayList<>();
+    }
+
+    public void startTempFreezeTimer() {
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                listener.RetrievedServices();
+                timer = null;
+            }
+        };
+
+        if (endTime > 0 && timer == null) {
+            Long current = new Date().getTime();
+            timer = new Timer();
+            timer.schedule(timerTask, endTime - current);
+        }
+    }
+
+    public void stopTempFreezeTimer() {
+        if(timer != null) timer.cancel();
     }
 
     public String getUserType() {
@@ -130,7 +167,7 @@ public class GlobalClass extends Application {
                     Details.serviceRequired.add(ServiceType.WHEEL_ALIGNMENT);
                     Details.serviceRequired.add(ServiceType.WHEEL_BALANCING);
                 }
-                Details.vehicleImage = BitmapFactory.decodeResource(getResources(), R.drawable.alto);
+                Details.model_id = Integer.parseInt(obj.getString("model_id"));
                 Details.issue = obj.isNull("issue") ? "" : (String) obj.get("issue");
                 Details.userID = (String) obj.get("uId");
                 Details.comment = obj.isNull("comment") ? "" : (String) obj.get("comment");
@@ -185,8 +222,10 @@ public class GlobalClass extends Application {
                                         JSONArray jsonArray = (JSONArray) response.get("services");
                                         Log.d("JSON Object", jsonArray.toString());
                                         String freeze = response.get("open_status").toString();
+                                        endTime = Long.parseLong(response.getString("temp_freeze_end"));
                                         freezeStatus = (Boolean)(freeze.trim().equals("freeze"));
                                         arrangePendingAndHistoryList(jsonArray);
+                                        getVehicleImages();
                                         if(callback != null) callback.RetrievedServices();
                                     }
                                 } catch (JSONException e) {
@@ -405,7 +444,123 @@ public class GlobalClass extends Application {
                     @Override
                     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                         Log.d(TAG, "StatusCode: "+String.valueOf(response.statusCode));
-                        return super.parseNetworkResponse(response);
+                        try {
+                            String jsonString = new String(response.data,
+                                    HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+
+                            JSONObject result = null;
+
+                            if (jsonString != null && jsonString.length() > 0)
+                                result = new JSONObject(jsonString);
+
+                            return Response.success(result,
+                                    HttpHeaderParser.parseCacheHeaders(response));
+                        } catch (UnsupportedEncodingException e) {
+                            return Response.error(new ParseError(e));
+                        } catch (JSONException je) {
+                            return Response.error(new ParseError(je));
+                        }
+                    }
+                }
+        );
+    }
+
+    // MARK: For setting the status
+
+    public void tempFreezeServices(PendingServicesListener listner, boolean freeze) {
+
+        JSONObject object = createTempFreezeJSONObject(freeze);
+        if(object != null) {
+            tempFreezeCall(listner, object);
+        } else {
+            Log.e(TAG, "Failed to create JSON object for fetching service provider info");
+        }
+    }
+
+    public JSONObject createTempFreezeJSONObject(boolean freeze) {
+        JSONObject object = new JSONObject();
+        try {
+            long time = 0;
+            object.put("spId", AuthenticationManager.getInstance().getUserID());
+            if(freeze) {
+                time = new Date().getTime();
+                object.put("freeze_time_start", String.valueOf(time));
+                time = time + (1000 * 60 * 30);
+                object.put("freeze_time_end", String.valueOf(time));
+            } else {
+                object.put("freeze_time_start", String.valueOf(time));
+                object.put("freeze_time_end", String.valueOf(time));
+            }
+            endTime = time;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return object;
+    }
+
+    private void tempFreezeCall(final PendingServicesListener listener, final JSONObject object) {
+        // Add the request to the RequestQueue.
+        WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
+                // Request a string response from the provided URL.
+                new JsonObjectRequest(Request.Method.POST, TempFreezeServicesURL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                // Actual data received here
+                                listener.RetrievedServices();
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, error.toString());
+                                listener.RetrievingServicesFailed(error);
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String,String> header = new HashMap<>();
+                        header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
+                        Log.e(TAG,"header "+header);
+                        return header;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() {
+                        try {
+                            return object == null ? null : object.toString().getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                        Log.d(TAG, "StatusCode: "+String.valueOf(response.statusCode));
+                        try {
+                            String jsonString = new String(response.data,
+                                    HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+
+                            JSONObject result = null;
+
+                            if (jsonString != null && jsonString.length() > 0)
+                                result = new JSONObject(jsonString);
+
+                            return Response.success(result,
+                                    HttpHeaderParser.parseCacheHeaders(response));
+                        } catch (UnsupportedEncodingException e) {
+                            return Response.error(new ParseError(e));
+                        } catch (JSONException je) {
+                            return Response.error(new ParseError(je));
+                        }
                     }
                 }
         );
@@ -433,5 +588,101 @@ public class GlobalClass extends Application {
         String json = gson.toJson(list);
         editor.putString("list", json);
         editor.apply();
+    }
+
+    public void getVehicleImages() {
+
+        for(int i = 0, j; i < pending.size(); i++) {
+            for(j = 0; j < vehicles.size(); j++) {
+                if(pending.get(i).model_id == vehicles.get(j).id) break;
+            }
+            if(j == (vehicles.size() - 1)) {
+                Vehicle v = new Vehicle();
+                v.id = pending.get(i).model_id;
+            }
+        }
+
+        for(int i = 0, j; i < history.size(); i++) {
+            for(j = 0; j < vehicles.size(); j++) {
+                if(pending.get(i).model_id == vehicles.get(j).id) break;
+            }
+            if(j == (vehicles.size() - 1)) {
+                Vehicle v = new Vehicle();
+                v.id = pending.get(i).model_id;
+                v.image = null;
+                vehicles.add(v);
+            }
+        }
+
+        for(int i = 0; i < vehicles.size(); i++) {
+            if(vehicles.get(i).image != null) continue;
+
+            final JSONObject object = new JSONObject();
+            try {
+                object.put("model_id", vehicles.get(i).id);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (object == null) return;
+
+            final int finalI = i;
+            WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
+                    // Request a string response from the provided URL.
+                    new JsonObjectRequest(Request.Method.POST, ImageURL, null,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Log.d(TAG, response.toString());
+                                    // Actual data received here
+                                    try {
+                                        String byteString = response.getString("img");
+                                        vehicles.get(finalI).image = Base64.decode(byteString, Base64.DEFAULT);
+                                        listener.RetrievedServices();
+                                    } catch (JSONException e) {
+                                        vehicles.get(finalI).image = null;
+                                        e.printStackTrace();
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.d(TAG, error.toString());
+                                    vehicles.get(finalI).image = null;
+                                }
+                            }
+                    ) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> header = new HashMap<>();
+                            header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
+                            Log.e(TAG, "header " + header);
+                            return header;
+                        }
+
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+
+                        @Override
+                        public byte[] getBody() {
+                            try {
+                                return object == null ? null : object.toString().getBytes("utf-8");
+                            } catch (UnsupportedEncodingException uee) {
+                                VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                            Log.d(TAG, "StatusCode: " + String.valueOf(response.statusCode));
+                            return super.parseNetworkResponse(response);
+                        }
+                    }
+            );
+        }
     }
 }

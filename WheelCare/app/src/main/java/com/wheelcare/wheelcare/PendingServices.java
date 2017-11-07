@@ -1,6 +1,8 @@
 package com.wheelcare.wheelcare;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,6 +31,8 @@ import com.android.volley.VolleyError;
 import com.wheelcare.wheelcare.R;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -45,6 +49,7 @@ public class PendingServices extends Fragment implements PendingServicesListener
     public PendingServicesListener listener;
 
     private Button freezeButton;
+    private Button temporaryFreezeButton;
 
     private ListView listView;
 
@@ -58,7 +63,9 @@ public class PendingServices extends Fragment implements PendingServicesListener
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         listener = this;
+        ((GlobalClass)getActivity().getApplicationContext()).listener = this;
         freezeButton = (Button) view.findViewById(R.id.button_freeze);
+        temporaryFreezeButton = (Button) view.findViewById(R.id.button_freeze_temp);
         mySwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         mySwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
@@ -76,6 +83,18 @@ public class PendingServices extends Fragment implements PendingServicesListener
             public void onClick(View v) {
                 ((GlobalClass)getActivity().getApplicationContext()).freezeStatus = !((GlobalClass)getActivity().getApplicationContext()).freezeStatus;
                 ((GlobalClass)getActivity().getApplicationContext()).freezeServices(listener, (((GlobalClass) getActivity().getApplicationContext()).freezeStatus));
+            }
+        });
+
+        temporaryFreezeButton.setTypeface(calibri);
+        temporaryFreezeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Objects.equals(temporaryFreezeButton.getText().toString(), "FREEZE")) {
+                    ((GlobalClass)getActivity().getApplicationContext()).tempFreezeServices(listener, true);
+                } else {
+                    ((GlobalClass)getActivity().getApplicationContext()).tempFreezeServices(listener, false);
+                }
             }
         });
         GlobalClass context = ((GlobalClass)getActivity().getApplicationContext());
@@ -105,9 +124,16 @@ public class PendingServices extends Fragment implements PendingServicesListener
             mySwipeRefreshLayout.setRefreshing(false);
         }
         if(((GlobalClass)getActivity().getApplicationContext()).freezeStatus) {
-            freezeButton.setText("UN-FREEZE");
+            freezeButton.setText("UN-FREEZE ALL");
         } else{
             freezeButton.setText("FREEZE ALL");
+        }
+        if(((GlobalClass)getActivity().getApplicationContext()).endTime == 0 || ((GlobalClass)getActivity().getApplicationContext()).endTime < new Date().getTime()) {
+            ((GlobalClass)getActivity().getApplicationContext()).stopTempFreezeTimer();
+            temporaryFreezeButton.setText("FREEZE");
+        } else {
+            ((GlobalClass)getActivity().getApplicationContext()).startTempFreezeTimer();
+            temporaryFreezeButton.setText("UN-FREEZE");
         }
         adapter.notifyDataSetChanged();
     }
@@ -187,8 +213,6 @@ public class PendingServices extends Fragment implements PendingServicesListener
             final EditText editCode = (EditText) view.findViewById(R.id.code);
             final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
             final TextView username = (TextView) view.findViewById(R.id.username);
-            final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
-            final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
             final TextView code = (TextView) view.findViewById(R.id.Code);
             final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
             final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
@@ -203,8 +227,6 @@ public class PendingServices extends Fragment implements PendingServicesListener
 
             registrationNumber.setTypeface(calibri);
             username.setTypeface(calibri, BOLD);
-            wheelAlignment.setTypeface(calibri);
-            wheelBalancing.setTypeface(calibri);
             code.setTypeface(calibri, BOLD);
             dateSlot.setTypeface(calibri);
 
@@ -226,21 +248,21 @@ public class PendingServices extends Fragment implements PendingServicesListener
 
             registrationNumber.setText(service.vehicleRegistrationNumber);
             username.setText(service.customername);
-            if (service.serviceRequired.contains(ServiceType.WHEEL_ALIGNMENT)) {
-                wheelAlignment.setHeight(20);
-            } else {
-                wheelAlignment.setHeight(0);
-            }
 
-            if (service.serviceRequired.contains(ServiceType.WHEEL_BALANCING)) {
-                wheelBalancing.setHeight(20);
-            } else {
-                wheelBalancing.setHeight(0);
-            }
             dateSlot.setText(date);
             code.setText("CODE: ");
             code.append(service.code);
-            vehicleImage.setImageBitmap(service.vehicleImage);
+
+            int position = 0;
+            for(; position < ((GlobalClass)getActivity().getApplicationContext()).vehicles.size(); position++) {
+                if(((GlobalClass)getActivity().getApplicationContext()).vehicles.get(position).id == service.model_id) {
+                    break;
+                }
+            }
+
+            byte[] image = ((GlobalClass)getActivity().getApplicationContext()).vehicles.get(position).image;
+            Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
+            vehicleImage.setImageBitmap(bmp);
 
             switch (service.serviceStatus) {
                 case DONE:

@@ -5,5 +5,5 @@ package com.wheelcare.wheelcare;
  */
 
 public interface LogoutListener {
-    void loginSuccess();
+    void logoutSuccess();
 }

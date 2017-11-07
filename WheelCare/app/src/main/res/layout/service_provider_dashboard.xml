@@ -23,13 +23,27 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
+    <Button
+        android:id="@+id/button_freeze_temp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/button_freeze"
+        android:background="@color/cb_dark_blue_button"
+        android:onClick="freezeServices"
+        android:text="TEMPORARY FREEZE"
+        android:textAlignment="gravity"
+        android:textColor="@color/title_indicator"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swiperefresh"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_width="match_parent"
-        android:layout_below="@+id/button_freeze"
+        android:layout_below="@+id/button_freeze_temp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_height="491dp">

@@ -113,6 +113,7 @@ public class UserDashboard extends AppCompatActivity
         // Handle navigation view item clicks here.
         Fragment fragment = null;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.user_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
 
         if (id == R.id.nav_home) {
             // Handle the camera action
@@ -128,10 +129,8 @@ public class UserDashboard extends AppCompatActivity
             title.setText("History");
             fragment = new UserHistory();
         } else if (id == R.id.nav_helpline) {
-            drawer.closeDrawer(GravityCompat.START);
             getHelpLine();
         } else if (id == R.id.nav_logout) {
-            drawer.closeDrawer(GravityCompat.START);
             AuthenticationManager.getInstance().logout(this);
         }
 
@@ -140,9 +139,6 @@ public class UserDashboard extends AppCompatActivity
             ft.replace(R.id.content_frame, fragment);
             ft.commit();
         }
-
-        if (id != R.id.nav_helpline && id != R.id.nav_logout)
-            drawer.closeDrawer(GravityCompat.START);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -241,7 +237,7 @@ public class UserDashboard extends AppCompatActivity
     }
 
     @Override
-    public void loginSuccess() {
+    public void logoutSuccess() {
         Intent intent = new Intent(this,
                 BaseActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -110,21 +110,12 @@ public class UserHistory extends Fragment {
 
                 view = getLayoutInflater(null).inflate(R.layout.user_history_detail_view, null);
                 final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
-                final TextView username = (TextView) view.findViewById(R.id.username);
-                final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
-                final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
                 final TextView code = (TextView) view.findViewById(R.id.Code);
                 final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
                 final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
-                final LinearLayout statusBar = (LinearLayout) view.findViewById(R.id.StatusBar);
                 final TextView historyStatus = (TextView) view.findViewById(R.id.CompletionStatus);
 
-                statusBar.setVisibility(View.INVISIBLE);
-
                 registrationNumber.setTypeface(calibri);
-                username.setTypeface(calibri, BOLD);
-                wheelAlignment.setTypeface(calibri);
-                wheelBalancing.setTypeface(calibri);
                 code.setTypeface(calibri, BOLD);
                 dateSlot.setTypeface(calibri);
                 historyStatus.setTypeface(calibri, BOLD);
@@ -133,19 +124,6 @@ public class UserHistory extends Fragment {
                 code.setTextSize(25);
 
                 registrationNumber.setText(service.vehicleRegistrationNumber);
-
-                if(service.serviceRequired.size() == 2) {
-                    wheelBalancing.setText("Wheel Balancing");
-                    wheelAlignment.setText("Wheel Alignment");
-                } else {
-                    wheelAlignment.setVisibility(View.INVISIBLE);
-                    if (service.serviceRequired.contains(ServiceType.WHEEL_BALANCING)) {
-                        wheelBalancing.setHeight(20);
-                    } else {
-                        wheelBalancing.setText("Wheel Alignment");
-                        wheelBalancing.setHeight(20);
-                    }
-                }
 
                 dateSlot.setText(date);
                 code.setText("CODE: ");

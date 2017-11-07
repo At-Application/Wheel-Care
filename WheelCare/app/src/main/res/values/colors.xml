@@ -3,7 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="white">#ffffff</color>
-    <color name="auto_fill">#8B0000</color>
+    <color name="auto_fill">#8b0000</color>
     <color name="colorAccent">#FF4081</color>
     <color name="setup_btn_color">#595959</color>
     <color name="red_press">#990000</color>

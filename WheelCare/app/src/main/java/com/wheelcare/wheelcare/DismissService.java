@@ -1,5 +1,7 @@
 package com.wheelcare.wheelcare;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -162,7 +164,17 @@ public class DismissService extends RootActivity {
                 dateSlot.setText(date);
                 code.setText("CODE: ");
                 code.append(service.code);
-                vehicleImage.setImageBitmap(service.vehicleImage);
+
+                int pos = 0;
+                for(; pos < ((GlobalClass)getApplicationContext()).vehicles.size(); pos++) {
+                    if(((GlobalClass)getApplicationContext()).vehicles.get(pos).id == service.model_id) {
+                        break;
+                    }
+                }
+
+                byte[] image = ((GlobalClass)getApplicationContext()).vehicles.get(pos).image;
+                Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
+                vehicleImage.setImageBitmap(bmp);
             }
             return view;
         }

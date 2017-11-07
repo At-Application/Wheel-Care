@@ -1,5 +1,7 @@
 package com.wheelcare.wheelcare;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -72,51 +74,45 @@ public class History extends Fragment {
 
             final VehicleDetails service = ((GlobalClass)getActivity().getApplicationContext()).history.get(position);
 
+            SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
+            String date = fmt.format(service.date_slot);
 
-                SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
-                String date = fmt.format(service.date_slot);
+            view = getLayoutInflater(null).inflate(R.layout.pending_service_info_detail_view, null);
+            final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
+            final TextView username = (TextView) view.findViewById(R.id.username);
+            final TextView code = (TextView) view.findViewById(R.id.Code);
+            final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
+            final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
+            final LinearLayout statusBar = (LinearLayout) view.findViewById(R.id.StatusBar);
+            final TextView historyStatus = (TextView) view.findViewById(R.id.CompletionStatus);
+            statusBar.setVisibility(View.INVISIBLE);
 
-                view = getLayoutInflater(null).inflate(R.layout.pending_service_info_detail_view, null);
-                final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
-                final TextView username = (TextView) view.findViewById(R.id.username);
-                final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
-                final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
-                final TextView code = (TextView) view.findViewById(R.id.Code);
-                final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
-                final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
-                final LinearLayout statusBar = (LinearLayout) view.findViewById(R.id.StatusBar);
-                final TextView historyStatus = (TextView) view.findViewById(R.id.CompletionStatus);
-                statusBar.setVisibility(View.INVISIBLE);
+            registrationNumber.setTypeface(calibri);
+            username.setTypeface(calibri, BOLD);
+            code.setTypeface(calibri, BOLD);
+            dateSlot.setTypeface(calibri);
+            historyStatus.setTypeface(calibri, BOLD);
 
-                registrationNumber.setTypeface(calibri);
-                username.setTypeface(calibri, BOLD);
-                wheelAlignment.setTypeface(calibri);
-                wheelBalancing.setTypeface(calibri);
-                code.setTypeface(calibri, BOLD);
-                dateSlot.setTypeface(calibri);
-                historyStatus.setTypeface(calibri, BOLD);
+            historyStatus.setTextSize(23);
+            code.setTextSize(25);
 
-                historyStatus.setTextSize(23);
-                code.setTextSize(25);
-
-                registrationNumber.setText(service.vehicleRegistrationNumber);
-                username.setText(service.customername);
-                if (service.serviceRequired.contains(ServiceType.WHEEL_ALIGNMENT)) {
-                    wheelAlignment.setHeight(20);
-                } else {
-                    wheelAlignment.setHeight(0);
-                }
-
-                if (service.serviceRequired.contains(ServiceType.WHEEL_BALANCING)) {
-                    wheelBalancing.setHeight(20);
-                } else {
-                    wheelBalancing.setHeight(0);
-                }
+            registrationNumber.setText(service.vehicleRegistrationNumber);
+            username.setText(service.customername);
 
             dateSlot.setText(date);
             code.setText("CODE: ");
             code.append(service.code);
-            vehicleImage.setImageBitmap(service.vehicleImage);
+
+            int pos = 0;
+            for(; pos < ((GlobalClass)getActivity().getApplicationContext()).vehicles.size(); pos++) {
+                if(((GlobalClass)getActivity().getApplicationContext()).vehicles.get(pos).id == service.model_id) {
+                    break;
+                }
+            }
+
+            byte[] image = ((GlobalClass)getActivity().getApplicationContext()).vehicles.get(pos).image;
+            Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
+            vehicleImage.setImageBitmap(bmp);
 
             // Main Logic
             if (service.issue != null && service.issue != "") {
