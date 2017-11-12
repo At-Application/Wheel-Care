@@ -3,10 +3,11 @@ package com.wheelcare.wheelcare;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -18,7 +19,6 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
-import com.wheelcare.wheelcare.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,6 +61,8 @@ public class GlobalClass extends Application {
 
     private TimerTask timerTask;
 
+    public boolean isConnected;
+
     public ArrayList<VehicleDetails> pending = null;
     public ArrayList<VehicleDetails> history = null;
     public ArrayList<Issues> issues = null;
@@ -83,6 +85,13 @@ public class GlobalClass extends Application {
         issues = new ArrayList<>();
         userCarLists = new ArrayList<>();
         userhistory = new ArrayList<>();
+    }
+
+    public boolean isInternetAvailable() {
+        if(!isConnected) {
+            Toast.makeText(this, "Please connect to internet", Toast.LENGTH_LONG).show();
+        }
+        return isConnected;
     }
 
     public void startTempFreezeTimer() {
@@ -484,8 +493,10 @@ public class GlobalClass extends Application {
             object.put("spId", AuthenticationManager.getInstance().getUserID());
             if(freeze) {
                 time = new Date().getTime();
+                Log.d("Start Time", String.valueOf(time));
                 object.put("freeze_time_start", String.valueOf(time));
                 time = time + (1000 * 60 * 30);
+                Log.d("End Time", String.valueOf(time));
                 object.put("freeze_time_end", String.valueOf(time));
             } else {
                 object.put("freeze_time_start", String.valueOf(time));
@@ -591,6 +602,10 @@ public class GlobalClass extends Application {
     }
 
     public void getVehicleImages() {
+
+        if(vehicles == null) {
+            vehicles = new ArrayList<>();
+        }
 
         for(int i = 0, j; i < pending.size(); i++) {
             for(j = 0; j < vehicles.size(); j++) {

@@ -34,7 +34,9 @@ public class ForgotPassword extends RootActivity implements ForgotPasswordListen
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submit();
+                if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
+                    submit();
+                }
             }
         });
     }

@@ -72,7 +72,13 @@ public class PendingServices extends Fragment implements PendingServicesListener
                     @Override
                     public void onRefresh() {
                         Log.i("Refresh", "onRefresh called from SwipeRefreshLayout");
-                        getListVehicleDetails();
+                        if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+                            getListVehicleDetails();
+                        } else {
+                            if(mySwipeRefreshLayout.isRefreshing()) {
+                                mySwipeRefreshLayout.setRefreshing(false);
+                            }
+                        }
                     }
                 }
         );
@@ -98,8 +104,10 @@ public class PendingServices extends Fragment implements PendingServicesListener
             }
         });
         GlobalClass context = ((GlobalClass)getActivity().getApplicationContext());
-        if((context.pending.size() == 0) && (context.history.size() == 0)) {
-            getListVehicleDetails();
+        if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+            if ((context.pending.size() == 0) && (context.history.size() == 0)) {
+                getListVehicleDetails();
+            }
         }
         setupListView(view);
     }
@@ -306,15 +314,17 @@ public class PendingServices extends Fragment implements PendingServicesListener
             verify.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
-                    if (editCode.getText().toString().trim().equals(service.code)) {
-                        service.serviceStatus = ServiceStatus.VERIFIED;
-                        ((GlobalClass) getActivity().getApplicationContext()).pending.set((i), service);
-                        ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                        cancel.performClick();
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        editCode.setText("Failed");
+                    if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+                        VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
+                        if (editCode.getText().toString().trim().equals(service.code)) {
+                            service.serviceStatus = ServiceStatus.VERIFIED;
+                            ((GlobalClass) getActivity().getApplicationContext()).pending.set((i), service);
+                            ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                            cancel.performClick();
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            editCode.setText("Failed");
+                        }
                     }
                 }
             });
@@ -322,47 +332,55 @@ public class PendingServices extends Fragment implements PendingServicesListener
             started.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
-                    service.serviceStatus = ServiceStatus.STARTED;
-                    ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
-                    ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                    adapter.notifyDataSetChanged();
+                    if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+                        VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
+                        service.serviceStatus = ServiceStatus.STARTED;
+                        ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                        ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             });
 
             inProgress.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
-                    service.serviceStatus = ServiceStatus.IN_PROGRESS;
-                    ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
-                    ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                    adapter.notifyDataSetChanged();
+                    if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+                        VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
+                        service.serviceStatus = ServiceStatus.IN_PROGRESS;
+                        ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                        ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             });
 
             finalizing.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
-                    service.serviceStatus = ServiceStatus.FINALIZING;
-                    ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
-                    ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                    adapter.notifyDataSetChanged();
+                    if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+                        VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
+                        service.serviceStatus = ServiceStatus.FINALIZING;
+                        ((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                        ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             });
 
             done.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
-                    service.serviceStatus = ServiceStatus.DONE;
-                    //((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
-                    // Removing from pending list and adding to history list
-                    ((GlobalClass) getActivity().getApplicationContext()).history.add(0, service);
-                    ((GlobalClass) getActivity().getApplicationContext()).pending.remove(i);
-                    ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
-                    adapter.notifyDataSetChanged();
+                    if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+                        VehicleDetails service = ((GlobalClass) getActivity().getApplicationContext()).pending.get(i);
+                        service.serviceStatus = ServiceStatus.DONE;
+                        //((GlobalClass) getActivity().getApplicationContext()).pending.set(i, service);
+                        // Removing from pending list and adding to history list
+                        ((GlobalClass) getActivity().getApplicationContext()).history.add(0, service);
+                        ((GlobalClass) getActivity().getApplicationContext()).pending.remove(i);
+                        ((GlobalClass) getActivity().getApplicationContext()).setServicesStatus(service);
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             });
         }

@@ -60,15 +60,17 @@ public class DismissService extends RootActivity {
         dismiss_submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((GlobalClass)getApplicationContext()).history.add(((GlobalClass)getApplicationContext()).pending.get(removePosition - 1));
-                ((GlobalClass)getApplicationContext()).pending.remove(removePosition);
-                service.serviceStatus = ServiceStatus.DISMISS;
-                service.issue = issue.issue;
-                service.comment = comment.getText().toString();
-                ((GlobalClass)getApplicationContext()).pending.get(removePosition).serviceStatus = ServiceStatus.DISMISS;
-                ((GlobalClass)getApplicationContext()).pending.get(removePosition).issue = issue.issue;
-                ((GlobalClass)getApplicationContext()).pending.get(removePosition).comment = comment.getText().toString();
-                ((GlobalClass)getApplicationContext()).setServicesStatus(service);
+                if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
+                    ((GlobalClass) getApplicationContext()).history.add(((GlobalClass) getApplicationContext()).pending.get(removePosition - 1));
+                    ((GlobalClass) getApplicationContext()).pending.remove(removePosition);
+                    service.serviceStatus = ServiceStatus.DISMISS;
+                    service.issue = issue.issue;
+                    service.comment = comment.getText().toString();
+                    ((GlobalClass) getApplicationContext()).pending.get(removePosition).serviceStatus = ServiceStatus.DISMISS;
+                    ((GlobalClass) getApplicationContext()).pending.get(removePosition).issue = issue.issue;
+                    ((GlobalClass) getApplicationContext()).pending.get(removePosition).comment = comment.getText().toString();
+                    ((GlobalClass) getApplicationContext()).setServicesStatus(service);
+                }
             }
         });
     }

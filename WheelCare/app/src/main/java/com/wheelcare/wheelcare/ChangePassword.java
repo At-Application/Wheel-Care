@@ -1,5 +1,6 @@
 package com.wheelcare.wheelcare;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,24 +25,32 @@ public class ChangePassword extends RootActivity implements ChangePasswordListen
 
     EditText oldPassword, newPassword, confirmPassword;
     TextView notMatch;
+    Typeface calibri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_change_password);
+        calibri = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
 
         Button button = (Button) findViewById(R.id.submit_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submit();
+                if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
+                    submit();
+                }
             }
         });
 
         oldPassword = (EditText) findViewById(R.id.OldPassword);
         newPassword = (EditText) findViewById(R.id.NewPassword);
         confirmPassword = (EditText) findViewById(R.id.ConfirmPassword);
+
+        oldPassword.setTypeface(calibri);
+        newPassword.setTypeface(calibri);
+        confirmPassword.setTypeface(calibri);
 
         notMatch = (TextView) findViewById(R.id.NotMatch);
         notMatch.setVisibility(View.INVISIBLE);
@@ -95,7 +104,7 @@ public class ChangePassword extends RootActivity implements ChangePasswordListen
     }
 
     private void submit() {
-        if(!(oldPassword.getText().toString().length() > 8 && newPassword.getText().toString().length() > 8 && confirmPassword.getText().toString().length() > 8)) {
+        if(!(oldPassword.getText().toString().length() >= 8 && newPassword.getText().toString().length() >= 8 && confirmPassword.getText().toString().length() >= 8)) {
             Toast.makeText(this, "Password should be minimum 8 characters", Toast.LENGTH_LONG).show();
         } else if(Objects.equals(newPassword.getText().toString(), confirmPassword.getText().toString())) {
 

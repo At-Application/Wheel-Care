@@ -94,7 +94,9 @@ public class MyCars extends Fragment {
         super.onResume();
         rowItems = ((GlobalClass)getActivity().getApplicationContext()).getCarList();
         if(rowItems.size() == 0) {
-            requestCars();
+            if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+                requestCars();
+            }
         } else {
             adapter.notifyDataSetChanged();
         }
@@ -246,6 +248,10 @@ public class MyCars extends Fragment {
     }
 
     public void deleteCar(final int position) {
+
+        if(!(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable())) {
+            return;
+        }
 
         final JSONObject object = new JSONObject();
         try {

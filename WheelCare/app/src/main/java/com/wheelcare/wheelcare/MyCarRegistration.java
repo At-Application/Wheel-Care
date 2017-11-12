@@ -1,15 +1,12 @@
 package com.wheelcare.wheelcare;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.text.BoringLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -24,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -33,8 +29,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
-import com.wheelcare.wheelcare.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,9 +36,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -52,7 +44,7 @@ import java.util.Objects;
  * Created by Lenovo on 8/9/2017.
  */
 
-public class CarRegistration extends BaseActivity {
+public class MyCarRegistration extends BaseActivity implements View.OnClickListener {
     private Typeface custom_font_light;
     private ArrayAdapter<CharSequence> adapter;
     public Spinner brand_spinner, model_spinner, type_spinner;
@@ -69,7 +61,7 @@ public class CarRegistration extends BaseActivity {
     private boolean isValidCarNumber = false;
     private Button submit_btn;
 
-    private static final String TAG = CarRegistration.class.getSimpleName();
+    private static final String TAG = MyCarRegistration.class.getSimpleName();
 
     private static final String CarRegistrationURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carRegistration";
     private static final String URL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carInfo";
@@ -131,17 +123,7 @@ public class CarRegistration extends BaseActivity {
 
         //text_register_number.setTypeface(custom_font_light);
 
-        submit_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isValidCarNumber) {
-                    registerCar();
-                } else if (et_carRegno.getText().toString().length() == 0) {
-                    text_invalid_regno.setText("All field are required");
-                    text_invalid_regno.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        submit_btn.setOnClickListener(this);
 
         /*txt_title.setText("Wheelcare Car Registration");
         txt_title.setTypeface(custom_font_light);
@@ -455,7 +437,7 @@ public class CarRegistration extends BaseActivity {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                error.printStackTrace();
+                                Log.d(TAG, error.toString());
                             }
                         }
                 ) {

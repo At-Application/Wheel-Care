@@ -167,7 +167,9 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
             isValidEmail = false;
        }
         if ((isValidFullName)&&(isValidEmail)){
-            register();
+            if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
+                register();
+            }
             //bundle.putString("Mobile",et_user.getText().toString());
            //startActivity(new Intent(getApplicationContext(),OtpActivity.class).putExtras(bundle));
         }

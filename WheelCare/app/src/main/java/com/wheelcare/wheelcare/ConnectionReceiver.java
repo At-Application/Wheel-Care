@@ -12,26 +12,22 @@ import android.widget.Toast;
  */
 
 public class ConnectionReceiver extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
-            ConnectivityManager cm =
-                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            boolean isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-            if (isConnected) {
-                try {
-                    Toast.makeText(context, "Network is connected", Toast.LENGTH_LONG).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Toast.makeText(context, "Network is disconnected", Toast.LENGTH_LONG).show();
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        ((GlobalClass)context.getApplicationContext()).isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        if (((GlobalClass)context.getApplicationContext()).isConnected) {
+            try {
+                Toast.makeText(context, "Network is connected", Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
+        } else {
+            Toast.makeText(context, "Network is disconnected", Toast.LENGTH_LONG).show();
+        }
     }
-
-
 }

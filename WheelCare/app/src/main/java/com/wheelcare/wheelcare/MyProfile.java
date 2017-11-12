@@ -83,8 +83,10 @@ public class MyProfile extends Fragment {
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), ChangePassword.class);
-                startActivity(intent);
+                if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+                    Intent intent = new Intent(getActivity().getApplicationContext(), ChangePassword.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -92,7 +94,9 @@ public class MyProfile extends Fragment {
         adapter = new CustomListViewAdapter();
         listView.setAdapter(adapter);
 
-        getProfile();
+        if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+            getProfile();
+        }
     }
 
     public class CustomListViewAdapter extends BaseAdapter {

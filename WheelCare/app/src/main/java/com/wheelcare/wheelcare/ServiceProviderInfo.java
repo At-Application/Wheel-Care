@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wheelcare.wheelcare.R;
 import com.synnapps.carouselview.CarouselView;
@@ -222,9 +223,13 @@ public class ServiceProviderInfo extends RootActivity {
         // Send information as Intent to the next screen
         // Service Provider ID, Current Date, Slots with details
         // Wheel Alignment and Wheel Balancing Amount
-        Intent i = new Intent(getApplicationContext(), SelectServices.class);
-        i.putExtra("index", index);
-        startActivity(i);
+        if(((GlobalClass)getApplicationContext()).getCarList().size() > 0) {
+            Intent i = new Intent(getApplicationContext(), SelectServices.class);
+            i.putExtra("index", index);
+            startActivity(i);
+        } else {
+            Toast.makeText(getApplicationContext(), "Please register a car to proceed", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

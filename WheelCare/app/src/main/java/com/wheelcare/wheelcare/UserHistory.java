@@ -63,10 +63,12 @@ public class UserHistory extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         calibri = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "Calibri.ttf");
         models = ((GlobalClass)getActivity().getApplicationContext()).getCarList();
-        if(models.size() == 0) {
-            requestCars();
-        } else {
-            requestHistory();
+        if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
+            if (models.size() == 0) {
+                requestCars();
+            } else {
+                requestHistory();
+            }
         }
         setupListView(view);
     }

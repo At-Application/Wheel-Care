@@ -70,8 +70,9 @@ public class SelectServices extends RootActivity {
     private int ServiceProviderID;
     private String RegistrationNumber = "";
     private String Slot = " ";
-    private String WheelAlignmentAmount = "300";
-    private String WheelBalancingAmount = "300";
+    //private String WheelAlignmentAmount = "300";
+    //private String WheelBalancingAmount = "300";
+    private String ServiceAmount = "300";
     private String Total = "4";
     String DateViewText = "dd/mm/yyyy";
 
@@ -91,6 +92,8 @@ public class SelectServices extends RootActivity {
     boolean balancingChecked = false;
 
     float finalAmount = 0;
+
+    boolean slotValidity = false;
 
     SelectAdapter adapter;
 
@@ -125,8 +128,9 @@ public class SelectServices extends RootActivity {
         index = (int) extras.get("index");
         ServiceProviderDetails details = ((GlobalClass)getApplicationContext()).serviceProviders.get(index);
         ServiceProviderID = details.getId();
-        WheelAlignmentAmount = String.valueOf(details.getWheelAlignmentAmount());
-        WheelBalancingAmount = String.valueOf(details.getWheelBalancingAmount());
+        //WheelAlignmentAmount = String.valueOf(details.getWheelAlignmentAmount());
+        //WheelBalancingAmount = String.valueOf(details.getWheelBalancingAmount());
+        ServiceAmount = String.valueOf(details.getServiceAmount());
         Date CurrentDate = new Date();
         SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
         DateViewText = fmt.format(CurrentDate);
@@ -266,7 +270,7 @@ public class SelectServices extends RootActivity {
                 });
 
             } else if(position == 2) {
-                convertView = getLayoutInflater().inflate(R.layout.service_select_view, null);
+                /*convertView = getLayoutInflater().inflate(R.layout.service_select_view, null);
                 TextView selectLabel = (TextView) convertView.findViewById(R.id.SelectServices);
                 TextView amountLabel = (TextView) convertView.findViewById(R.id.Amount);
                 final TextView alignmentAmountLabel = (TextView) convertView.findViewById(R.id.WheelAlignmentAmount);
@@ -313,13 +317,16 @@ public class SelectServices extends RootActivity {
                     }
                 });
 
-            } else if(position == 3){
+            } else if(position == 3){*/
                 convertView = getLayoutInflater().inflate(R.layout.service_total, null);
                 TextView totalLabel = (TextView) convertView.findViewById(R.id.Total);
                 TextView totalAmount = (TextView) convertView.findViewById(R.id.TotalAmount);
 
                 totalLabel.setTypeface(calibri);
                 totalAmount.setTypeface(calibri);
+
+                totalLabel.setText("Total Amount");
+                finalAmount = Float.parseFloat(ServiceAmount);
 
                 totalAmount.setText("₹" + finalAmount);
             } else {
@@ -341,11 +348,15 @@ public class SelectServices extends RootActivity {
 
     public void proceedToService(View view) {
         Log.d("Button pressed", "Proceed to pay");
-        if(alignmentChecked || balancingChecked) {
+        //if(alignmentChecked || balancingChecked) {
+        if(slotValidity) {
             Log.d("Button pressed", "Will Proceed to pay");
-            bookService();
+            if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
+                bookService();
+            }
         } else {
-            Toast.makeText(this.getApplicationContext(), "Please select service type", Toast.LENGTH_LONG).show();
+            Toast.makeText(this.getApplicationContext(), "This slot is not available", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this.getApplicationContext(), "Please select service type", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -428,6 +439,10 @@ public class SelectServices extends RootActivity {
     // MARK: For registering CAR
 
     public void checkSlotValidity() {
+        if(!(((GlobalClass)getApplicationContext()).isInternetAvailable())) {
+            return;
+        }
+
         Log.e("Current Time", String.valueOf(new Date().getTime()));
         Log.e("Sent Time", String.valueOf(getSlotTime()));
         if(getSlotTime() < new Date().getTime()) {
@@ -437,6 +452,7 @@ public class SelectServices extends RootActivity {
             hour = todayHour;
             minutes = todayMinutes;
             Toast.makeText(getApplicationContext(), "This slot is not available", Toast.LENGTH_LONG).show();
+            slotValidity = false;
             adapter.notifyDataSetChanged();
         } else {
             JSONObject object = createJSONObject();
@@ -478,7 +494,10 @@ public class SelectServices extends RootActivity {
                                         hour = todayHour;
                                         minutes = todayMinutes;
                                         Toast.makeText(getApplicationContext(), "This slot is not available", Toast.LENGTH_LONG).show();
+                                        slotValidity = false;
                                         adapter.notifyDataSetChanged();
+                                    } else {
+                                        slotValidity = true;
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -543,13 +562,14 @@ public class SelectServices extends RootActivity {
             object.put("service_status", "not_verified");
             object.put("booking_service_amount", String.valueOf(finalAmount));
             String serviceType;
-            if(balancingChecked && alignmentChecked) {
+            /*if(balancingChecked && alignmentChecked) {
                 serviceType = "balancing alignment";
             } else if(!alignmentChecked) {
                 serviceType = "wheel balancing";
             } else {
                 serviceType = "wheel alignment";
-            }
+            }*/
+            serviceType = "balancing alignment";
             object.put("serviceType", serviceType);
         } catch (JSONException e) {
             e.printStackTrace();

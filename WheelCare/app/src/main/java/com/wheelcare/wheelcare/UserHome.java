@@ -395,6 +395,9 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
     // MARK: For setting the status
 
     public void getServiceProviders() {
+        if(!(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable())) {
+            return;
+        }
         if(!this.isVisible()) return;
         JSONObject object = createJSONObject();
         if (object != null) {

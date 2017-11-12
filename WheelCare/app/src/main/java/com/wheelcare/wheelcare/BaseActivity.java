@@ -1,7 +1,10 @@
 package com.wheelcare.wheelcare;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -78,6 +81,11 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base1);
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        ((GlobalClass)getApplicationContext()).isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
         //welcome_text= (TextView)findViewById(R.id.welcome_text);
         et_user= (TextView)findViewById(R.id.text_user);
         et_service= (TextView)findViewById(R.id.text_provider);

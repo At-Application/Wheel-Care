@@ -289,6 +289,9 @@ public class ServiceInfo extends RootActivity {
     }
 
     public void proceedToService(View view) {
+        if(!(((GlobalClass)getApplicationContext()).isInternetAvailable())) {
+            return;
+        }
         final JSONObject object = new JSONObject();
         try {
             object.put("userId", AuthenticationManager.getInstance().getUserID());

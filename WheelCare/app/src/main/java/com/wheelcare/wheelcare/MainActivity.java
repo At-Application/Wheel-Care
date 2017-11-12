@@ -223,7 +223,9 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         //if ((isValidPassword)&&(isValidMobile)) {
+        if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
             login();
+        }
         //}
     }
 

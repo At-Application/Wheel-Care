@@ -194,7 +194,9 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
     @Override
     public void onClick(View view) {
         if (isValid){
-            otpManager.verifyOTP(this.getApplicationContext(), this, et_otp.getText().toString());
+            if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
+                otpManager.verifyOTP(this.getApplicationContext(), this, et_otp.getText().toString());
+            }
         }
     }
 

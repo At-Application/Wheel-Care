@@ -115,9 +115,11 @@ public class ServiceProviderDashboard extends AppCompatActivity
             title.setText("History");
             fragment = new History();
         } else if (id == R.id.nav_helpline) {
-            getHelpLine();
+            if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
+                getHelpLine();
+            }
         } else if (id == R.id.nav_logout) {
-
+            AuthenticationManager.getInstance().logout(this);
         }
 
         if (fragment != null) {

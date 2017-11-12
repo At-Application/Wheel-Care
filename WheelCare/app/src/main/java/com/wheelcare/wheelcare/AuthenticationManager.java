@@ -3,6 +3,7 @@ package com.wheelcare.wheelcare;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -452,6 +453,11 @@ public class AuthenticationManager {
     }
 
     public void renewToken(Context context) {
+
+        if(!((GlobalClass)context).isConnected) {
+            Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         final JSONObject object = new JSONObject();
         try {

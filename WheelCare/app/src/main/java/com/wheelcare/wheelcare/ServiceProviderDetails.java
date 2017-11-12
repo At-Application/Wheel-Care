@@ -19,8 +19,9 @@ public class ServiceProviderDetails {
     private String Address;
     private String Website;
     private String ContactNumber;
-    private float WheelBalancingAmount;
-    private float WheelAlignmentAmount;
+    private float ServiceAmount;
+    //private float WheelBalancingAmount;
+    //private float WheelAlignmentAmount;
     private ArrayList<String> LocationImage;
 
     public ServiceProviderDetails(JSONObject response) {
@@ -32,8 +33,9 @@ public class ServiceProviderDetails {
             Address = (String) response.get("address");
             Website = response.isNull("website") ? "" : (String) response.get("website");
             ContactNumber = (String) response.get("contactNo");
-            WheelBalancingAmount = response.isNull("wheel_balancing_service") ? 0 : Float.parseFloat((String)response.get("wheel_balancing_service"));
-            WheelAlignmentAmount = response.isNull("wheel_alignment_service") ? 0 : Float.parseFloat((String)response.get("wheel_alignment_service"));
+            ServiceAmount = response.isNull("balancing_alignment_service") ? 0 : Float.parseFloat((String)response.get("balancing_alignment_service"));
+            //WheelBalancingAmount = response.isNull("wheel_balancing_service") ? 0 : Float.parseFloat((String)response.get("wheel_balancing_service"));
+            //WheelAlignmentAmount = response.isNull("wheel_alignment_service") ? 0 : Float.parseFloat((String)response.get("wheel_alignment_service"));
         } catch(JSONException e) {
             e.printStackTrace();
         }
@@ -59,13 +61,13 @@ public class ServiceProviderDetails {
         return ContactNumber;
     }
 
-    public float getWheelBalancingAmount() {
-        return WheelBalancingAmount;
-    }
+//    public float getWheelBalancingAmount() {
+//        return WheelBalancingAmount;
+//    }
 
-    public float getWheelAlignmentAmount() {
-        return WheelAlignmentAmount;
-    }
+//    public float getWheelAlignmentAmount() {
+//        return WheelAlignmentAmount;
+//    }
 
     public ArrayList<String> getLocationImage() {
         return LocationImage;
@@ -73,5 +75,9 @@ public class ServiceProviderDetails {
 
     public int getId() {
         return id;
+    }
+
+    public float getServiceAmount() {
+        return ServiceAmount;
     }
 }
