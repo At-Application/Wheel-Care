@@ -36,7 +36,7 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         Bundle bundle= new Bundle();
-        Intent i;
+        Intent i = new Intent();
 
         if(AuthenticationManager.getInstance().isSessionValid() == SessionValidity.VALID) {
             i = new Intent(getApplicationContext(), MainActivity.class);
@@ -55,7 +55,14 @@ public class BaseActivity extends RootActivity implements View.OnClickListener {
                 case R.id.text_user:
                     if (userType != null && Objects.equals(userType, "usr")) {
                         ((GlobalClass) getApplicationContext()).setUserType("usr");
-                        i = new Intent(getApplicationContext(), UserDashboard.class);
+                        Log.d("ACTIVITY", AuthenticationManager.getInstance().getScreen());
+                        switch(AuthenticationManager.getInstance().getScreen()) {
+                            case "MainActivity": i = new Intent(getApplicationContext(), MainActivity.class); break;
+                            case "OtpActivity": i = new Intent(getApplicationContext(), OtpActivity.class); break;
+                            case "RegistrationActivity": i = new Intent(getApplicationContext(), RegisterationActicvity.class); break;
+                            case "CarRegistration": i = new Intent(getApplicationContext(), CarRegistration.class); break;
+                            case "UserDashboard": i = new Intent(getApplicationContext(), UserDashboard.class); break;
+                        }
                     } else {
                         i = new Intent(getApplicationContext(), MainActivity.class);
                         i.putExtra("user_type", "usr");

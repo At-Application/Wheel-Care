@@ -117,6 +117,8 @@ public class AuthenticationManager {
 
     private static long PriorTime = (1000 * 60 * 5); // 5 min
 
+    private String Screen = "MainActivity";
+
     GlobalClass globalClass;
 
     // MARK: Initializer
@@ -133,6 +135,21 @@ public class AuthenticationManager {
     }
 
     // MARK: Initialization Function
+
+
+    public String getScreen() {
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        this.Screen = preferences.getString("Screen", "MainActivity");
+        return this.Screen;
+    }
+
+    public void setMainScreen(String Screen) {
+        this.Screen = Screen;
+        SharedPreferences preferences = globalClass.getApplicationContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("Screen", Screen);
+        editor.apply();
+    }
 
     public void setLoginURL(String loginURL) {
         this.loginURL = loginURL;
@@ -598,7 +615,7 @@ public class AuthenticationManager {
         // Add the request to the RequestQueue.
         WebServiceManager.getInstance(context).addToRequestQueue(
                 // Request a string response from the provided URL.
-                new JsonObjectRequest(Request.Method.POST, forgotPasswordURL, null,
+                new JsonObjectRequest(Request.Method.POST, changePasswordURL, null,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {

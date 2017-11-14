@@ -44,7 +44,7 @@ public class ServiceProviderDashboard extends AppCompatActivity
     String phone = "";
 
     private static final String TAG = UserDashboard.class.getSimpleName();
-    private static final String URL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/helpline";
+    private static final String URL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "helpline";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

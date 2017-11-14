@@ -53,8 +53,8 @@ public class MyCars extends Fragment {
     View view;
     CustomListViewAdapter adapter;
 
-    private static final String URL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/myCar";
-    private static final String deleteURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/rmCar";
+    private static final String URL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "myCar";
+    private static final String deleteURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "rmCar";
     private static final String TAG = MyCars.class.getSimpleName();
 
     @Nullable
@@ -279,7 +279,15 @@ public class MyCars extends Fragment {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d(TAG, error.toString());
+                                switch(error.networkResponse.statusCode) {
+                                    case 405:
+                                        Toast.makeText(getActivity().getApplicationContext(), "This vehicle has one free service left", Toast.LENGTH_LONG).show();
+                                        break;
+
+                                    case 409:
+                                        Toast.makeText(getActivity().getApplicationContext(), "Vehicle assigned for service. Cannot be deleted", Toast.LENGTH_LONG).show();
+                                        break;
+                                }
                             }
                         }
                 ) {

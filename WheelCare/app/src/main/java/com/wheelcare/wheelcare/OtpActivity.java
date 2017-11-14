@@ -39,8 +39,8 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
     IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 
 
-    private static final String otpRequestURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/loginOTP";
-    private static final String otpVerifyURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/loginOTPValidate";
+    private static final String otpRequestURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "loginOTP";
+    private static final String otpVerifyURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "loginOTPValidate";
 
     private Typeface custom_font_light;
     private TextView text_auto_detect;
@@ -53,6 +53,8 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
     private TextView text_resend_sms;
     protected TextView text_otp_error;
     private boolean isValid;
+
+    OTPRequestListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,15 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
         btn_submit= (Button)findViewById(R.id.btn_submit);
         text_resend_sms= (TextView)findViewById(R.id.text_resend_sms);
         text_otp_error= (TextView)findViewById(R.id.text_otp_error);
+
+        listener = this;
+
+        text_resend_sms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                otpManager.requestOTP(getApplicationContext(), listener);
+            }
+        });
 
         text_resend_sms.setPaintFlags(text_resend_sms.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
 

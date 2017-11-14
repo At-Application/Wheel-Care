@@ -47,12 +47,14 @@ public class UserDashboard extends AppCompatActivity
     String phone = "";
 
     private static final String TAG = UserDashboard.class.getSimpleName();
-    private static final String URL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/helpline";
-    private static final String CarsURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/myCar";
+    private static final String URL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "helpline";
+    private static final String CarsURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "myCar";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AuthenticationManager.getInstance().setMainScreen("UserDashboard");
+
         setContentView(R.layout.activity_user_dashboard);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,6 +73,7 @@ public class UserDashboard extends AppCompatActivity
         navigationView.getMenu().getItem(0).setChecked(true);
         displaySelectedItem(R.id.nav_home);
 
+        Log.d("CAR SIZE", String.valueOf(((GlobalClass)getApplicationContext()).getCarList().size()));
         if(((GlobalClass)getApplicationContext()).getCarList().size() == 0) {
             if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
                 requestCars();

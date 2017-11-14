@@ -71,9 +71,9 @@ public class CarRegistration extends BaseActivity {
 
     private static final String TAG = CarRegistration.class.getSimpleName();
 
-    private static final String CarRegistrationURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carRegistration";
-    private static final String URL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carInfo";
-    private static final String ImageURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carImg";
+    private static final String CarRegistrationURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "carRegistration";
+    private static final String URL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "carInfo";
+    private static final String ImageURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "carImg";
 
     private static final String SUCCESS = "200";
 
@@ -81,17 +81,6 @@ public class CarRegistration extends BaseActivity {
 
     JSONArray array;
     Boolean fromMycars = false;
-
-    @Override
-    public void onClick(View view) {
-        super.onClick(view);
-        if (isValidCarNumber) {
-            registerCar();
-        } else if (et_carRegno.getText().toString().length() == 0) {
-            text_invalid_regno.setText("All field are required");
-            text_invalid_regno.setVisibility(View.VISIBLE);
-        }
-    }
 
     // private String[] car_models= new String[5];
     @Override
@@ -102,6 +91,10 @@ public class CarRegistration extends BaseActivity {
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
             fromMycars = extra.getBoolean("MyCars");
+        }
+
+        if(!fromMycars) {
+            AuthenticationManager.getInstance().setMainScreen("CarRegistration");
         }
 
         list = ((GlobalClass)getApplicationContext()).getCarList();
@@ -136,8 +129,8 @@ public class CarRegistration extends BaseActivity {
             public void onClick(View v) {
                 if (isValidCarNumber) {
                     registerCar();
-                } else if (et_carRegno.getText().toString().length() == 0) {
-                    text_invalid_regno.setText("All field are required");
+                } else if (et_carRegno.getText().toString().length() != 10) {
+                    text_invalid_regno.setText("Registration number is invalid");
                     text_invalid_regno.setVisibility(View.VISIBLE);
                 }
             }
@@ -175,8 +168,13 @@ public class CarRegistration extends BaseActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
+            public void afterTextChanged(Editable s) {
+                String result = s.toString().replaceAll(" ", "");
+                if (!s.toString().equals(result)) {
+                    et_carRegno.setText(result);
+                    et_carRegno.setSelection(result.length());
+                    // alert the user
+                }
             }
         });
 
@@ -400,6 +398,7 @@ public class CarRegistration extends BaseActivity {
         } else {
             Log.e(TAG, "Not From My cars");
             startActivity(new Intent(getApplicationContext(), UserDashboard.class));
+            finish();
         }
     }
 
@@ -420,11 +419,11 @@ public class CarRegistration extends BaseActivity {
         JSONObject object = new JSONObject();
         try {
             object.put("userId", AuthenticationManager.getInstance().getUserID());
-            object.put("carManufacture", brand_spinner.getSelectedItem().toString());
+            //object.put("carManufacture", brand_spinner.getSelectedItem().toString());
             object.put("regNo", et_carRegno.getText());
-            object.put("carName", model_spinner.getSelectedItem().toString());
+            //object.put("carName", model_spinner.getSelectedItem().toString());
             object.put("carType", type_spinner.getSelectedItem().toString());
-            //object.put("carId", model_id.get(model_items.indexOf(model_spinner.getSelectedItem().toString())));
+            object.put("model_id", model_id.get(model_items.indexOf(model_spinner.getSelectedItem().toString())));
             Vehicle car = new Vehicle();
             car.id = model_id.get(model_items.indexOf(model_spinner.getSelectedItem().toString()));
             car.manufacturer = brand_spinner.getSelectedItem().toString();
@@ -455,7 +454,11 @@ public class CarRegistration extends BaseActivity {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                error.printStackTrace();
+                                if(error.networkResponse.statusCode == 423) {
+                                    Toast.makeText(getApplicationContext(), "Car already registered with another User", Toast.LENGTH_LONG).show();
+                                } else {
+                                    error.printStackTrace();
+                                }
                             }
                         }
                 ) {

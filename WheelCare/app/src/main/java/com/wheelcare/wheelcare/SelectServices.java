@@ -29,10 +29,12 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.wheelcare.wheelcare.R;
 import com.synnapps.carouselview.CarouselView;
@@ -59,8 +61,8 @@ public class SelectServices extends RootActivity {
 
     private static final String TAG = UserHome.class.getSimpleName();
 
-    private static final String getSlotURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getSlot";
-    private static final String bookServiceURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carBookingService";
+    private static final String getSlotURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "getSlot";
+    private static final String bookServiceURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "carBookingService";
 
     private static final String SUCCESS = "200";
 
@@ -352,7 +354,13 @@ public class SelectServices extends RootActivity {
         if(slotValidity) {
             Log.d("Button pressed", "Will Proceed to pay");
             if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
-                bookService();
+                if(vehicles.get(currentPosition).validity != 0 && vehicles.get(currentPosition).validity > new Date().getTime()) {
+                    Toast.makeText(getApplicationContext(), "You do not have to pay for this car", Toast.LENGTH_LONG).show();
+                    bookService();
+                } else {
+                    //Paytm calls
+                    bookService(); // Make validity = 0 in case of Paytm
+                }
             }
         } else {
             Toast.makeText(this.getApplicationContext(), "This slot is not available", Toast.LENGTH_LONG).show();
@@ -561,6 +569,7 @@ public class SelectServices extends RootActivity {
             object.put("reg_no", vehicles.get(currentPosition).registration_number);
             object.put("service_status", "not_verified");
             object.put("booking_service_amount", String.valueOf(finalAmount));
+            object.put("validity", vehicles.get(currentPosition).validity); // During new booking
             String serviceType;
             /*if(balancingChecked && alignmentChecked) {
                 serviceType = "balancing alignment";
@@ -594,7 +603,7 @@ public class SelectServices extends RootActivity {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                Log.d(TAG, response.toString());
+                               // Log.d(TAG, response.toString());
                                 // Actual data received here
 //                                try {
                                     // TODO: Add code for confirmation after payment
@@ -637,7 +646,22 @@ public class SelectServices extends RootActivity {
                     @Override
                     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                         Log.d(TAG, "StatusCode: "+String.valueOf(response.statusCode));
-                        return super.parseNetworkResponse(response);
+                        try {
+                            String jsonString = new String(response.data,
+                                    HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+
+                            JSONObject result = null;
+
+                            if (jsonString != null && jsonString.length() > 0)
+                                result = new JSONObject(jsonString);
+
+                            return Response.success(result,
+                                    HttpHeaderParser.parseCacheHeaders(response));
+                        } catch (UnsupportedEncodingException e) {
+                            return Response.error(new ParseError(e));
+                        } catch (JSONException je) {
+                            return Response.error(new ParseError(je));
+                        }
                     }
                 }
         );

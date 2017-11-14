@@ -47,10 +47,9 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     boolean is_hidden = true;
     private TextView header;
 
-    public static final String loginURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/mobileLoginAuth";
-    public static final String renewURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getRefreshToken";
-    public static final String forgotPasswordURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/forgotPassword";
-    public static final String changePasswordURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/changePassword";
+    public static final String loginURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "mobileLoginAuth";
+    public static final String renewURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "getRefreshToken";
+    public static final String forgotPasswordURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "forgotPassword";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,11 +221,13 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        //if ((isValidPassword)&&(isValidMobile)) {
-        if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
-            login();
+        if ((isValidPassword)&&(isValidMobile)) {
+            if (((GlobalClass) getApplicationContext()).isInternetAvailable()) {
+                login();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Please enter the details correctly", Toast.LENGTH_SHORT).show();
         }
-        //}
     }
 
     public void setupAuthentication() {
@@ -234,7 +235,6 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         AuthenticationManager.getInstance().setLoginURL(loginURL);
         AuthenticationManager.getInstance().setRenewURL(renewURL);
         AuthenticationManager.getInstance().setForgotPasswordURL(forgotPasswordURL);
-        AuthenticationManager.getInstance().setChangePasswordURL(changePasswordURL);
     }
 
     public void login() {
@@ -268,17 +268,21 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
                 if (Objects.equals((String) response.get("statusDesc"), "account already exist")) {
                     Log.i(TAG, "Account already Exists");
                     Toast.makeText(getApplicationContext(), "User already registered", Toast.LENGTH_LONG).show();
+                    AuthenticationManager.getInstance().setMainScreen("UserDashboard");
                     startActivity(new Intent(getApplicationContext(), UserDashboard.class));
                 } else if(Objects.equals((String) response.get("statusDesc"), "user not registered")) {
                     Log.i(TAG, "User not registered");
+                    AuthenticationManager.getInstance().setMainScreen("RegistrationActivity");
                     startActivity(new Intent(getApplicationContext(), RegisterationActicvity.class));
                 } else if(Objects.equals((String) response.get("statusDesc"), "car not registered")) {
                     Log.i(TAG, "Car not registered");
+                    AuthenticationManager.getInstance().setMainScreen("CarRegistration");
                     startActivity(new Intent(getApplicationContext(), CarRegistration.class));
                 } else {
                     Log.i(TAG, "Login Successful");
                     Bundle send_number = new Bundle();
                     send_number.putString("mobile_number",edit_mobile.getText().toString());
+                    AuthenticationManager.getInstance().setMainScreen("OtpActivity");
                     startActivity(new Intent(getApplicationContext(), OtpActivity.class).putExtras(send_number));
                 }
             } else {
@@ -294,7 +298,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
 
     @Override
     public void loginFailed(VolleyError error) {
-        Log.e(TAG, error.toString());
+        Toast.makeText(getApplicationContext(), "Failed to Log in", Toast.LENGTH_SHORT).show();
     }
 
     public static final int MY_PERMISSIONS_INTERNET = 99;
@@ -330,7 +334,7 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     }
 
     private void sendForgotPasswordRequest() {
-        Intent intent = new Intent(this, ForgotPassword.class);
+        Intent intent = new Intent(this, ForgotPassword.class).putExtra("user_type", userType);
         startActivity(intent);
     }
 }

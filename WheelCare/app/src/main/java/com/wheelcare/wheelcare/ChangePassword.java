@@ -27,9 +27,13 @@ public class ChangePassword extends RootActivity implements ChangePasswordListen
     TextView notMatch;
     Typeface calibri;
 
+    public static final String changePasswordURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "changePassword";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AuthenticationManager.getInstance().setChangePasswordURL(changePasswordURL);
 
         setContentView(R.layout.activity_change_password);
         calibri = Typeface.createFromAsset(getApplicationContext().getAssets(), "Calibri.ttf");
@@ -111,13 +115,14 @@ public class ChangePassword extends RootActivity implements ChangePasswordListen
             final JSONObject object = new JSONObject();
             try {
                 object.put("userId", AuthenticationManager.getInstance().getUserID());
-                object.put("oldPwd", oldPassword.getText().toString());
-                object.put("newPwd", newPassword.getText().toString());
+                object.put("currpwd", oldPassword.getText().toString());
+                object.put("newpwd", newPassword.getText().toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             if (object == null) return;
+
 
             AuthenticationManager.getInstance().changePassword(this, this, object);
         }
@@ -131,6 +136,11 @@ public class ChangePassword extends RootActivity implements ChangePasswordListen
 
     @Override
     public void ResponseFailure(VolleyError error) {
-        Toast.makeText(this, "Please check your password", Toast.LENGTH_LONG).show();
+        switch(error.networkResponse.statusCode) {
+            case 423: Toast.makeText(this, "Current password is incorrect", Toast.LENGTH_LONG).show(); break;
+
+            default:
+            Toast.makeText(this, "Please check your password", Toast.LENGTH_LONG).show();
+        }
     }
 }

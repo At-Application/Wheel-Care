@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -64,7 +65,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
 
     private static final String TAG = UserHome.class.getSimpleName();
 
-    private static final String ServiceProviderListURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getSPInfos";
+    private static final String ServiceProviderListURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "getSPInfos";
 
     private static final String SUCCESS = "200";
 
@@ -154,7 +155,19 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
         progressBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity().getApplicationContext(), ServiceInfo.class).putExtra("UserCarListIndex", ((GlobalClass)context).userCarLists.indexOf(userCarListObj)));
+                int index = -1;
+                for(int i = 0; i < ((GlobalClass)getActivity().getApplicationContext()).vehicles.size(); i++) {
+                    Vehicle vehicle = ((GlobalClass)getActivity().getApplicationContext()).vehicles.get(i);
+                    if(Objects.equals(vehicle.registration_number, userCarListObj.getRegistrationNumber())) {
+                        index = i;
+                        break;
+                    }
+                }
+                Log.d("Index of v", String.valueOf(index));
+                Intent i = new Intent(getActivity().getApplicationContext(), ServiceInfo.class);
+                i.putExtra("UserCarListIndex", ((GlobalClass)context).userCarLists.indexOf(userCarListObj));
+                i.putExtra("vehicleIndex", index);
+                startActivity(i);
             }
         });
     }
@@ -479,9 +492,13 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        UserCarList lowest = new UserCarList();
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "ON START CALLED");
+        if(mLastLocation != null) {
+            getServiceProviders();
+        }
+        /*UserCarList lowest = new UserCarList();
         lowest.setSlotValue(0);
         for (UserCarList obj : ((GlobalClass) context).userCarLists) {
             if (obj.getServiceStatus() != null) {
@@ -537,7 +554,7 @@ public class UserHome extends Fragment implements OnMapReadyCallback, GoogleApiC
                         break;
                 }
             }
-        }
+        }*/
     }
 
     private void populateUserCarData(JSONArray response) {

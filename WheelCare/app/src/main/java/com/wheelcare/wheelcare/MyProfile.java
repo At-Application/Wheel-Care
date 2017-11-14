@@ -60,7 +60,7 @@ public class MyProfile extends Fragment {
     View view;
     CustomListViewAdapter adapter;
 
-    private static final String URL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/getProfile";
+    private static final String URL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "getProfile";
     private static final String TAG = MyProfile.class.getSimpleName();
 
     @Nullable
@@ -146,6 +146,7 @@ public class MyProfile extends Fragment {
         final JSONObject object = new JSONObject();
         try {
             object.put("userId", AuthenticationManager.getInstance().getUserID());
+            object.put("usertype", ((GlobalClass)getActivity().getApplicationContext()).userType);
         } catch (JSONException e) {
             e.printStackTrace();
         }

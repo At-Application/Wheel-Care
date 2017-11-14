@@ -50,7 +50,7 @@ public class UserHistory extends Fragment {
     HistoryAdapter adapter;
 
     private static final String TAG = UserHistory.class.getSimpleName();
-    private static final String CarsURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/myCar";
+    private static final String CarsURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "myCar";
 
     @Nullable
     @Override
@@ -61,6 +61,7 @@ public class UserHistory extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ((GlobalClass)getActivity().getApplicationContext()).userhistory.clear();
         calibri = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "Calibri.ttf");
         models = ((GlobalClass)getActivity().getApplicationContext()).getCarList();
         if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {

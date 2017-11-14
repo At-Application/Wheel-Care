@@ -35,8 +35,11 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.microedition.khronos.opengles.GL;
 
 import static android.graphics.Typeface.BOLD;
 
@@ -49,7 +52,7 @@ public class ServiceInfo extends RootActivity {
     private Typeface calibri;
 
     private static final String TAG = ServiceInfo.class.getSimpleName();
-    private static final String URL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/cancelBookingService";
+    private static final String URL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "cancelBookingService";
 
     InfoAdapter serviceProviderInfoAdapter;
 
@@ -59,7 +62,7 @@ public class ServiceInfo extends RootActivity {
     private String Address = "One two three four five six seven eight nine ten eleven twelve";
     private String PhoneNumber = "9743722774";
     private String Website = "serviceprovider.com";
-    private Bitmap ProviderImage = null;
+    private int vehicleIndex = -1;
     private ArrayList<ServiceType> serviceTypes;
     private ServiceStatus serviceStatus = ServiceStatus.FINALIZING;
     String date, boldCode;
@@ -89,6 +92,7 @@ public class ServiceInfo extends RootActivity {
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
             index = (int) extra.get("UserCarListIndex");
+            vehicleIndex = (int) extra.get("vehicleIndex");
         }
         UserCarList obj = ((GlobalClass)context).userCarLists.get(index);
         if (obj.getServiceStatus() != null) {
@@ -174,9 +178,11 @@ public class ServiceInfo extends RootActivity {
                 done.setTextSize(12);
                 code.setTextSize(25);
 
-                if (ProviderImage != null) {
-                    CarImage.setImageBitmap(ProviderImage);
-                }
+                Log.d("vehicleIndex", String.valueOf(vehicleIndex));
+
+                Bitmap bmp = BitmapFactory.decodeByteArray(((GlobalClass)context).vehicles.get(vehicleIndex).image, 0, ((GlobalClass)context).vehicles.get(vehicleIndex).image.length);
+                CarImage.setImageBitmap(bmp);
+
                 registrationNumber.setText(RegistrationNumber);
 
                 dateSlot.setText(date);
@@ -297,6 +303,12 @@ public class ServiceInfo extends RootActivity {
             object.put("userId", AuthenticationManager.getInstance().getUserID());
             object.put("reg_no", RegistrationNumber);
             object.put("service_status", "not_verified");
+            if(((GlobalClass)context).vehicles.get(vehicleIndex).validity == 0 || ((GlobalClass)context).vehicles.get(vehicleIndex).validity < new Date().getTime()) {
+                ((GlobalClass) context).vehicles.get(vehicleIndex).validity = (new Date().getTime() + (86400 * 1000 * 3));
+                object.put("validity", ((GlobalClass) context).vehicles.get(vehicleIndex).validity);
+            } else {
+                object.put("validity", ((GlobalClass) context).vehicles.get(vehicleIndex).validity);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -310,6 +322,7 @@ public class ServiceInfo extends RootActivity {
                             @Override
                             public void onResponse(JSONObject response) {
                                 ((GlobalClass)context).userCarLists.remove(index);
+                                ((GlobalClass)context).saveCarList(((GlobalClass)context).vehicles);
                                 closeActivity();
                             }
                         },

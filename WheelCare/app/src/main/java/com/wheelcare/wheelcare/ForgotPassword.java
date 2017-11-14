@@ -1,6 +1,9 @@
 package com.wheelcare.wheelcare;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +24,10 @@ public class ForgotPassword extends RootActivity implements ForgotPasswordListen
 
     EditText emailID;
 
+    Boolean isValidEmail = false;
+
+    private static final String TAG = ForgotPassword.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,13 +36,42 @@ public class ForgotPassword extends RootActivity implements ForgotPasswordListen
 
         emailID = (EditText) findViewById(R.id.emailId_text);
 
+        emailID.addTextChangedListener(new TextWatcher(){
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                if (emailID.getText().toString().matches("^ ") ){
+                    isValidEmail= false;
+                }else if(emailID.getText().toString().matches("^[a-zA-Z0-9._-]+@[a-z]+.[a-z]+$")){
+                    isValidEmail = true;
+                }else {
+                    isValidEmail = false;
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void afterTextChanged(Editable arg0) {}
+        });
+
         Button button = (Button) findViewById(R.id.submit_button);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
-                    submit();
+                    if(isValidEmail) {
+                        submit();
+                    } else {
+                        if(emailID.getText().toString().length() == 0) {
+                            Toast.makeText(getApplicationContext(), "Field cannot be left empty", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Invalid Email address", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
             }
         });
@@ -44,7 +80,11 @@ public class ForgotPassword extends RootActivity implements ForgotPasswordListen
     private void submit() {
         final JSONObject object = new JSONObject();
         try {
-            object.put("emailId", emailID.getText().toString());
+            Bundle extra = getIntent().getExtras();
+            if(extra != null) {
+                object.put("usertype", extra.getString("user_type"));
+                object.put("emailId", emailID.getText().toString());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -62,6 +102,10 @@ public class ForgotPassword extends RootActivity implements ForgotPasswordListen
 
     @Override
     public void ResponseFailure(VolleyError error) {
-        Toast.makeText(this, "Request for Forgot password failed", Toast.LENGTH_LONG).show();
+        if(error.networkResponse.statusCode == 404) {
+            Toast.makeText(this, "Email address is not registered", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Request for Forgot password failed", Toast.LENGTH_LONG).show();
+        }
     }
 }

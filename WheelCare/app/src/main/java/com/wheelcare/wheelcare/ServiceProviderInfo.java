@@ -8,6 +8,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,26 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.wheelcare.wheelcare.R;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ViewListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Vimal on 08-09-2017.
@@ -30,6 +46,7 @@ import java.util.ArrayList;
 
 public class ServiceProviderInfo extends RootActivity {
 
+    private static final String TAG = ServiceProviderInfo.class.getSimpleName();
     private Typeface calibri;
     private int index;
 
@@ -42,6 +59,10 @@ public class ServiceProviderInfo extends RootActivity {
     private ArrayList<String> ProviderImages = null;
     private int currentPosition = 0;
     // MARK: Initialization
+
+    InfoAdapter serviceProviderInfoAdapter;
+
+    private static final String ServiceProviderInfoURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "spView";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +90,8 @@ public class ServiceProviderInfo extends RootActivity {
         Address = details.getAddress();
         PhoneNumber = details.getContactNumber();
         Website = details.getWebsite();
+        ProviderImages = new ArrayList<>();
+        getProviderImages();
     }
 
     // MARK: Setup Tool Bar
@@ -82,7 +105,7 @@ public class ServiceProviderInfo extends RootActivity {
 
     private void setupListView() {
         ListView listView = (ListView) findViewById(R.id.listView);
-        InfoAdapter serviceProviderInfoAdapter = new InfoAdapter();
+        serviceProviderInfoAdapter = new InfoAdapter();
         listView.setAdapter(serviceProviderInfoAdapter);
     }
 
@@ -120,7 +143,7 @@ public class ServiceProviderInfo extends RootActivity {
                     public View setViewForPosition(int position) {
                         View view = getLayoutInflater().inflate(R.layout.car_view, null);
                         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
-                        if(ProviderImages != null) {
+                        if(ProviderImages.size() != 0) {
                             byte[] decodedString = Base64.decode(ProviderImages.get(position), Base64.DEFAULT);
                             imageView.setImageBitmap(BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length));
                         } else {
@@ -242,6 +265,72 @@ public class ServiceProviderInfo extends RootActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void getProviderImages() {
+
+        final JSONObject object = new JSONObject();
+        try {
+            object.put("spId", ServiceProviderID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (object == null) return;
+
+        WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
+                // Request a string response from the provided URL.
+                new JsonObjectRequest(Request.Method.POST, ServiceProviderInfoURL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d(TAG, response.toString());
+                                try {
+                                    ProviderImages.add(response.getString("spImage"));
+                                    serviceProviderInfoAdapter.notifyDataSetChanged();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, error.toString());
+
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String,String> header = new HashMap<>();
+                        header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
+                        Log.e(TAG,"header "+header);
+                        return header;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() {
+                        try {
+                            return object == null ? null : object.toString().getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                        Log.d(TAG, "StatusCode: "+String.valueOf(response.statusCode));
+                        return super.parseNetworkResponse(response);
+                    }
+                }
+        );
     }
 
 }

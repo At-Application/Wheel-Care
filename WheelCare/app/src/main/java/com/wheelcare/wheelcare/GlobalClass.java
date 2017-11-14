@@ -51,7 +51,13 @@ public class GlobalClass extends Application {
 
     public long endTime = 0;
 
+    //public static final String IPAddress = "192.168.0.102:8089";
+
     public static final String IPAddress = "139.59.77.103:8080";
+
+    //public static final String Path = "/atapplication/rest/consumer/";
+
+    public static final String Path = "/wheelcare/rest/consumer/";
 
     private static final String SUCCESS = "200";
 
@@ -71,12 +77,12 @@ public class GlobalClass extends Application {
     public ArrayList<Vehicle> vehicles = null;
     // MARK: URLs
 
-    private static final String ServiceProviderInfoURL = "http://" + IPAddress + "/wheelcare/rest/consumer/spInfo";
-    private static final String SetServiceStatusURL = "http://" + IPAddress + "/wheelcare/rest/consumer/serviceStatus";
-    private static final String FreezeServicesURL = "http://" + IPAddress + "/wheelcare/rest/consumer/setOpenStatus";
-    private static final String TempFreezeServicesURL = "http://" + IPAddress + "/wheelcare/rest/consumer/tempFreeze";
-    public static final String UserHistoryURL = "http://" + IPAddress + "/wheelcare/rest/consumer/getUserHistory";
-    private static final String ImageURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/carImg";
+    private static final String ServiceProviderInfoURL = "http://" + IPAddress + Path + "spInfo";
+    private static final String SetServiceStatusURL = "http://" + IPAddress + Path + "serviceStatus";
+    private static final String FreezeServicesURL = "http://" + IPAddress + Path + "setOpenStatus";
+    private static final String TempFreezeServicesURL = "http://" + IPAddress + Path + "tempFreeze";
+    public static final String UserHistoryURL = "http://" + IPAddress + Path + "getUserHistory";
+    private static final String ImageURL = "http://" + GlobalClass.IPAddress + Path + "carImg";
 
     public GlobalClass() {
         AuthenticationManager.getInstance().globalClass = this;
@@ -229,13 +235,12 @@ public class GlobalClass extends Application {
                                     if (Objects.equals(response.get("statusCode"), SUCCESS)) {
                                         // Actual data received here
                                         JSONArray jsonArray = (JSONArray) response.get("services");
-                                        Log.d("JSON Object", jsonArray.toString());
                                         String freeze = response.get("open_status").toString();
                                         endTime = Long.parseLong(response.getString("temp_freeze_end"));
                                         freezeStatus = (Boolean)(freeze.trim().equals("freeze"));
                                         arrangePendingAndHistoryList(jsonArray);
                                         getVehicleImages();
-                                        if(callback != null) callback.RetrievedServices();
+                                        //if(callback != null) callback.RetrievedServices();
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -391,8 +396,8 @@ public class GlobalClass extends Application {
     public JSONObject createFreezeJSONObject(boolean freeze) {
         JSONObject object = new JSONObject();
         try {
-            object.put("userId", AuthenticationManager.getInstance().getUserID());
-            object.put("open_status", freeze ? "freeze" : "unfreeze");
+            object.put("spId", AuthenticationManager.getInstance().getUserID());
+            object.put("openStatus", freeze ? "freeze" : "unfreeze");
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -585,9 +590,11 @@ public class GlobalClass extends Application {
         try {
             Log.d(TAG, "list = " + vlist[0].model);
             List<Vehicle> vehiclelist = Arrays.asList(vlist);
+            vehicles = new ArrayList<Vehicle>(vehiclelist);
             return new ArrayList<Vehicle>(vehiclelist);
         } catch (Exception e) {
             e.printStackTrace();
+            vehicles = new ArrayList<>();
             return new ArrayList<>();
         }
     }
@@ -595,6 +602,9 @@ public class GlobalClass extends Application {
     public void saveCarList(ArrayList<Vehicle> list) {
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("CarList", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+        vehicles = list;
         Gson gson =  new Gson();
         String json = gson.toJson(list);
         editor.putString("list", json);
@@ -607,21 +617,14 @@ public class GlobalClass extends Application {
             vehicles = new ArrayList<>();
         }
 
+        Log.d("Pending", String.valueOf(pending.size()));
+        Log.d("History", String.valueOf(history.size()));
+
         for(int i = 0, j; i < pending.size(); i++) {
             for(j = 0; j < vehicles.size(); j++) {
                 if(pending.get(i).model_id == vehicles.get(j).id) break;
             }
-            if(j == (vehicles.size() - 1)) {
-                Vehicle v = new Vehicle();
-                v.id = pending.get(i).model_id;
-            }
-        }
-
-        for(int i = 0, j; i < history.size(); i++) {
-            for(j = 0; j < vehicles.size(); j++) {
-                if(pending.get(i).model_id == vehicles.get(j).id) break;
-            }
-            if(j == (vehicles.size() - 1)) {
+            if(j == (vehicles.size())) {
                 Vehicle v = new Vehicle();
                 v.id = pending.get(i).model_id;
                 v.image = null;
@@ -629,8 +632,22 @@ public class GlobalClass extends Application {
             }
         }
 
+        for(int i = 0, j; i < history.size(); i++) {
+            for(j = 0; j < vehicles.size(); j++) {
+                if(history.get(i).model_id == vehicles.get(j).id) break;
+            }
+            if(j == (vehicles.size())) {
+                Vehicle v = new Vehicle();
+                v.id = history.get(i).model_id;
+                v.image = null;
+                vehicles.add(v);
+            }
+        }
+
+        Log.d("vehicles", String.valueOf(vehicles.size()));
+
         for(int i = 0; i < vehicles.size(); i++) {
-            if(vehicles.get(i).image != null) continue;
+            //if(vehicles.get(i).image != null) continue;
 
             final JSONObject object = new JSONObject();
             try {
@@ -638,6 +655,8 @@ public class GlobalClass extends Application {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            Log.d("Inside", String.valueOf(vehicles.get(i).id));
 
             if (object == null) return;
 
@@ -656,6 +675,7 @@ public class GlobalClass extends Application {
                                         listener.RetrievedServices();
                                     } catch (JSONException e) {
                                         vehicles.get(finalI).image = null;
+                                        listener.RetrievedServices();
                                         e.printStackTrace();
                                     }
                                 }
@@ -665,6 +685,7 @@ public class GlobalClass extends Application {
                                 public void onErrorResponse(VolleyError error) {
                                     Log.d(TAG, error.toString());
                                     vehicles.get(finalI).image = null;
+                                    listener.RetrievedServices();
                                 }
                             }
                     ) {

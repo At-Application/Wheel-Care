@@ -18,6 +18,7 @@ public class Vehicle {
     public String type;
     public String registration_number;
     public byte[] image;
+    public long validity;
 
     public Vehicle() {
 
@@ -30,6 +31,7 @@ public class Vehicle {
             model = object.getString("car_model");
             type = object.getString("veh_type");
             registration_number = object.getString("reg_no");
+            validity = object.getLong("validity");
             String string = object.getString("img");
             image = Base64.decode(string, Base64.DEFAULT);
         } catch (JSONException e) {

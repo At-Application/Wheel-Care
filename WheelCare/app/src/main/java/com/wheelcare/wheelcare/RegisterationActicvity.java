@@ -27,7 +27,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
 
     private static final String TAG = RegisterationActicvity.class.getSimpleName();
 
-    public static final String registrationURL = "http://" + GlobalClass.IPAddress + "/wheelcare/rest/consumer/doRegistration";
+    public static final String registrationURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "doRegistration";
 
     private TextView welcome_text;
     private EditText et_user;
@@ -44,7 +44,7 @@ public class RegisterationActicvity extends RootActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-
+        AuthenticationManager.getInstance().setMainScreen("RegistrationActivity");
         setupRegistrationURL();
 
         welcome_text= (TextView)findViewById(R.id.welcome_text);
