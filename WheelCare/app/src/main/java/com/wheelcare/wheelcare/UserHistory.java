@@ -45,8 +45,6 @@ public class UserHistory extends Fragment {
 
     private Typeface calibri;
 
-    ArrayList<Vehicle> models;
-
     HistoryAdapter adapter;
 
     private static final String TAG = UserHistory.class.getSimpleName();
@@ -63,9 +61,9 @@ public class UserHistory extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ((GlobalClass)getActivity().getApplicationContext()).userhistory.clear();
         calibri = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "Calibri.ttf");
-        models = ((GlobalClass)getActivity().getApplicationContext()).getCarList();
+
         if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
-            if (models.size() == 0) {
+            if (((GlobalClass)getActivity().getApplicationContext()).vehicles.size() == 0) {
                 requestCars();
             } else {
                 requestHistory();
@@ -133,13 +131,13 @@ public class UserHistory extends Fragment {
                 code.append(service.code);
 
                 int pos = 0;
-                for(; pos < models.size(); pos++) {
-                    if(models.get(pos).id == service.modelId) {
+                for(; pos < ((GlobalClass)getActivity().getApplicationContext()).vehicles.size(); pos++) {
+                    if(((GlobalClass)getActivity().getApplicationContext()).vehicles.get(pos).id == service.modelId) {
                         break;
                     }
                 }
 
-                Bitmap bmp = BitmapFactory.decodeByteArray( models.get(pos).image, 0, models.get(pos).image.length);
+                Bitmap bmp = BitmapFactory.decodeByteArray( ((GlobalClass)getActivity().getApplicationContext()).vehicles.get(pos).image, 0, ((GlobalClass)getActivity().getApplicationContext()).vehicles.get(pos).image.length);
                 vehicleImage.setImageBitmap(bmp);
 
                 // Main Logic
@@ -175,11 +173,10 @@ public class UserHistory extends Fragment {
                                 // Actual data received here
                                 try {
                                     JSONArray array = response.getJSONArray("myCars");
-                                    models.clear();
+                                    ((GlobalClass)getActivity().getApplicationContext()).vehicles.clear();
                                     for(int i = 0; i < array.length(); i++) {
-                                        models.add(new Vehicle(array.getJSONObject(i)));
+                                        ((GlobalClass)getActivity().getApplicationContext()).vehicles.add(new Vehicle(array.getJSONObject(i)));
                                     }
-                                    ((GlobalClass)getActivity().getApplicationContext()).saveCarList(models);
                                     requestHistory();
                                 } catch (JSONException e) {
                                     e.printStackTrace();

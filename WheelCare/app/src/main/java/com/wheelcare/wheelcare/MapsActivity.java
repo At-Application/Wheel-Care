@@ -4,10 +4,20 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -16,25 +26,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.wheelcare.wheelcare.R;
-import com.google.android.gms.location.LocationListener;
-
-import android.os.Build;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,6 +36,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -61,8 +56,8 @@ import java.util.Objects;
 import static android.graphics.Typeface.BOLD;
 
 
-public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-/*
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
     private static final String TAG = UserHome.class.getSimpleName();
 
     private static final String ServiceProviderListURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "getSPInfos";
@@ -72,7 +67,7 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
     private int selectedLocation;
 
     private Typeface calibri;
-    String Distance;
+    String Distance, serviceProviderName;
     Context context;
     GoogleMap googlemap;
     MapView mapview;
@@ -81,62 +76,26 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
     Location mLastLocation;
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
-    TextView serviceProvider, distance, regNo, boldCode, codeVerified, slot;
-    Button started, inProgress, finalizing, done;
-    ConstraintLayout infoView, progressBar;
-
-    UserCarList userCarListObj;
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //returning our layout file
-        //change R.layout.yourlayoutfilename for each of your fragments
-        view = inflater.inflate(R.layout.fragment_home, container, false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkLocationPermission();
-        }
-
-        return view;
-    }
+    TextView serviceProvider;
+    ConstraintLayout infoView;
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        context = getActivity().getApplicationContext();
-        calibri = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "Calibri.ttf");
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            checkLocationPermission();
-//        }
-        //you can set the title for your toolbar here for different fragments different titles
-        mapview = (MapView) view.findViewById(R.id.map);
-        infoView = (ConstraintLayout) view.findViewById(R.id.spInfoLayout);
-        serviceProvider = (TextView) view.findViewById(R.id.serviceProviderName);
-        distance = (TextView) view.findViewById(R.id.providerDistance);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_home);
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+        context = this.getApplicationContext();
+        calibri = Typeface.createFromAsset(this.getAssets(), "Calibri.ttf");
+        infoView = (ConstraintLayout) findViewById(R.id.spInfoLayout);
+        serviceProvider = (TextView) findViewById(R.id.serviceProviderName);
         serviceProvider.setTypeface(calibri);
-        distance.setTypeface(calibri);
-        infoView.setVisibility(View.INVISIBLE);
+        infoView.setVisibility(View.VISIBLE);
         infoView.setClickable(false);
 
-        progressBar = (ConstraintLayout) view.findViewById(R.id.ProgressBar);
-        regNo = (TextView) progressBar.findViewById(R.id.textView2);
-        boldCode = (TextView) progressBar.findViewById(R.id.textView3);
-        slot = (TextView) progressBar.findViewById(R.id.textView4);
-        codeVerified = (TextView) progressBar.findViewById(R.id.textView5);
-        started = (Button) progressBar.findViewById(R.id.Started);
-        inProgress = (Button) progressBar.findViewById(R.id.InProgress);
-        finalizing = (Button) progressBar.findViewById(R.id.Finalizing);
-        done = (Button) progressBar.findViewById(R.id.Done);
-        regNo.setTypeface(calibri);
-        boldCode.setTypeface(calibri, BOLD);
-        slot.setTypeface(calibri);
-        codeVerified.setTypeface(calibri);
-        started.setTypeface(calibri, BOLD);
-        inProgress.setTypeface(calibri, BOLD);
-        finalizing.setTypeface(calibri, BOLD);
-        done.setTypeface(calibri, BOLD);
-        progressBar.setVisibility(View.INVISIBLE);
-        progressBar.setClickable(false);
+        serviceProvider.setText("Please click on the marker");
 
         if (mapview != null) {
             mapview.onCreate(null);
@@ -148,26 +107,7 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
             @Override
             public void onClick(View v) {
                 // Launch the next screen
-                startActivity(new Intent(getActivity().getApplicationContext(), ServiceProviderInfo.class).putExtra("index", selectedLocation).putExtra("distance", Distance));
-            }
-        });
-
-        progressBar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int index = -1;
-                for(int i = 0; i < ((GlobalClass)getActivity().getApplicationContext()).vehicles.size(); i++) {
-                    Vehicle vehicle = ((GlobalClass)getActivity().getApplicationContext()).vehicles.get(i);
-                    if(Objects.equals(vehicle.registration_number, userCarListObj.getRegistrationNumber())) {
-                        index = i;
-                        break;
-                    }
-                }
-                Log.d("Index of v", String.valueOf(index));
-                Intent i = new Intent(getActivity().getApplicationContext(), ServiceInfo.class);
-                i.putExtra("UserCarListIndex", ((GlobalClass)context).userCarLists.indexOf(userCarListObj));
-                i.putExtra("vehicleIndex", index);
-                startActivity(i);
+                //startActivity(new Intent(MapsActivity.this, ServiceProviderInfo.class).putExtra("index", selectedLocation).putExtra("distance", Distance));
             }
         });
     }
@@ -175,67 +115,100 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        MapsInitializer.initialize(getContext());
+        MapsInitializer.initialize(getApplicationContext());
+        if(googlemap == null) {
+            googlemap = googleMap;
+            LatLng india = new LatLng(12.9716, 77.5946);
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(india));
+            googlemap.animateCamera(CameraUpdateFactory.newLatLng(india));
+            googlemap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        }
         googlemap = googleMap;
         //googlemap.setMyLocationEnabled(true);
+
+        googlemap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            // Use default InfoWindow frame
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            // Defines the contents of the InfoWindow
+            @Override
+            public View getInfoContents(Marker arg0) {
+
+                Log.d("INFO Window", "Showing");
+
+                // Getting view from the layout file info_window_layout
+                View v = getLayoutInflater().inflate(R.layout.info_window_layout, null);
+
+                // Getting the position from the marker
+                LatLng latLng = arg0.getPosition();
+
+                // Getting reference to the TextView to set latitude
+                TextView name = (TextView) v.findViewById(R.id.tv_lat);
+
+                // Getting reference to the TextView to set longitude
+                TextView dist = (TextView) v.findViewById(R.id.tv_lng);
+
+                Button b = (Button) v.findViewById(R.id.button2);
+
+                // Setting the latitude
+                name.setText("Name:" + serviceProviderName);
+
+                // Setting the longitude
+                dist.setText("Distance:"+ Distance);
+
+                googlemap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    public void onInfoWindowClick(Marker marker) {
+                        Intent i = new Intent(MapsActivity.this, ServiceProviderInfo.class).putExtra("index", selectedLocation).putExtra("distance", Distance);
+                        int pos = getIntent().getExtras().getInt("vehicleIndex");
+                        i.putExtra("vehicleIndex", pos);
+                        startActivity(i);
+                    }
+                });
+                        // Returning the view containing InfoWindow contents
+                return v;
+
+            }
+        });
+
         googlemap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermission();
+        }
+
         googlemap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker m) {
-                boolean proceed = true;
-                if (((GlobalClass) context).userCarLists.size() > 0) {
-                    for (UserCarList obj : ((GlobalClass) context).userCarLists) {
-                        if (obj.getServiceStatus() != null) {
-                            switch (obj.getServiceStatus()) {
-                                case NOT_VERIFIED:
-                                case VERIFIED:
-                                case STARTED:
-                                case IN_PROGRESS:
-                                case FINALIZING:
-                                    progressBar.setVisibility(View.VISIBLE);
-                                    infoView.setClickable(false);
-                                    proceed = false;
-                                    break;
-
-                                case DONE:
-                                case DISMISS:
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    proceed = true;
-                                    break;
-                            }
-                            break;
-                        } else {
-                            proceed = true;
-                        }
-                    }
+                Location newLocation = new Location("newlocation");
+                newLocation.setLatitude(m.getPosition().latitude);
+                newLocation.setLongitude(m.getPosition().longitude);
+                infoView.setVisibility(View.VISIBLE);
+                infoView.setClickable(false);
+                Distance = String.format("%.1f", mLastLocation.distanceTo(newLocation) / 1000);
+                //Toast.makeText(MapsActivity.this, Float.toString(mLastLocation.distanceTo(newLocation)/1000), Toast.LENGTH_LONG).show();
+                if (Distance.contentEquals("1.0") || Distance.contentEquals("1")) {
+                    //distance.append(" km");
+                    Distance = Distance + " km";
+                } else {
+                    //distance.append(" kms");
+                    Distance = Distance + " kms";
                 }
-                if (proceed) {
-                    Location newLocation = new Location("newlocation");
-                    newLocation.setLatitude(m.getPosition().latitude);
-                    newLocation.setLongitude(m.getPosition().longitude);
-                    infoView.setVisibility(View.VISIBLE);
-                    infoView.setClickable(true);
-                    progressBar.setVisibility(View.INVISIBLE);
-                    Distance = String.format("%.1f", mLastLocation.distanceTo(newLocation) / 1000);
-                    //Toast.makeText(MapsActivity.this, Float.toString(mLastLocation.distanceTo(newLocation)/1000), Toast.LENGTH_LONG).show();
-                    distance.setText(Distance);
-                    if (Distance.contentEquals("1.0") || Distance.contentEquals("1")) {
-                        distance.append(" km");
-                    } else {
-                        distance.append(" kms");
-                    }
 
-
+                if (((GlobalClass) context).serviceProviders != null) {
                     LatLng loc = new LatLng(m.getPosition().latitude, m.getPosition().longitude);
                     for (ServiceProviderDetails obj : ((GlobalClass) context).serviceProviders) {
                         if (loc.latitude == obj.getLocation().latitude && loc.longitude == obj.getLocation().longitude) {
-                            serviceProvider.setText(obj.getCompanyName());
+                            //serviceProvider.setText(obj.getCompanyName());
+                            serviceProviderName = obj.getCompanyName();
                             selectedLocation = ((GlobalClass) context).serviceProviders.indexOf(obj);
                             break;
                         }
                     }
                 }
-                //   providerName.setText(Float.toString(mLastLocation.distanceTo(newLocation)/1000));
+                m.showInfoWindow();
                 return true;
             }
         });
@@ -249,39 +222,11 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
                 return false;
             }
         });
-
-        // Setting a click event handler for the map
-        googlemap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                infoView.setVisibility(View.INVISIBLE);
-                infoView.setClickable(false);
-                for (UserCarList obj : ((GlobalClass) context).userCarLists) {
-                    if (obj.getServiceStatus() != null) {
-                        switch (obj.getServiceStatus()) {
-                            case NOT_VERIFIED:
-                            case VERIFIED:
-                            case STARTED:
-                            case IN_PROGRESS:
-                            case FINALIZING:
-                                progressBar.setVisibility(View.VISIBLE);
-                                break;
-
-                            case DONE:
-                            case DISMISS:
-                                progressBar.setVisibility(View.INVISIBLE);
-                                break;
-                        }
-                        break;
-                    }
-                }
-            }
-        });
         googlemap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         //Initialize Google Play Services
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(getActivity(),
+            if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
@@ -297,7 +242,7 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
     }
 
     protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -312,19 +257,19 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        if (ContextCompat.checkSelfPermission(getActivity(),
+        if (ContextCompat.checkSelfPermission(this,
+                //Manifest.permission.ACCESS_COARSE_LOCATION)
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
-
     }
 
     @Override
     public void onConnectionSuspended(int i) {
 
     }
-
 
     @Override
     public void onLocationChanged(Location location) {
@@ -358,6 +303,13 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
         if (mLastLocation != null) {
             getServiceProviders();
         }
+
+        // Add Markers only for testing here
+        LatLng sat = new LatLng(17.3005, 82.6119);
+        addMaker(sat);
+
+        LatLng sat1 = new LatLng(17.8803197,82.7872235);
+        addMaker(sat1);
     }
 
     @Override
@@ -365,16 +317,15 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
 
     }
 
-
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     public boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(),
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Asking user if explanation is needed
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 // Show an explanation to the user *asynchronously* -- don't block
@@ -382,14 +333,14 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
                 // sees the explanation, try again to request the permission.
 
                 //Prompt the user once explanation has been shown
-                ActivityCompat.requestPermissions(getActivity(),
+                ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
 
 
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(getActivity(),
+                ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
@@ -407,11 +358,20 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
 
     // MARK: For setting the status
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "ON START CALLED");
+        if(mLastLocation != null) {
+            getServiceProviders();
+        }
+    }
+
     public void getServiceProviders() {
-        if(!(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable())) {
+        if(!(((GlobalClass)getApplicationContext()).isInternetAvailable())) {
             return;
         }
-        if(!this.isVisible()) return;
+//        if(!this.isVisible()) return;
         JSONObject object = createJSONObject();
         if (object != null) {
             ServiceProviderCall(object);
@@ -435,7 +395,7 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
 
     private void ServiceProviderCall(final JSONObject object) {
         // Add the request to the RequestQueue.
-        WebServiceManager.getInstance(getActivity().getApplicationContext()).addToRequestQueue(
+        WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
                 // Request a string response from the provided URL.
                 new JsonObjectRequest(Request.Method.POST, ServiceProviderListURL, null,
                         new Response.Listener<JSONObject>() {
@@ -444,7 +404,6 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
                                 Log.d(TAG, response.toString());
                                 try {
                                     // Actual data received here
-                                    populateUserCarData((JSONArray) response.get("userCarSPInfo"));
                                     populateServiceProviders((JSONArray) response.get("spInfos"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -491,88 +450,6 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
         );
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "ON START CALLED");
-        if(mLastLocation != null) {
-            getServiceProviders();
-        }
-    }
-
-    private void populateUserCarData(JSONArray response) {
-        if (response.length() > 0) {
-            try {
-                ArrayList<UserCarList> list = new ArrayList<>();
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject obj = response.getJSONObject(i);
-                    UserCarList car = new UserCarList(obj);
-                    list.add(car);
-                }
-                ((GlobalClass) context).userCarLists = list;
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        UserCarList lowest = new UserCarList();
-        lowest.setSlotValue(0);
-        for (UserCarList obj : ((GlobalClass) context).userCarLists) {
-            if (obj.getServiceStatus() != null) {
-                switch (obj.getServiceStatus()) {
-                    case FINALIZING:
-                    case IN_PROGRESS:
-                    case STARTED:
-                    case VERIFIED:
-                    case NOT_VERIFIED:
-                        if (lowest.getSlotValue() == 0 || obj.getSlotValue() < lowest.getSlotValue()) {
-                            lowest = obj;
-                            userCarListObj = lowest;
-                        }
-                        break;
-
-                    case DONE:
-                    case DISMISS:
-                        break;
-                }
-            }
-        }
-        if (lowest.getSlotValue() == 0) {
-            progressBar.setVisibility(View.INVISIBLE);
-            infoView.setVisibility(infoView.getVisibility());
-            infoView.setClickable(infoView.getVisibility() == View.VISIBLE);
-        } else {
-            if (lowest.getServiceStatus() != null) {
-                switch (lowest.getServiceStatus()) {
-                    case FINALIZING:
-                        finalizing.setBackground(getActivity().getDrawable(R.drawable.border_green));
-                    case IN_PROGRESS:
-                        inProgress.setBackground(getActivity().getDrawable(R.drawable.border_green));
-                    case STARTED:
-                        started.setBackground(getActivity().getDrawable(R.drawable.border_green));
-                    case VERIFIED:
-                        codeVerified.setText("Code Verified");
-                    case NOT_VERIFIED:
-                        if (lowest.getServiceStatus() == ServiceStatus.NOT_VERIFIED)
-                            codeVerified.setText("Code Not Verified");
-                        regNo.setText(lowest.getRegistrationNumber());
-                        boldCode.setText("CODE: " + lowest.getCode());
-                        slot.setText(lowest.getSlot());
-                        progressBar.setVisibility(View.VISIBLE);
-                        infoView.setVisibility(View.INVISIBLE);
-                        infoView.setClickable(false);
-                        break;
-
-                    case DONE:
-                    case DISMISS:
-                        progressBar.setVisibility(View.INVISIBLE);
-                        infoView.setVisibility(infoView.getVisibility());
-                        infoView.setClickable(infoView.getVisibility() == View.VISIBLE);
-                        break;
-                }
-            }
-        }
-    }
-
     private void populateServiceProviders(JSONArray response) {
 
         if(response.length() > 0) {
@@ -608,7 +485,7 @@ public class UserHome extends Fragment {//implements OnMapReadyCallback, GoogleA
         // Animating to the touched position
         //googlemap.animateCamera(CameraUpdateFactory.newLatLng(loc));
         // Placing a marker on the touched position
-        googlemap.addMarker(markerOptions);
+       Marker marker = googlemap.addMarker(markerOptions);
+        //marker.showInfoWindow();
     }
-    */
 }

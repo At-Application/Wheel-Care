@@ -246,9 +246,11 @@ public class ServiceProviderInfo extends RootActivity {
         // Send information as Intent to the next screen
         // Service Provider ID, Current Date, Slots with details
         // Wheel Alignment and Wheel Balancing Amount
-        if(((GlobalClass)getApplicationContext()).getCarList().size() > 0) {
+        if(((GlobalClass)getApplicationContext()).vehicles.size() > 0) {
             Intent i = new Intent(getApplicationContext(), SelectServices.class);
             i.putExtra("index", index);
+            int pos = getIntent().getExtras().getInt("vehicleIndex");
+            i.putExtra("vehicleIndex", pos);
             startActivity(i);
         } else {
             Toast.makeText(getApplicationContext(), "Please register a car to proceed", Toast.LENGTH_LONG).show();

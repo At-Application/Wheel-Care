@@ -48,13 +48,13 @@
         android:layout_width="match_parent"
         android:layout_height="40dp">
 
-        <CheckBox
+        <RadioButton
             android:id="@+id/WheelAlignmentCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:text="Wheel Alignment"
+            android:onClick="radioButtonClicked"
+            android:text="3D Service"
             android:textSize="18sp"
             app:buttonTint="@color/btn_color"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -86,13 +86,13 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="0dp">
 
-        <CheckBox
+        <RadioButton
             android:id="@+id/WheelBalancingCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:text="Wheel Balancing"
+            android:onClick="radioButtonClicked"
+            android:text="Manual Service"
             android:textSize="18sp"
             app:buttonTint="@color/btn_color"
             app:layout_constraintBottom_toBottomOf="parent"

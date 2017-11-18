@@ -23,6 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -72,8 +73,8 @@ public class SelectServices extends RootActivity {
     private int ServiceProviderID;
     private String RegistrationNumber = "";
     private String Slot = " ";
-    //private String WheelAlignmentAmount = "300";
-    //private String WheelBalancingAmount = "300";
+    private String ManualAmount = "300";
+    private String ThreeDAmount = "300";
     private String ServiceAmount = "300";
     private String Total = "4";
     String DateViewText = "dd/mm/yyyy";
@@ -90,8 +91,8 @@ public class SelectServices extends RootActivity {
     private int todayHour;
     private int todayMinutes;
 
-    boolean alignmentChecked = false;
-    boolean balancingChecked = false;
+    boolean ThreeDChecked = false;
+    boolean ManualChecked = false;
 
     float finalAmount = 0;
 
@@ -105,8 +106,6 @@ public class SelectServices extends RootActivity {
     int currentPosition = 0;
     // MARK: Initialization
 
-    ArrayList<Vehicle> vehicles;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +116,6 @@ public class SelectServices extends RootActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        vehicles = ((GlobalClass)getApplicationContext()).getCarList();
         setupToolbar();
         setupListView();
         setupServiceButton();
@@ -128,14 +126,31 @@ public class SelectServices extends RootActivity {
     private void setupIntentData() {
         Bundle extras = getIntent().getExtras();
         index = (int) extras.get("index");
+        currentPosition = (int) extras.get("vehicleIndex");
         ServiceProviderDetails details = ((GlobalClass)getApplicationContext()).serviceProviders.get(index);
         ServiceProviderID = details.getId();
-        //WheelAlignmentAmount = String.valueOf(details.getWheelAlignmentAmount());
-        //WheelBalancingAmount = String.valueOf(details.getWheelBalancingAmount());
-        ServiceAmount = String.valueOf(details.getServiceAmount());
+        ManualAmount = String.valueOf(details.getManualAmount());
+        ThreeDAmount = String.valueOf(details.getThreeDAmount());
+        //ServiceAmount = String.valueOf(details.getServiceAmount());
         Date CurrentDate = new Date();
         SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
         DateViewText = fmt.format(CurrentDate);
+    }
+
+    public void radioButtonClicked(View v) {
+        switch(v.getId())
+        {
+            case R.id.WheelAlignmentCheckBox:
+                ThreeDChecked = true;
+                ManualChecked = false;
+                break;
+
+            case R.id.WheelBalancingCheckBox:
+                ThreeDChecked = false;
+                ManualChecked = true;
+                break;
+        }
+        adapter.notifyDataSetChanged();
     }
 
     // MARK: Setup Tool Bar
@@ -195,7 +210,7 @@ public class SelectServices extends RootActivity {
                 TextView selectedCar = (TextView) convertView.findViewById(R.id.serviceProviderName);
                 final TextView registrationNumber = (TextView) convertView.findViewById(R.id.serviceProviderDistance);
 
-                serviceProviderImage.setPageCount(vehicles.size());
+                serviceProviderImage.setPageCount(((GlobalClass)getApplicationContext()).vehicles.size());
 
                 selectedCar.setTypeface(calibri);
                 registrationNumber.setTypeface(calibri);
@@ -205,12 +220,13 @@ public class SelectServices extends RootActivity {
                 selectedCar.setText("Selected Car");
                 registrationNumber.setText("");
 
+                serviceProviderImage.setIndicatorVisibility(View.INVISIBLE);
                 serviceProviderImage.setViewListener(new ViewListener() {
                     @Override
                     public View setViewForPosition(int position) {
                         View view = getLayoutInflater().inflate(R.layout.car_view, null);
                         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
-                        Bitmap bmp = BitmapFactory.decodeByteArray( vehicles.get(position).image, 0, vehicles.get(position).image.length);
+                        Bitmap bmp = BitmapFactory.decodeByteArray( ((GlobalClass)getApplicationContext()).vehicles.get(position).image, 0, ((GlobalClass)getApplicationContext()).vehicles.get(position).image.length);
                         imageView.setImageBitmap(bmp);
                         return view;
                     }
@@ -226,7 +242,7 @@ public class SelectServices extends RootActivity {
                     @Override
                     public void onPageSelected(int position) {
                         currentPosition = position;
-                        registrationNumber.setText(vehicles.get(position).registration_number);
+                        registrationNumber.setText(((GlobalClass)getApplicationContext()).vehicles.get(position).registration_number);
                     }
 
                     @Override
@@ -236,7 +252,7 @@ public class SelectServices extends RootActivity {
                 });
 
                 serviceProviderImage.setCurrentItem(currentPosition);
-                registrationNumber.setText(vehicles.get(position).registration_number);
+                registrationNumber.setText(((GlobalClass)getApplicationContext()).vehicles.get(currentPosition).registration_number);
 
 
             } else if(position == 1) {
@@ -272,13 +288,13 @@ public class SelectServices extends RootActivity {
                 });
 
             } else if(position == 2) {
-                /*convertView = getLayoutInflater().inflate(R.layout.service_select_view, null);
+                convertView = getLayoutInflater().inflate(R.layout.service_select_view, null);
                 TextView selectLabel = (TextView) convertView.findViewById(R.id.SelectServices);
                 TextView amountLabel = (TextView) convertView.findViewById(R.id.Amount);
                 final TextView alignmentAmountLabel = (TextView) convertView.findViewById(R.id.WheelAlignmentAmount);
                 TextView balancingAmountLabel = (TextView) convertView.findViewById(R.id.WheelBalancingAmount);
-                final CheckBox alignmentCheckBox = (CheckBox) convertView.findViewById(R.id.WheelAlignmentCheckBox);
-                CheckBox balancingCheckBox = (CheckBox) convertView.findViewById(R.id.WheelBalancingCheckBox);
+                final RadioButton alignmentCheckBox = (RadioButton) convertView.findViewById(R.id.WheelAlignmentCheckBox);
+                final RadioButton balancingCheckBox = (RadioButton) convertView.findViewById(R.id.WheelBalancingCheckBox);
 
                 selectLabel.setTypeface(calibri);
                 amountLabel.setTypeface(calibri);
@@ -287,39 +303,42 @@ public class SelectServices extends RootActivity {
                 alignmentCheckBox.setTypeface(calibri);
                 balancingCheckBox.setTypeface(calibri);
 
-                alignmentCheckBox.setChecked(alignmentChecked);
-                balancingCheckBox.setChecked(balancingChecked);
+                alignmentCheckBox.setChecked(ThreeDChecked);
+                balancingCheckBox.setChecked(ManualChecked);
 
-                alignmentAmountLabel.setText("₹" + WheelAlignmentAmount);
-                balancingAmountLabel.setText("₹" + WheelBalancingAmount);
+                alignmentAmountLabel.setText("₹" + ManualAmount);
+                balancingAmountLabel.setText("₹" + ThreeDAmount);
 
-                alignmentCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if(isChecked) {
-                            finalAmount = finalAmount + Float.parseFloat(WheelAlignmentAmount);
-                        } else {
-                            finalAmount = finalAmount - Float.parseFloat(WheelAlignmentAmount);
-                        }
-                        alignmentChecked = isChecked;
-                        notifyDataSetChanged();
-                    }
-                });
+//                alignmentCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                        /*if(isChecked) {
+//                            finalAmount = finalAmount + Float.parseFloat(ManualAmount);
+//                        } else {
+//                            finalAmount = finalAmount - Float.parseFloat(ManualAmount);
+//                        }*/
+//                        ThreeDChecked = isChecked;
+//                        ManualChecked= !ThreeDChecked;
+//                        notifyDataSetChanged();
+//                    }
+//                });
+//
+//                balancingCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                        /*if(isChecked) {
+//                            finalAmount = finalAmount + Float.parseFloat(ThreeDAmount);
+//                        } else {
+//                            finalAmount = finalAmount - Float.parseFloat(ThreeDAmount);
+//                        }*/
+//                        ManualChecked = isChecked;
+//                        ThreeDChecked = !ManualChecked
+//                        notifyDataSetChanged();
+//                    }
+//                });
 
-                balancingCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if(isChecked) {
-                            finalAmount = finalAmount + Float.parseFloat(WheelBalancingAmount);
-                        } else {
-                            finalAmount = finalAmount - Float.parseFloat(WheelBalancingAmount);
-                        }
-                        balancingChecked = isChecked;
-                        notifyDataSetChanged();
-                    }
-                });
-
-            } else if(position == 3){*/
+            } else if(position == 3){
+                //convertView = null;
                 convertView = getLayoutInflater().inflate(R.layout.service_total, null);
                 TextView totalLabel = (TextView) convertView.findViewById(R.id.Total);
                 TextView totalAmount = (TextView) convertView.findViewById(R.id.TotalAmount);
@@ -328,7 +347,8 @@ public class SelectServices extends RootActivity {
                 totalAmount.setTypeface(calibri);
 
                 totalLabel.setText("Total Amount");
-                finalAmount = Float.parseFloat(ServiceAmount);
+                //finalAmount = Float.parseFloat(ServiceAmount);*/
+                finalAmount = Float.parseFloat(ThreeDChecked ? ThreeDAmount : ManualAmount);
 
                 totalAmount.setText("₹" + finalAmount);
             } else {
@@ -343,18 +363,18 @@ public class SelectServices extends RootActivity {
     private void setupServiceButton() {
         Button serviceButton = (Button) findViewById(R.id.proceedToService);
         serviceButton.setTypeface(calibri);
-        serviceButton.setText("PROCEED TO PAY");
+        serviceButton.setText("Confirm Booking");
     }
 
     // MARK: Button Pressed
 
     public void proceedToService(View view) {
         Log.d("Button pressed", "Proceed to pay");
-        //if(alignmentChecked || balancingChecked) {
+        //if(ThreeDChecked || ManualChecked) {
         if(slotValidity) {
             Log.d("Button pressed", "Will Proceed to pay");
             if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
-                if(vehicles.get(currentPosition).validity != 0 && vehicles.get(currentPosition).validity > new Date().getTime()) {
+                if(((GlobalClass)getApplicationContext()).vehicles.get(currentPosition).validity != 0 && ((GlobalClass)getApplicationContext()).vehicles.get(currentPosition).validity > new Date().getTime()) {
                     Toast.makeText(getApplicationContext(), "You do not have to pay for this car", Toast.LENGTH_LONG).show();
                     bookService();
                 } else {
@@ -566,19 +586,16 @@ public class SelectServices extends RootActivity {
             object.put("spId", String.valueOf(((GlobalClass)getApplicationContext()).serviceProviders.get(index).getId()));
             object.put("slotDateTime", getSlotTime());
             object.put("userId", AuthenticationManager.getInstance().getUserID());
-            object.put("reg_no", vehicles.get(currentPosition).registration_number);
+            object.put("reg_no", ((GlobalClass)getApplicationContext()).vehicles.get(currentPosition).registration_number);
             object.put("service_status", "not_verified");
             object.put("booking_service_amount", String.valueOf(finalAmount));
-            object.put("validity", vehicles.get(currentPosition).validity); // During new booking
+            object.put("validity", ((GlobalClass)getApplicationContext()).vehicles.get(currentPosition).validity); // During new booking
             String serviceType;
-            /*if(balancingChecked && alignmentChecked) {
-                serviceType = "balancing alignment";
-            } else if(!alignmentChecked) {
-                serviceType = "wheel balancing";
+            if(ManualChecked) {
+                serviceType = "Manual";
             } else {
-                serviceType = "wheel alignment";
-            }*/
-            serviceType = "balancing alignment";
+                serviceType = "3D";
+            }
             object.put("serviceType", serviceType);
         } catch (JSONException e) {
             e.printStackTrace();

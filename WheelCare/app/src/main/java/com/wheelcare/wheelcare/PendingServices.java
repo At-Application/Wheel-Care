@@ -1,5 +1,6 @@
 package com.wheelcare.wheelcare;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -241,13 +243,6 @@ public class PendingServices extends Fragment implements PendingServicesListener
             final Button inProgress = (Button) view.findViewById(R.id.InProgress);
             final Button finalizing = (Button) view.findViewById(R.id.Finalizing);
             final Button done = (Button) view.findViewById(R.id.Done);
-
-            editCode.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    editCode.setFocusable(true);
-                }
-            });
 
             verifyButton.setTypeface(calibri);
             editCode.setTypeface(calibri);

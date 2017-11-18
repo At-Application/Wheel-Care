@@ -226,7 +226,6 @@
                 android:hint="Email Code"
                 android:visibility="invisible"
                 android:textAlignment="center"
-                android:inputType="textPersonName"
                 app:layout_constraintEnd_toStartOf="@+id/ButtonCancel"
                 app:layout_constraintStart_toStartOf="parent"
                 swipe:layout_constraintRight_toLeftOf="@+id/ButtonCancel"

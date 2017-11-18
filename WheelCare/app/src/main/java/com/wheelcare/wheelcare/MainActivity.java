@@ -22,12 +22,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.wheelcare.wheelcare.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends RootActivity implements View.OnClickListener, LoginListener {
@@ -35,6 +47,8 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private String userType = "usr";
+
+    private static final String CarsURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "myCar";
 
     private EditText edit_mobile;
     private EditText edit_userpass;
@@ -265,25 +279,8 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
         try {
             ((GlobalClass)getApplicationContext()).setUserType(userType);
             if(Objects.equals(userType, "usr")) {
-                if (Objects.equals((String) response.get("statusDesc"), "account already exist")) {
-                    Log.i(TAG, "Account already Exists");
-                    Toast.makeText(getApplicationContext(), "User already registered", Toast.LENGTH_LONG).show();
-                    AuthenticationManager.getInstance().setMainScreen("UserDashboard");
-                    startActivity(new Intent(getApplicationContext(), UserDashboard.class));
-                } else if(Objects.equals((String) response.get("statusDesc"), "user not registered")) {
-                    Log.i(TAG, "User not registered");
-                    AuthenticationManager.getInstance().setMainScreen("RegistrationActivity");
-                    startActivity(new Intent(getApplicationContext(), RegisterationActicvity.class));
-                } else if(Objects.equals((String) response.get("statusDesc"), "car not registered")) {
-                    Log.i(TAG, "Car not registered");
-                    AuthenticationManager.getInstance().setMainScreen("CarRegistration");
-                    startActivity(new Intent(getApplicationContext(), CarRegistration.class));
-                } else {
-                    Log.i(TAG, "Login Successful");
-                    Bundle send_number = new Bundle();
-                    send_number.putString("mobile_number",edit_mobile.getText().toString());
-                    AuthenticationManager.getInstance().setMainScreen("OtpActivity");
-                    startActivity(new Intent(getApplicationContext(), OtpActivity.class).putExtras(send_number));
+                if (((GlobalClass) getApplicationContext()).isInternetAvailable()) {
+                    requestCars(response);
                 }
             } else {
                 if (Objects.equals((String) response.get("statusDesc"), "SP login authentication successful")) {
@@ -336,5 +333,123 @@ public class MainActivity extends RootActivity implements View.OnClickListener, 
     private void sendForgotPasswordRequest() {
         Intent intent = new Intent(this, ForgotPassword.class).putExtra("user_type", userType);
         startActivity(intent);
+    }
+
+    void launchActivity(JSONObject response) {
+        try {
+            if (Objects.equals((String) response.get("statusDesc"), "user not registered")) {
+                Log.i(TAG, "User not registered");
+                AuthenticationManager.getInstance().setMainScreen("RegistrationActivity");
+                startActivity(new Intent(getApplicationContext(), RegisterationActicvity.class));
+            } else if (Objects.equals((String) response.get("statusDesc"), "car not registered")) {
+                Log.i(TAG, "Car not registered");
+                AuthenticationManager.getInstance().setMainScreen("CarRegistration");
+                startActivity(new Intent(getApplicationContext(), CarRegistration.class));
+            } else {
+                Log.i(TAG, "Login Successful");
+                Bundle send_number = new Bundle();
+                send_number.putString("mobile_number", edit_mobile.getText().toString());
+                startActivity(new Intent(getApplicationContext(), OtpActivity.class).putExtras(send_number));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void requestCars(final JSONObject activity) {
+
+        JSONObject object = null;
+
+        try {
+            if (!Objects.equals((String) activity.get("statusDesc"), "account already exist")) {
+                launchActivity(activity);
+            } else {
+                Log.i(TAG, "Account already Exists");
+                Toast.makeText(getApplicationContext(), "User already registered", Toast.LENGTH_LONG).show();
+                object = new JSONObject();
+                object.put("userId", AuthenticationManager.getInstance().getUserID());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(object == null) return;
+
+        final JSONObject finalObject = object;
+        WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
+                // Request a string response from the provided URL.
+                new JsonObjectRequest(Request.Method.POST, CarsURL, null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                //Log.d(TAG, response.toString());
+                                // Actual data received here
+                                try {
+                                    if(response != null) {
+                                        JSONArray array = response.getJSONArray("myCars");
+                                        ((GlobalClass) getApplicationContext()).vehicles.clear();
+                                        for (int i = 0; i < array.length(); i++) {
+                                            ((GlobalClass) getApplicationContext()).vehicles.add(new Vehicle(array.getJSONObject(i)));
+                                        }
+                                    }
+                                    AuthenticationManager.getInstance().setMainScreen("UserDashboard");
+                                    startActivity(new Intent(getApplicationContext(), UserDashboard.class));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, error.toString());
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> header = new HashMap<>();
+                        header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
+                        Log.e(TAG, "header " + header);
+                        return header;
+                    }
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() {
+                        try {
+                            return finalObject == null ? null : finalObject.toString().getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", finalObject.toString(), "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                        Log.d(TAG, "StatusCode: " + String.valueOf(response.statusCode));
+                        try {
+                            String jsonString = new String(response.data,
+                                    HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+
+                            JSONObject result = null;
+
+                            if (jsonString != null && jsonString.length() > 0)
+                                result = new JSONObject(jsonString);
+
+                            return Response.success(result,
+                                    HttpHeaderParser.parseCacheHeaders(response));
+                        } catch (UnsupportedEncodingException e) {
+                            return Response.error(new ParseError(e));
+                        } catch (JSONException je) {
+                            return Response.error(new ParseError(je));
+                        }
+                    }
+                }
+        );
     }
 }

@@ -77,8 +77,6 @@ public class CarRegistration extends BaseActivity {
 
     private static final String SUCCESS = "200";
 
-    private ArrayList<Vehicle> list;
-
     JSONArray array;
     Boolean fromMycars = false;
 
@@ -96,8 +94,6 @@ public class CarRegistration extends BaseActivity {
         if(!fromMycars) {
             AuthenticationManager.getInstance().setMainScreen("CarRegistration");
         }
-
-        list = ((GlobalClass)getApplicationContext()).getCarList();
 
         manufaturer_items = new ArrayList<>();
         model_items = new ArrayList<>();
@@ -390,7 +386,13 @@ public class CarRegistration extends BaseActivity {
 
     private void startCarRegistration() {
         //Toast.makeText(getApplicationContext(), "Car added successfully!", Toast.LENGTH_LONG).show();
-        ((GlobalClass) getApplicationContext()).saveCarList(list);
+        Vehicle car = new Vehicle();
+        car.id = model_id.get(model_items.indexOf(model_spinner.getSelectedItem().toString()));
+        car.manufacturer = brand_spinner.getSelectedItem().toString();
+        car.registration_number = et_carRegno.getText().toString();
+        car.type = type_spinner.getSelectedItem().toString();
+        car.image = byteArray;
+        ((GlobalClass)getApplicationContext()).vehicles.add(car);
         if (fromMycars) {
             Log.e(TAG, "From My cars");
             this.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
@@ -424,13 +426,6 @@ public class CarRegistration extends BaseActivity {
             //object.put("carName", model_spinner.getSelectedItem().toString());
             object.put("carType", type_spinner.getSelectedItem().toString());
             object.put("model_id", model_id.get(model_items.indexOf(model_spinner.getSelectedItem().toString())));
-            Vehicle car = new Vehicle();
-            car.id = model_id.get(model_items.indexOf(model_spinner.getSelectedItem().toString()));
-            car.manufacturer = brand_spinner.getSelectedItem().toString();
-            car.registration_number = et_carRegno.getText().toString();
-            car.type = type_spinner.getSelectedItem().toString();
-            car.image = byteArray;
-            list.add(car);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

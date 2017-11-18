@@ -138,7 +138,6 @@ public class DismissService extends RootActivity {
                 final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
                 final TextView username = (TextView) view.findViewById(R.id.username);
                 final TextView wheelAlignment = (TextView) view.findViewById(R.id.WheelAlignmentCheckBox);
-                final TextView wheelBalancing = (TextView) view.findViewById(R.id.WheelBalancingCheckBox);
                 final TextView code = (TextView) view.findViewById(R.id.Code);
                 final TextView dateSlot = (TextView) view.findViewById(R.id.date_slot);
                 final ImageView vehicleImage = (ImageView) view.findViewById(R.id.Vehicle);
@@ -146,23 +145,18 @@ public class DismissService extends RootActivity {
                 registrationNumber.setTypeface(calibri);
                 username.setTypeface(calibri, BOLD);
                 wheelAlignment.setTypeface(calibri);
-                wheelBalancing.setTypeface(calibri);
                 code.setTypeface(calibri, BOLD);
                 dateSlot.setTypeface(calibri);
 
                 registrationNumber.setText(service.vehicleRegistrationNumber);
                 username.setText(service.customername);
-                if (service.serviceRequired.contains(ServiceType.WHEEL_ALIGNMENT)) {
-                    wheelAlignment.setHeight(20);
+
+                if(service.serviceRequired == ServiceType.THREE_D) {
+                    wheelAlignment.setText("3D Service");
                 } else {
-                    wheelAlignment.setHeight(0);
+                    wheelAlignment.setText("Manual Service");
                 }
 
-                if (service.serviceRequired.contains(ServiceType.WHEEL_BALANCING)) {
-                    wheelBalancing.setHeight(20);
-                } else {
-                    wheelBalancing.setHeight(0);
-                }
                 dateSlot.setText(date);
                 code.setText("CODE: ");
                 code.append(service.code);

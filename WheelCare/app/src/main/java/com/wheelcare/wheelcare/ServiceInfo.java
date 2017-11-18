@@ -48,7 +48,7 @@ import static android.graphics.Typeface.BOLD;
  */
 
 public class ServiceInfo extends RootActivity {
-
+/*
     private Typeface calibri;
 
     private static final String TAG = ServiceInfo.class.getSimpleName();
@@ -322,7 +322,6 @@ public class ServiceInfo extends RootActivity {
                             @Override
                             public void onResponse(JSONObject response) {
                                 ((GlobalClass)context).userCarLists.remove(index);
-                                ((GlobalClass)context).saveCarList(((GlobalClass)context).vehicles);
                                 closeActivity();
                             }
                         },
@@ -391,5 +390,5 @@ public class ServiceInfo extends RootActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
+*/
 }

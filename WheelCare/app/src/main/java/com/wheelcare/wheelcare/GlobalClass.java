@@ -51,13 +51,13 @@ public class GlobalClass extends Application {
 
     public long endTime = 0;
 
-    //public static final String IPAddress = "192.168.0.102:8089";
+    public static final String IPAddress = "192.168.0.103:8089";
 
-    public static final String IPAddress = "139.59.77.103:8080";
+    //public static final String IPAddress = "139.59.77.103:8080";
 
-    //public static final String Path = "/atapplication/rest/consumer/";
+    public static final String Path = "/atapplication/rest/consumer/";
 
-    public static final String Path = "/wheelcare/rest/consumer/";
+    //public static final String Path = "/wheelcare/rest/consumer/";
 
     private static final String SUCCESS = "200";
 
@@ -170,18 +170,14 @@ public class GlobalClass extends Application {
                     case "cancelled": Details.serviceStatus = ServiceStatus.DISMISS; break;
                 }
 
-                Details.serviceRequired = new ArrayList<>();
                 String service_required = obj.getString("service_type");
-                if(service_required == "wheel alignment") {
-                    Details.serviceRequired.add(ServiceType.WHEEL_ALIGNMENT);
+                if(Objects.equals(service_required, "3D")) {
+                    Details.serviceRequired = ServiceType.THREE_D;
                 }
-                if(service_required == "wheel balancing") {
-                    Details.serviceRequired.add(ServiceType.WHEEL_BALANCING);
+                if(Objects.equals(service_required, "Manual")) {
+                    Details.serviceRequired = ServiceType.MANUAL;
                 }
-                if(service_required == "balancing alignment") {
-                    Details.serviceRequired.add(ServiceType.WHEEL_ALIGNMENT);
-                    Details.serviceRequired.add(ServiceType.WHEEL_BALANCING);
-                }
+
                 Details.model_id = Integer.parseInt(obj.getString("model_id"));
                 Details.issue = obj.isNull("issue") ? "" : (String) obj.get("issue");
                 Details.userID = (String) obj.get("uId");
@@ -580,35 +576,6 @@ public class GlobalClass extends Application {
                     }
                 }
         );
-    }
-
-    public ArrayList<Vehicle> getCarList() {
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("CarList", Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = preferences.getString("list", "");
-        Vehicle[] vlist = gson.fromJson(json, Vehicle[].class);
-        try {
-            Log.d(TAG, "list = " + vlist[0].model);
-            List<Vehicle> vehiclelist = Arrays.asList(vlist);
-            vehicles = new ArrayList<Vehicle>(vehiclelist);
-            return new ArrayList<Vehicle>(vehiclelist);
-        } catch (Exception e) {
-            e.printStackTrace();
-            vehicles = new ArrayList<>();
-            return new ArrayList<>();
-        }
-    }
-
-    public void saveCarList(ArrayList<Vehicle> list) {
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("CarList", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
-        editor.apply();
-        vehicles = list;
-        Gson gson =  new Gson();
-        String json = gson.toJson(list);
-        editor.putString("list", json);
-        editor.apply();
     }
 
     public void getVehicleImages() {

@@ -48,7 +48,6 @@ public class UserDashboard extends AppCompatActivity
 
     private static final String TAG = UserDashboard.class.getSimpleName();
     private static final String URL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "helpline";
-    private static final String CarsURL = "http://" + GlobalClass.IPAddress + GlobalClass.Path + "myCar";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +71,6 @@ public class UserDashboard extends AppCompatActivity
         navigationView.setItemIconTintList(null);
         navigationView.getMenu().getItem(0).setChecked(true);
         displaySelectedItem(R.id.nav_home);
-
-        Log.d("CAR SIZE", String.valueOf(((GlobalClass)getApplicationContext()).getCarList().size()));
-        if(((GlobalClass)getApplicationContext()).getCarList().size() == 0) {
-            if(((GlobalClass)getApplicationContext()).isInternetAvailable()) {
-                requestCars();
-            }
-        }
-
     }
 
     @Override
@@ -130,7 +121,8 @@ public class UserDashboard extends AppCompatActivity
         if (id == R.id.nav_home) {
             // Handle the camera action
             title.setText("Home");
-            fragment = new UserHome();
+            //fragment = new UserHome();
+            fragment = new UserHomepage();
         } else if (id == R.id.nav_user) {
             title.setText("My Profile");
             fragment = new MyProfile();
@@ -256,76 +248,5 @@ public class UserDashboard extends AppCompatActivity
                 BaseActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
-
-    public void requestCars() {
-
-        final JSONObject object = new JSONObject();
-        try {
-            object.put("userId", AuthenticationManager.getInstance().getUserID());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if(object == null) return;
-
-        WebServiceManager.getInstance(getApplicationContext()).addToRequestQueue(
-                // Request a string response from the provided URL.
-                new JsonObjectRequest(Request.Method.POST, CarsURL, null,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                Log.d(TAG, response.toString());
-                                // Actual data received here
-                                try {
-                                    JSONArray array = response.getJSONArray("myCars");
-                                    ArrayList<Vehicle> models = new ArrayList<>();
-                                    models.clear();
-                                    for(int i = 0; i < array.length(); i++) {
-                                        models.add(new Vehicle(array.getJSONObject(i)));
-                                    }
-                                    ((GlobalClass)getApplicationContext()).saveCarList(models);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.d(TAG, error.toString());
-                            }
-                        }
-                ) {
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> header = new HashMap<>();
-                        header.put("X-ACCESS-TOKEN", AuthenticationManager.getInstance().getAccessToken());
-                        Log.e(TAG, "header " + header);
-                        return header;
-                    }
-
-                    @Override
-                    public String getBodyContentType() {
-                        return "application/json; charset=utf-8";
-                    }
-
-                    @Override
-                    public byte[] getBody() {
-                        try {
-                            return object == null ? null : object.toString().getBytes("utf-8");
-                        } catch (UnsupportedEncodingException uee) {
-                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", object.toString(), "utf-8");
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                        Log.d(TAG, "StatusCode: " + String.valueOf(response.statusCode));
-                        return super.parseNetworkResponse(response);
-                    }
-                }
-        );
     }
 }

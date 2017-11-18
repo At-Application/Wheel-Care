@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,7 +51,6 @@ import java.util.Map;
 public class MyCars extends Fragment {
 
     ListView listView;
-    ArrayList<Vehicle> rowItems;
     View view;
     CustomListViewAdapter adapter;
 
@@ -69,9 +70,6 @@ public class MyCars extends Fragment {
     @Override
     public void onViewCreated(View view,  Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        rowItems = new ArrayList<>();
-
         listView = (ListView) view.findViewById(R.id.list);
         adapter = new CustomListViewAdapter();
         listView.setAdapter(adapter);
@@ -90,10 +88,9 @@ public class MyCars extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        rowItems = ((GlobalClass)getActivity().getApplicationContext()).getCarList();
-        if(rowItems.size() == 0) {
+    public void onStart() {
+        super.onStart();
+        if(((GlobalClass)getActivity().getApplicationContext()).vehicles.size() == 0) {
             if(((GlobalClass)getActivity().getApplicationContext()).isInternetAvailable()) {
                 requestCars();
             }
@@ -102,56 +99,14 @@ public class MyCars extends Fragment {
         }
     }
 
-    public class CustomListViewAdapter extends BaseSwipeAdapter {
-
-        @Override
-        public int getSwipeLayoutResourceId(int pos) {
-            return R.id.swipe;
-        }
-
-        @Override
-        public View generateView(final int position, ViewGroup viewGroup) {
-            View view=null;
-
-            LayoutInflater mInflater = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-
-            view = mInflater.inflate(R.layout.mycars_list_item, null);
-                SwipeLayout swipeLayout = (SwipeLayout)view.findViewById(getSwipeLayoutResourceId(position));
-                swipeLayout.addSwipeListener(new SimpleSwipeListener() {
-                    @Override
-                    public void onOpen(SwipeLayout layout) {
-                        YoYo.with(Techniques.Tada).duration(500).delay(100).playOn(layout.findViewById(R.id.trash));
-                    }
-                });
-            view.findViewById(R.id.trash).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //Toast.makeText(getActivity().getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
-                        deleteCar(position);
-                    }
-                });
-
-            return view;
-        }
-
-        @Override
-        public void fillValues(int i, View view) {
-            TextView txtDesc = (TextView) view.findViewById(R.id.registrationnumber);
-            TextView txtTitle = (TextView) view.findViewById(R.id.carvariant);
-            ImageView imageView = (ImageView) view.findViewById(R.id.carimage);
-
-            txtDesc.setText(rowItems.get(i).registration_number);
-            txtTitle.setText(rowItems.get(i).type);
-            Bitmap bmp = BitmapFactory.decodeByteArray( rowItems.get(i).image, 0, rowItems.get(i).image.length);
-            imageView.setImageBitmap(bmp);
-        }
+    public class CustomListViewAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
-            if(rowItems.size() > 0)
-            return rowItems.size();
+            if(((GlobalClass)getActivity().getApplicationContext()).vehicles.size() > 0)
+            return ((GlobalClass)getActivity().getApplicationContext()).vehicles.size();
             else
-                return 0;
+                return 1;
         }
 
         @Override
@@ -164,6 +119,41 @@ public class MyCars extends Fragment {
             return 0;
         }
 
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            if(((GlobalClass)getActivity().getApplicationContext()).vehicles.size() > 0) {
+
+
+                LayoutInflater mInflater = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+                convertView = mInflater.inflate(R.layout.mycars_list_item, null);
+
+                convertView.findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //Toast.makeText(getActivity().getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
+                        deleteCar(position);
+                    }
+                });
+
+                TextView txtDesc = (TextView) convertView.findViewById(R.id.registrationnumber);
+                TextView txtTitle = (TextView) convertView.findViewById(R.id.carvariant);
+                ImageView imageView = (ImageView) convertView.findViewById(R.id.carimage);
+
+                txtDesc.setText(((GlobalClass) getActivity().getApplicationContext()).vehicles.get(position).registration_number);
+                txtTitle.setText(((GlobalClass) getActivity().getApplicationContext()).vehicles.get(position).type);
+                Bitmap bmp = BitmapFactory.decodeByteArray(((GlobalClass) getActivity().getApplicationContext()).vehicles.get(position).image, 0, ((GlobalClass) getActivity().getApplicationContext()).vehicles.get(position).image.length);
+                imageView.setImageBitmap(bmp);
+            } else {
+                convertView = getActivity().getLayoutInflater().inflate(R.layout.no_cars, null);
+                convertView.setMinimumHeight(parent.getMeasuredHeight());
+                ConstraintLayout layout = (ConstraintLayout)convertView.findViewById(R.id.backLayout);
+                layout.setMinHeight(parent.getMeasuredHeight());
+            }
+
+            return convertView;
+        }
     }
 
     @Override
@@ -197,11 +187,10 @@ public class MyCars extends Fragment {
                                 // Actual data received here
                                 try {
                                     JSONArray array = response.getJSONArray("myCars");
-                                    rowItems.clear();
+                                    ((GlobalClass)getActivity().getApplicationContext()).vehicles.clear();
                                     for(int i = 0; i < array.length(); i++) {
-                                        rowItems.add(new Vehicle(array.getJSONObject(i)));
+                                        ((GlobalClass)getActivity().getApplicationContext()).vehicles.add(new Vehicle(array.getJSONObject(i)));
                                     }
-                                    ((GlobalClass)getActivity().getApplicationContext()).saveCarList(rowItems);
                                     adapter.notifyDataSetChanged();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -256,7 +245,7 @@ public class MyCars extends Fragment {
         final JSONObject object = new JSONObject();
         try {
             object.put("userId", AuthenticationManager.getInstance().getUserID());
-            object.put("reg_no", rowItems.get(position).registration_number);
+            object.put("reg_no", ((GlobalClass)getActivity().getApplicationContext()).vehicles.get(position).registration_number);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -271,8 +260,7 @@ public class MyCars extends Fragment {
                             public void onResponse(JSONObject response) {
 //                                Log.d(TAG, response.toString());
                                 // Actual data received here
-                                rowItems.remove(position);
-                                ((GlobalClass)getActivity().getApplicationContext()).saveCarList(rowItems);
+                                ((GlobalClass)getActivity().getApplicationContext()).vehicles.remove(position);
                                 adapter.notifyDataSetChanged();
                             }
                         },

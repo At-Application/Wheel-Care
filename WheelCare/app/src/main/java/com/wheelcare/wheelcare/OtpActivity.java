@@ -173,7 +173,7 @@ public class OtpActivity extends RootActivity implements View.OnClickListener, O
                                 message = message.substring(22,26);
                                 try
                                 {
-                                if (senderNum.equals("IM-WHEELC"))
+                                if (senderNum.contains("WHEELC"))
                                 {
                                     et_otp.setText(message);
                                     btn_submit.performClick();

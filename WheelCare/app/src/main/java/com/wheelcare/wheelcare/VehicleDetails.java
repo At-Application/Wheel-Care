@@ -14,7 +14,7 @@ public class VehicleDetails {
     public String vehicleRegistrationNumber;
     public String customername;
     public Date date_slot;
-    public ArrayList<ServiceType> serviceRequired;
+    public ServiceType serviceRequired;
     public String code;
     public ServiceStatus serviceStatus;
     public String issue;

@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by sri surya on 07-09-2017.
@@ -18,7 +19,7 @@ public class UserHistoryDetails {
     public int spiId;
     public String vehicleRegistrationNumber;
     public Date date_slot;
-    public ArrayList<ServiceType> serviceRequired;
+    public ServiceType serviceRequired;
     public String code;
     public ServiceStatus serviceStatus;
     public String issue;
@@ -62,18 +63,14 @@ public class UserHistoryDetails {
                     break;
             }
 
-            serviceRequired = new ArrayList<>();
             String service_required = obj.getString("service_type");
-            if (service_required == "wheel alignment") {
-                serviceRequired.add(ServiceType.WHEEL_ALIGNMENT);
+            if(Objects.equals(service_required, "3D")) {
+                serviceRequired = ServiceType.THREE_D;
             }
-            if (service_required == "wheel balancing") {
-                serviceRequired.add(ServiceType.WHEEL_BALANCING);
+            if(Objects.equals(service_required, "Manual")) {
+                serviceRequired = ServiceType.MANUAL;
             }
-            if (service_required == "balancing alignment") {
-                serviceRequired.add(ServiceType.WHEEL_ALIGNMENT);
-                serviceRequired.add(ServiceType.WHEEL_BALANCING);
-            }
+
             issue = obj.isNull("issue") ? "" : (String) obj.get("issue");
             comment = obj.isNull("comment") ? "" : (String) obj.get("comment");
 

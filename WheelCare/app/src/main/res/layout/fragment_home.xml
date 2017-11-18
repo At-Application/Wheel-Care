@@ -7,175 +7,69 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/map"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/serviceProviderInfoToolbar3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/btn_color"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Service Providers Near By"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="91dp"
+            tools:layout_editor_absoluteY="15dp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </com.google.android.gms.maps.MapView>
+        app:layout_constraintTop_toBottomOf="@+id/serviceProviderInfoToolbar3" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/spInfoLayout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="40dp"
         android:background="@color/white"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
 
         <TextView
-            android:id="@+id/providerDistance"
-            android:layout_width="wrap_content"
+            android:id="@+id/serviceProviderName"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:gravity="center_vertical"
-            android:text="2.3 kms"
-            android:textColor="@color/setup_btn_color"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/serviceProviderName"
-            android:layout_width="265dp"
-            android:layout_height="0dp"
-            android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:gravity="center_vertical"
             android:text="Service Provider Name"
-            android:textAlignment="textStart"
+            android:textAlignment="center"
             android:textColor="#8f216f"
-            android:textSize="24sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
-    </android.support.constraint.ConstraintLayout>
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/ProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/spInfoLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent">
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="10dp"
-            android:text="KA04DJ1234"
-            android:textColor="#8f216f"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/textView4"
-            app:layout_constraintLeft_toLeftOf="parent" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginRight="10dp"
-            android:text="CODE:JJDDFF"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/textView5"
-            app:layout_constraintRight_toRightOf="parent" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
-            android:text="28/08/2017(14:30-15:30)"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/StatusBar"
-            app:layout_constraintLeft_toLeftOf="parent" />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="10dp"
-            android:text="Code Verified"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/StatusBar"
-            app:layout_constraintRight_toRightOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/StatusBar"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_below="@+id/slot"
-            android:orientation="horizontal"
-            android:visibility="visible"
-            android:weightSum="4"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
-
-            <Button
-                android:id="@+id/Started"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/border_yellow"
-                android:orientation="vertical"
-                android:text="Started"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/InProgress"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/border_yellow"
-                android:orientation="vertical"
-                android:text="in progress"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/Finalizing"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/border_yellow"
-                android:orientation="vertical"
-                android:text="Finalizing"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/Done"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/yellow"
-                android:orientation="vertical"
-                android:text="DONE"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

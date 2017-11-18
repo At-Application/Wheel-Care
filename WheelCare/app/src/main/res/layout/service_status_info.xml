@@ -7,15 +7,21 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <ImageView
+    <com.synnapps.carouselview.CarouselView
         android:id="@+id/CarImage"
         android:layout_width="match_parent"
-        android:layout_height="165dp"
+        android:layout_height="175dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:adjustViewBounds="false"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="0dp" />
+        app:fillColor="#FFFFFFFF"
+        app:pageColor="#00000000"
+        app:radius="3dp"
+        app:autoPlay="false"
+        app:strokeColor="#FFFFFF"
+        app:strokeWidth="1dp"
+        app:indicatorGravity="bottom|center_horizontal"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -27,32 +33,16 @@
         android:background="@color/white">
 
         <TextView
-            android:id="@+id/WheelAlignmentLabel"
+            android:id="@+id/serviceType"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_above="@+id/StatusBar"
-            android:layout_marginBottom="8dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
             android:gravity="center_vertical|start"
-            android:text="Wheel Alignment"
+            android:text="3D Service"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="23sp"
             app:layout_constraintBottom_toTopOf="@+id/StatusBar"
-            app:layout_constraintLeft_toLeftOf="parent" />
-
-        <TextView
-            android:id="@+id/WheelBalancingLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:gravity="center_vertical|start"
-            android:text="Wheel Balancing"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/WheelAlignmentLabel"
             app:layout_constraintLeft_toLeftOf="parent" />
 
         <TextView
@@ -71,10 +61,9 @@
         <TextView
             android:id="@+id/RegistrationNumber"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:layout_marginBottom="0dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="3dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
             android:gravity="center_vertical|start"
             android:text="TextView"
@@ -108,11 +97,10 @@
             android:id="@+id/dateSlot"
             android:layout_width="wrap_content"
             android:layout_height="21dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="3dp"
             android:layout_marginRight="10dp"
-            android:gravity="center_vertical|start"
+            android:gravity="center_vertical|end"
             android:text="TextView"
-            android:textAlignment="textEnd"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/StatusBar"

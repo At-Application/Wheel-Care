@@ -23,7 +23,7 @@ public class UserCarList {
     private int ServiceProivderID;
     private String serviceStatusString;
     private ServiceStatus serviceStatus;
-    private ArrayList<ServiceType> serviceType;
+    ServiceType serviceType;
     private long Slot;
     private String Code;
 
@@ -51,17 +51,14 @@ public class UserCarList {
                 case "pending": serviceStatus = null; break;
             }
             if(!Objects.equals(serviceStatusString, "pending")) {
-                serviceType = new ArrayList<>();
+
                 switch ((String) response.get("serviceType")) {
-                    case "wheel alignment":
-                        serviceType.add(ServiceType.WHEEL_ALIGNMENT);
+                    case "3D":
+                        serviceType = ServiceType.THREE_D;
                         break;
-                    case "wheel balancing":
-                        serviceType.add(ServiceType.WHEEL_BALANCING);
-                        break;
-                    case "balancing alignment":
-                        serviceType.add(ServiceType.WHEEL_ALIGNMENT);
-                        serviceType.add(ServiceType.WHEEL_BALANCING);
+
+                    case "Manual":
+                        serviceType = ServiceType.MANUAL;
                         break;
                 }
                 Slot = Long.valueOf((String) response.get("slot"));
@@ -102,7 +99,7 @@ public class UserCarList {
         return serviceStatus;
     }
 
-    public ArrayList<ServiceType> getServiceType() {
+    public ServiceType getServiceType() {
         return serviceType;
     }
 

@@ -77,7 +77,7 @@ public class History extends Fragment {
             SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy(kk:mm)");
             String date = fmt.format(service.date_slot);
 
-            view = getLayoutInflater(null).inflate(R.layout.pending_service_info_detail_view, null);
+            view = getActivity().getLayoutInflater().inflate(R.layout.pending_service_info_detail_view, null);
             final TextView registrationNumber = (TextView) view.findViewById(R.id.vehiclenumber);
             final TextView username = (TextView) view.findViewById(R.id.username);
             final TextView code = (TextView) view.findViewById(R.id.Code);

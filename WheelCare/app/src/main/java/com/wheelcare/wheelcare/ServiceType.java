@@ -5,6 +5,6 @@ package com.wheelcare.wheelcare;
  */
 
 public enum ServiceType {
-    WHEEL_ALIGNMENT,
-    WHEEL_BALANCING
+    THREE_D,
+    MANUAL
 }
